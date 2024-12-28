@@ -1,0 +1,70 @@
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="ValueSet-adverse-reaction-risk-v1-severityofreaction-R4"/>
+    <meta>
+        <profile value="http://hl7.org/fhir/StructureDefinition/shareablevalueset"/>
+    </meta>
+    <text>
+        <status value="generated"/>
+        <div xmlns="http://www.w3.org/1999/xhtml">
+            <p> Value set Severity of reaction. Clinical assessment of the severity of the reaction event as a whole, potentially considering multiple different manifestations.</p>
+            <p> Developed by: openEHR community</p>
+            <p> Generated with LinkEHR</p>
+            <p> This value set includes codes from archetype openEHR-EHR-EVALUATION.adverse_reaction_risk.v1 internal terminology</p>
+            <ul>
+                <li>at0093: Mild</li>
+                <li>at0092: Moderate</li>
+                <li>at0090: Severe</li>
+            </ul>
+        </div>
+    </text>
+    <url value="http://linkehr.com/fhir/ValueSet-adverse-reaction-risk-v1-severityofreaction-R4"/>
+    <version value="20200227"/>
+    <name value="Severity of reaction"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <publisher value="openEHR"/>
+    <description value="Clinical assessment of the severity of the reaction event as a whole, potentially considering multiple different manifestations."/>
+    <compose>
+        <include>
+            <system value="http://openehr.org/ckm/archetypes/openEHR-EHR-EVALUATION.adverse_reaction_risk.v1"/>
+            <concept>
+                <code value="at0093"/>
+                <display value="Mild"/>
+                <designation>
+                    <language value="pt-br"/>
+                    <value value="Suave"/>
+                </designation>
+                <designation>
+                    <language value="nb"/>
+                    <value value="Mild"/>
+                </designation>
+            </concept>
+            <concept>
+                <code value="at0092"/>
+                <display value="Moderate"/>
+                <designation>
+                    <language value="pt-br"/>
+                    <value value="Moderado"/>
+                </designation>
+                <designation>
+                    <language value="nb"/>
+                    <value value="Moderat"/>
+                </designation>
+            </concept>
+            <concept>
+                <code value="at0090"/>
+                <display value="Severe"/>
+                <designation>
+                    <language value="pt-br"/>
+                    <value value="Severo"/>
+                </designation>
+                <designation>
+                    <language value="nb"/>
+                    <value value="Alvorlig"/>
+                </designation>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

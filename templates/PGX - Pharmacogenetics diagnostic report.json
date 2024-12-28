@@ -1,0 +1,1083 @@
+{
+  "templateId" : "PGX - Pharmacogenetics diagnostic report",
+  "semVer" : "1.0.0-alpha.3",
+  "version" : "2.3",
+  "defaultLanguage" : "en",
+  "languages" : [ "en" ],
+  "tree" : {
+    "id" : "pharmacogenetics_diagnostic_report",
+    "name" : "Pharmacogenetics diagnostic report",
+    "localizedName" : "Pharmacogenetics diagnostic report",
+    "rmType" : "COMPOSITION",
+    "nodeId" : "openEHR-EHR-COMPOSITION.report-result.v1",
+    "min" : 1,
+    "max" : 1,
+    "localizedNames" : {
+      "en" : "Pharmacogenetics diagnostic report"
+    },
+    "localizedDescriptions" : {
+      "en" : "Document to communicate information to others about the result of a test or assessment."
+    },
+    "aqlPath" : "",
+    "children" : [ {
+      "id" : "context",
+      "rmType" : "EVENT_CONTEXT",
+      "nodeId" : "",
+      "min" : 1,
+      "max" : 1,
+      "aqlPath" : "/context",
+      "children" : [ {
+        "id" : "xds_metadata",
+        "name" : "XDS Metadata",
+        "localizedName" : "XDS Metadata",
+        "rmType" : "CLUSTER",
+        "nodeId" : "openEHR-EHR-CLUSTER.xds_metadata.v0",
+        "min" : 0,
+        "max" : 1,
+        "localizedNames" : {
+          "en" : "XDS Metadata"
+        },
+        "localizedDescriptions" : {
+          "en" : "Additional composition metadata aligned with IHE-XDS which is not already available from the Reference Model COMPOSITION class."
+        },
+        "aqlPath" : "/context/other_context[at0001]/items[openEHR-EHR-CLUSTER.xds_metadata.v0]",
+        "children" : [ {
+          "id" : "author_specialty",
+          "name" : "Author specialty",
+          "localizedName" : "Author specialty",
+          "rmType" : "DV_TEXT",
+          "nodeId" : "at0001",
+          "min" : 0,
+          "max" : 1,
+          "localizedNames" : {
+            "en" : "Author specialty"
+          },
+          "localizedDescriptions" : {
+            "en" : "The speciality of the author/composer of the document."
+          },
+          "aqlPath" : "/context/other_context[at0001]/items[openEHR-EHR-CLUSTER.xds_metadata.v0]/items[at0001]/value",
+          "inputs" : [ {
+            "type" : "TEXT"
+          } ]
+        }, {
+          "id" : "document_type",
+          "name" : "Document type",
+          "localizedName" : "Document type",
+          "rmType" : "DV_TEXT",
+          "nodeId" : "at0003",
+          "min" : 0,
+          "max" : 1,
+          "localizedNames" : {
+            "en" : "Document type"
+          },
+          "localizedDescriptions" : {
+            "en" : "The code specifying the precise type of document from the user perspective. Normally selected from a valueset provided by the local IHE-XDS Affinity Domain or national standard."
+          },
+          "annotations" : {
+            "comment" : "for example:  Pulmonary History and Physical, Discharge Summary, Ultrasound Report.\r\nThese codes are specific to an XDS Affinity Domain."
+          },
+          "aqlPath" : "/context/other_context[at0001]/items[openEHR-EHR-CLUSTER.xds_metadata.v0]/items[at0003]/value",
+          "inputs" : [ {
+            "type" : "TEXT"
+          } ]
+        } ]
+      }, {
+        "id" : "start_time",
+        "name" : "Start_time",
+        "rmType" : "DV_DATE_TIME",
+        "min" : 1,
+        "max" : 1,
+        "aqlPath" : "/context/start_time",
+        "inputs" : [ {
+          "type" : "DATETIME"
+        } ],
+        "inContext" : true
+      }, {
+        "id" : "setting",
+        "name" : "Setting",
+        "rmType" : "DV_CODED_TEXT",
+        "min" : 1,
+        "max" : 1,
+        "aqlPath" : "/context/setting",
+        "inputs" : [ {
+          "suffix" : "code",
+          "type" : "TEXT"
+        }, {
+          "suffix" : "value",
+          "type" : "TEXT"
+        } ],
+        "inContext" : true
+      } ]
+    }, {
+      "id" : "pharmacogenetic_laboratory_test",
+      "name" : "Pharmacogenetic laboratory test",
+      "localizedName" : "Pharmacogenetic laboratory test",
+      "rmType" : "OBSERVATION",
+      "nodeId" : "openEHR-EHR-OBSERVATION.laboratory_test_result.v1",
+      "min" : 0,
+      "max" : 1,
+      "localizedNames" : {
+        "en" : "Pharmacogenetic laboratory test"
+      },
+      "localizedDescriptions" : {
+        "en" : "The result, including findings and the laboratory's interpretation, of Pharmacogenetics investigation performed on specimens collected from an individual."
+      },
+      "aqlPath" : "/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1,'Pharmacogenetic laboratory test']",
+      "children" : [ {
+        "id" : "test_name",
+        "name" : "Test name",
+        "localizedName" : "Test name",
+        "rmType" : "DV_TEXT",
+        "nodeId" : "at0005",
+        "min" : 1,
+        "max" : 1,
+        "localizedNames" : {
+          "en" : "Test name"
+        },
+        "localizedDescriptions" : {
+          "en" : "Name of the laboratory investigation performed on the specimen(s)."
+        },
+        "annotations" : {
+          "comment" : "A test result may be for a single analyte, or a group of items, including panel tests. It is strongly recommended that 'Test name' be coded with a terminology, for example LOINC or SNOMED CT. For example: 'Glucose', 'Urea and Electrolytes', 'Swab', 'Cortisol (am)', 'Potassium in perspiration' or 'Melanoma histopathology'. The name may sometimes include specimen type and patient state, for example 'Fasting blood glucose' or include other information, as 'Potassium (PNA blood gas)'."
+        },
+        "aqlPath" : "/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1,'Pharmacogenetic laboratory test']/data[at0001]/events[at0002,'Point in time']/data[at0003]/items[at0005]/value",
+        "inputs" : [ {
+          "type" : "TEXT",
+          "defaultValue" : "Pharmacogenomic analysis basic associated observations panel - Blood or Tissue [78046-0]"
+        } ]
+      }, {
+        "id" : "clinical_information_provided",
+        "name" : "Clinical information provided",
+        "localizedName" : "Clinical information provided",
+        "rmType" : "DV_TEXT",
+        "nodeId" : "at0100",
+        "min" : 0,
+        "max" : 1,
+        "localizedNames" : {
+          "en" : "Clinical information provided"
+        },
+        "localizedDescriptions" : {
+          "en" : "Description of clinical information available at the time of interpretation of results."
+        },
+        "annotations" : {
+          "comment" : "This data element may include a link to the original clinical information provided in the test request."
+        },
+        "aqlPath" : "/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1,'Pharmacogenetic laboratory test']/data[at0001]/events[at0002,'Point in time']/data[at0003]/items[at0100]/value",
+        "inputs" : [ {
+          "type" : "TEXT"
+        } ]
+      }, {
+        "id" : "laboratory_result",
+        "name" : "Laboratory result",
+        "localizedName" : "Laboratory result",
+        "rmType" : "CLUSTER",
+        "nodeId" : "openEHR-EHR-CLUSTER.laboratory_test_analyte.v1",
+        "min" : 0,
+        "max" : -1,
+        "localizedNames" : {
+          "en" : "Laboratory result"
+        },
+        "localizedDescriptions" : {
+          "en" : "The result of a laboratory test for a single analyte value."
+        },
+        "aqlPath" : "/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1,'Pharmacogenetic laboratory test']/data[at0001]/events[at0002,'Point in time']/data[at0003]/items[openEHR-EHR-CLUSTER.laboratory_test_analyte.v1,'Laboratory result']",
+        "children" : [ {
+          "id" : "analyte_name",
+          "name" : "Analyte name",
+          "localizedName" : "Analyte name",
+          "rmType" : "DV_TEXT",
+          "nodeId" : "at0024",
+          "min" : 0,
+          "max" : 1,
+          "localizedNames" : {
+            "en" : "Analyte name"
+          },
+          "localizedDescriptions" : {
+            "en" : "The name of the analyte result."
+          },
+          "annotations" : {
+            "comment" : "The value for this element is normally supplied in a specialisation, in a template or at run-time to reflect the actual analyte. For example: 'Serum sodium', 'Haemoglobin'. Coding with an external terminology is strongly recommended, such as LOINC, NPU, SNOMED CT, or local lab terminologies.",
+            "hl7v2_mapping" : "OBX.3",
+            "fhir_mapping" : "Observation.code"
+          },
+          "aqlPath" : "/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1,'Pharmacogenetic laboratory test']/data[at0001]/events[at0002,'Point in time']/data[at0003]/items[openEHR-EHR-CLUSTER.laboratory_test_analyte.v1,'Laboratory result']/items[at0024]/value",
+          "inputs" : [ {
+            "type" : "TEXT"
+          } ]
+        }, {
+          "id" : "pharmacogenetic_test_result",
+          "name" : "Pharmacogenetic test result",
+          "localizedName" : "Pharmacogenetic test result",
+          "rmType" : "CLUSTER",
+          "nodeId" : "openEHR-EHR-CLUSTER.pharmacogenetic_result.v0",
+          "min" : 0,
+          "max" : 1,
+          "localizedNames" : {
+            "en" : "Pharmacogenetic test result"
+          },
+          "localizedDescriptions" : {
+            "en" : "Findings on pharmacogenetic testing for a single gene."
+          },
+          "aqlPath" : "/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1,'Pharmacogenetic laboratory test']/data[at0001]/events[at0002,'Point in time']/data[at0003]/items[openEHR-EHR-CLUSTER.laboratory_test_analyte.v1,'Laboratory result']/items[openEHR-EHR-CLUSTER.pharmacogenetic_result.v0,'Pharmacogenetic test result']",
+          "children" : [ {
+            "id" : "gene_symbol",
+            "name" : "Gene symbol",
+            "localizedName" : "Gene symbol",
+            "rmType" : "DV_TEXT",
+            "nodeId" : "at0003",
+            "min" : 1,
+            "max" : 1,
+            "localizedNames" : {
+              "en" : "Gene symbol"
+            },
+            "localizedDescriptions" : {
+              "en" : "The official gene symbol approved by the HGNC, which is a short abbreviated form of the gene name."
+            },
+            "annotations" : {
+              "comment" : "Coding with an external terminology is preferred, where possible.\r\n\r\nPreferably this should be coded with terms from the HGNC (HUGO Gene Nomenclature Committee) nomenclature, using 'http://www.genenames.org' as the terminology identifier.\r\n\r\nFor example: 'http://www.genenames.org::CYP2C9 | CYP2C9 |'."
+            },
+            "aqlPath" : "/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1,'Pharmacogenetic laboratory test']/data[at0001]/events[at0002,'Point in time']/data[at0003]/items[openEHR-EHR-CLUSTER.laboratory_test_analyte.v1,'Laboratory result']/items[openEHR-EHR-CLUSTER.pharmacogenetic_result.v0,'Pharmacogenetic test result']/items[at0003]/value",
+            "inputs" : [ {
+              "type" : "TEXT"
+            } ]
+          }, {
+            "id" : "diplotype",
+            "name" : "Diplotype",
+            "localizedName" : "Diplotype",
+            "rmType" : "DV_TEXT",
+            "nodeId" : "at0004",
+            "min" : 0,
+            "max" : 1,
+            "localizedNames" : {
+              "en" : "Diplotype"
+            },
+            "localizedDescriptions" : {
+              "en" : "A textual representation of the diplotype, normally as string of characters, either as as gene change descriptors or star allele diplotypes."
+            },
+            "annotations" : {
+              "comment" : "For example: 'g.94938683A>G' (Gene changes) or '*1/*36' (Star allele diplotype)."
+            },
+            "aqlPath" : "/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1,'Pharmacogenetic laboratory test']/data[at0001]/events[at0002,'Point in time']/data[at0003]/items[openEHR-EHR-CLUSTER.laboratory_test_analyte.v1,'Laboratory result']/items[openEHR-EHR-CLUSTER.pharmacogenetic_result.v0,'Pharmacogenetic test result']/items[at0004]/value",
+            "inputs" : [ {
+              "type" : "TEXT"
+            } ]
+          }, {
+            "id" : "phenotype",
+            "name" : "Phenotype",
+            "localizedName" : "Phenotype",
+            "rmType" : "DV_CODED_TEXT",
+            "nodeId" : "at0052",
+            "min" : 0,
+            "max" : 1,
+            "localizedNames" : {
+              "en" : "Phenotype"
+            },
+            "localizedDescriptions" : {
+              "en" : "The estimated pharmacological impact of the identified genotype."
+            },
+            "annotations" : {
+              "comment" : "The coded text values are based on CPIC phenotype recommendations - see https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5253119/.\r\n\r\nIt is possible to add other coded text values when they are required."
+            },
+            "aqlPath" : "/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1,'Pharmacogenetic laboratory test']/data[at0001]/events[at0002,'Point in time']/data[at0003]/items[openEHR-EHR-CLUSTER.laboratory_test_analyte.v1,'Laboratory result']/items[openEHR-EHR-CLUSTER.pharmacogenetic_result.v0,'Pharmacogenetic test result']/items[at0052]/value",
+            "inputs" : [ {
+              "suffix" : "code",
+              "type" : "CODED_TEXT",
+              "list" : [ {
+                "value" : "at0053",
+                "label" : "Normal metaboliser",
+                "localizedLabels" : {
+                  "en" : "Normal metaboliser"
+                },
+                "localizedDescriptions" : {
+                  "en" : "The metaboliser status is normal."
+                },
+                "termBindings" : {
+                  "SNOMED-CT" : {
+                    "value" : "[SNOMED-CT::3351000181105]",
+                    "terminologyId" : "SNOMED-CT"
+                  },
+                  "LOINC" : {
+                    "value" : "[LOINC::LA25391-6]",
+                    "terminologyId" : "LOINC"
+                  }
+                }
+              }, {
+                "value" : "at0054",
+                "label" : "Rapid metaboliser",
+                "localizedLabels" : {
+                  "en" : "Rapid metaboliser"
+                },
+                "localizedDescriptions" : {
+                  "en" : "The metaboliser status is rapid."
+                },
+                "termBindings" : {
+                  "SNOMED-CT" : {
+                    "value" : "[SNOMED-CT::3341000181107]",
+                    "terminologyId" : "SNOMED-CT"
+                  },
+                  "LOINC" : {
+                    "value" : "[LOINC::LA25390-8]",
+                    "terminologyId" : "LOINC"
+                  }
+                }
+              }, {
+                "value" : "at0055",
+                "label" : "Ultrarapid metaboliser",
+                "localizedLabels" : {
+                  "en" : "Ultrarapid metaboliser"
+                },
+                "localizedDescriptions" : {
+                  "en" : "The metaboliser status is ultrarapid."
+                },
+                "termBindings" : {
+                  "SNOMED-CT" : {
+                    "value" : "[SNOMED-CT::3331000181100]",
+                    "terminologyId" : "SNOMED-CT"
+                  },
+                  "LOINC" : {
+                    "value" : "[LOINC::LA10315-2]",
+                    "terminologyId" : "LOINC"
+                  }
+                }
+              }, {
+                "value" : "at0056",
+                "label" : "Intermediate metaboliser",
+                "localizedLabels" : {
+                  "en" : "Intermediate metaboliser"
+                },
+                "localizedDescriptions" : {
+                  "en" : "The metaboliser status is intermediate."
+                },
+                "termBindings" : {
+                  "SNOMED-CT" : {
+                    "value" : "[SNOMED-CT::3361000181108]",
+                    "terminologyId" : "SNOMED-CT"
+                  },
+                  "LOINC" : {
+                    "value" : "[LOINC::LA10317-8]",
+                    "terminologyId" : "LOINC"
+                  }
+                }
+              }, {
+                "value" : "at0057",
+                "label" : "Poor metaboliser",
+                "localizedLabels" : {
+                  "en" : "Poor metaboliser"
+                },
+                "localizedDescriptions" : {
+                  "en" : "The metaboliser status is poor."
+                },
+                "termBindings" : {
+                  "SNOMED-CT" : {
+                    "value" : "[SNOMED-CT::3371000181103]",
+                    "terminologyId" : "SNOMED-CT"
+                  },
+                  "LOINC" : {
+                    "value" : "[LOINC::LA9657-3]",
+                    "terminologyId" : "LOINC"
+                  }
+                }
+              }, {
+                "value" : "at0087",
+                "label" : "Increased function",
+                "localizedLabels" : {
+                  "en" : "Increased function"
+                },
+                "localizedDescriptions" : {
+                  "en" : "Functional activity is increased."
+                },
+                "termBindings" : {
+                  "SNOMED-CT" : {
+                    "value" : "[SNOMED-CT::3381000181101]",
+                    "terminologyId" : "SNOMED-CT"
+                  },
+                  "LOINC" : {
+                    "value" : "[LOINC::LA25392-4]",
+                    "terminologyId" : "LOINC"
+                  }
+                }
+              }, {
+                "value" : "at0088",
+                "label" : "Decreased function",
+                "localizedLabels" : {
+                  "en" : "Decreased function"
+                },
+                "localizedDescriptions" : {
+                  "en" : "Functional activity is decreased."
+                },
+                "termBindings" : {
+                  "SNOMED-CT" : {
+                    "value" : "[SNOMED-CT::3401000181101]",
+                    "terminologyId" : "SNOMED-CT"
+                  },
+                  "LOINC" : {
+                    "value" : "[LOINC::LA25395-7]",
+                    "terminologyId" : "LOINC"
+                  }
+                }
+              }, {
+                "value" : "at0089",
+                "label" : "Normal function",
+                "localizedLabels" : {
+                  "en" : "Normal function"
+                },
+                "localizedDescriptions" : {
+                  "en" : "Functional activity is normal."
+                },
+                "termBindings" : {
+                  "SNOMED-CT" : {
+                    "value" : "[SNOMED-CT::3391000181104]",
+                    "terminologyId" : "SNOMED-CT"
+                  },
+                  "LOINC" : {
+                    "value" : "[LOINC::LA25393-2]",
+                    "terminologyId" : "LOINC"
+                  }
+                }
+              }, {
+                "value" : "at0090",
+                "label" : "Poor function",
+                "localizedLabels" : {
+                  "en" : "Poor function"
+                },
+                "localizedDescriptions" : {
+                  "en" : "Functional activity is poor."
+                },
+                "termBindings" : {
+                  "SNOMED-CT" : {
+                    "value" : "[SNOMED-CT::3451000181100]",
+                    "terminologyId" : "SNOMED-CT"
+                  },
+                  "LOINC" : {
+                    "value" : "[LOINC::LA25394-0]",
+                    "terminologyId" : "LOINC"
+                  }
+                }
+              }, {
+                "value" : "at0091",
+                "label" : "Negative",
+                "localizedLabels" : {
+                  "en" : "Negative"
+                },
+                "localizedDescriptions" : {
+                  "en" : "Negative test for risk alleles."
+                },
+                "termBindings" : {
+                  "SNOMED-CT" : {
+                    "value" : "[SNOMED-CT::260385009]",
+                    "terminologyId" : "SNOMED-CT"
+                  },
+                  "LOINC" : {
+                    "value" : "[LOINC::LA6576-8]",
+                    "terminologyId" : "LOINC"
+                  }
+                }
+              }, {
+                "value" : "at0092",
+                "label" : "Positive",
+                "localizedLabels" : {
+                  "en" : "Positive"
+                },
+                "localizedDescriptions" : {
+                  "en" : "Positive test for risk alleles."
+                },
+                "termBindings" : {
+                  "SNOMED-CT" : {
+                    "value" : "[SNOMED-CT::10828004]",
+                    "terminologyId" : "SNOMED-CT"
+                  },
+                  "LOINC" : {
+                    "value" : "[LOINC::LA6577-6]",
+                    "terminologyId" : "LOINC"
+                  }
+                }
+              }, {
+                "value" : "at0093",
+                "label" : "Normal risk of aminoglycoside-induced hearing loss",
+                "localizedLabels" : {
+                  "en" : "Normal risk of aminoglycoside-induced hearing loss"
+                },
+                "localizedDescriptions" : {
+                  "en" : "Normal risk of aminoglycoside-induced hearing loss."
+                }
+              }, {
+                "value" : "at0094",
+                "label" : "Increased risk of aminoglycoside-induced hearing loss",
+                "localizedLabels" : {
+                  "en" : "Increased risk of aminoglycoside-induced hearing loss"
+                },
+                "localizedDescriptions" : {
+                  "en" : "Increased risk of aminoglycoside-induced hearing loss."
+                }
+              }, {
+                "value" : "at0095",
+                "label" : "Uncertain risk of aminoglycoside-induced hearing loss",
+                "localizedLabels" : {
+                  "en" : "Uncertain risk of aminoglycoside-induced hearing loss"
+                },
+                "localizedDescriptions" : {
+                  "en" : "Uncertain risk of aminoglycoside-induced hearing loss."
+                }
+              } ]
+            } ]
+          }, {
+            "id" : "overall_activity_score",
+            "name" : "Overall activity score",
+            "localizedName" : "Overall activity score",
+            "rmType" : "DV_QUANTITY",
+            "nodeId" : "at0080",
+            "min" : 0,
+            "max" : 1,
+            "localizedNames" : {
+              "en" : "Overall activity score"
+            },
+            "localizedDescriptions" : {
+              "en" : "An associated derived activity score, based on known association with specific genotypes and individual allele activity values, which is required to assess metaboliser status for some phenotypes."
+            },
+            "annotations" : {
+              "comment" : "For example: '0.5'."
+            },
+            "aqlPath" : "/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1,'Pharmacogenetic laboratory test']/data[at0001]/events[at0002,'Point in time']/data[at0003]/items[openEHR-EHR-CLUSTER.laboratory_test_analyte.v1,'Laboratory result']/items[openEHR-EHR-CLUSTER.pharmacogenetic_result.v0,'Pharmacogenetic test result']/items[at0080]/value",
+            "inputs" : [ {
+              "suffix" : "magnitude",
+              "type" : "DECIMAL",
+              "validation" : {
+                "range" : {
+                  "minOp" : ">=",
+                  "min" : 0.0,
+                  "maxOp" : "<=",
+                  "max" : 10.0
+                }
+              }
+            }, {
+              "suffix" : "unit",
+              "type" : "CODED_TEXT",
+              "list" : [ {
+                "value" : "1",
+                "label" : "1",
+                "validation" : {
+                  "range" : {
+                    "minOp" : ">=",
+                    "min" : 0.0,
+                    "maxOp" : "<=",
+                    "max" : 10.0
+                  }
+                }
+              } ]
+            } ]
+          }, {
+            "id" : "individual_activity_value",
+            "name" : "Individual activity value",
+            "localizedName" : "Individual activity value",
+            "rmType" : "CLUSTER",
+            "nodeId" : "at0084",
+            "min" : 0,
+            "max" : -1,
+            "localizedNames" : {
+              "en" : "Individual activity value"
+            },
+            "localizedDescriptions" : {
+              "en" : "A list of enzyme activity values each associated with a specific allele, which are used to derive the Overall activity score."
+            },
+            "aqlPath" : "/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1,'Pharmacogenetic laboratory test']/data[at0001]/events[at0002,'Point in time']/data[at0003]/items[openEHR-EHR-CLUSTER.laboratory_test_analyte.v1,'Laboratory result']/items[openEHR-EHR-CLUSTER.pharmacogenetic_result.v0,'Pharmacogenetic test result']/items[at0084]",
+            "children" : [ {
+              "id" : "allele_haplotype",
+              "name" : "Allele haplotype",
+              "localizedName" : "Allele haplotype",
+              "rmType" : "DV_TEXT",
+              "nodeId" : "at0086",
+              "min" : 0,
+              "max" : 1,
+              "localizedNames" : {
+                "en" : "Allele haplotype"
+              },
+              "localizedDescriptions" : {
+                "en" : "The allele haplotype descriptor associated with the activity value."
+              },
+              "annotations" : {
+                "comment" : "For example: '*36'."
+              },
+              "aqlPath" : "/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1,'Pharmacogenetic laboratory test']/data[at0001]/events[at0002,'Point in time']/data[at0003]/items[openEHR-EHR-CLUSTER.laboratory_test_analyte.v1,'Laboratory result']/items[openEHR-EHR-CLUSTER.pharmacogenetic_result.v0,'Pharmacogenetic test result']/items[at0084]/items[at0086]/value",
+              "inputs" : [ {
+                "type" : "TEXT"
+              } ]
+            }, {
+              "id" : "activity_value",
+              "name" : "Activity value",
+              "localizedName" : "Activity value",
+              "rmType" : "DV_QUANTITY",
+              "nodeId" : "at0085",
+              "min" : 0,
+              "max" : 1,
+              "localizedNames" : {
+                "en" : "Activity value"
+              },
+              "localizedDescriptions" : {
+                "en" : "An associated derived activity score, based on known association with specific genotypes, which is required to assess metaboliser status for some phenotypes."
+              },
+              "annotations" : {
+                "comment" : "For example: '0.5'."
+              },
+              "aqlPath" : "/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1,'Pharmacogenetic laboratory test']/data[at0001]/events[at0002,'Point in time']/data[at0003]/items[openEHR-EHR-CLUSTER.laboratory_test_analyte.v1,'Laboratory result']/items[openEHR-EHR-CLUSTER.pharmacogenetic_result.v0,'Pharmacogenetic test result']/items[at0084]/items[at0085]/value",
+              "inputs" : [ {
+                "suffix" : "magnitude",
+                "type" : "DECIMAL",
+                "validation" : {
+                  "range" : {
+                    "minOp" : ">=",
+                    "min" : 0.0,
+                    "maxOp" : "<=",
+                    "max" : 10.0
+                  }
+                }
+              }, {
+                "suffix" : "unit",
+                "type" : "CODED_TEXT",
+                "list" : [ {
+                  "value" : "1",
+                  "label" : "1",
+                  "validation" : {
+                    "range" : {
+                      "minOp" : ">=",
+                      "min" : 0.0,
+                      "maxOp" : "<=",
+                      "max" : 10.0
+                    }
+                  }
+                } ]
+              } ]
+            } ]
+          }, {
+            "id" : "per-allele_tested",
+            "name" : "Per-allele tested",
+            "localizedName" : "Per-allele tested",
+            "rmType" : "CLUSTER",
+            "nodeId" : "at0097",
+            "min" : 0,
+            "max" : -1,
+            "localizedNames" : {
+              "en" : "Per-allele tested"
+            },
+            "localizedDescriptions" : {
+              "en" : "A list of the specific alleles tested by this pharmacogenetic test, as the specific alleles may vary between tests."
+            },
+            "aqlPath" : "/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1,'Pharmacogenetic laboratory test']/data[at0001]/events[at0002,'Point in time']/data[at0003]/items[openEHR-EHR-CLUSTER.laboratory_test_analyte.v1,'Laboratory result']/items[openEHR-EHR-CLUSTER.pharmacogenetic_result.v0,'Pharmacogenetic test result']/items[at0097]",
+            "children" : [ {
+              "id" : "snp_rsnumber",
+              "name" : "SNP rsNumber",
+              "localizedName" : "SNP rsNumber",
+              "rmType" : "CLUSTER",
+              "nodeId" : "openEHR-EHR-CLUSTER.knowledge_base_reference.v1",
+              "min" : 0,
+              "max" : 1,
+              "localizedNames" : {
+                "en" : "SNP rsNumber"
+              },
+              "localizedDescriptions" : {
+                "en" : "A citation of a digital resource used as an source of authoritative or expert information, and/or to items contained within the resource."
+              },
+              "annotations" : {
+                "comment" : "For example: a genomics pipeline history, a database of genomic variants, or a database of healthcare procedure guidelines."
+              },
+              "aqlPath" : "/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1,'Pharmacogenetic laboratory test']/data[at0001]/events[at0002,'Point in time']/data[at0003]/items[openEHR-EHR-CLUSTER.laboratory_test_analyte.v1,'Laboratory result']/items[openEHR-EHR-CLUSTER.pharmacogenetic_result.v0,'Pharmacogenetic test result']/items[at0097]/items[openEHR-EHR-CLUSTER.knowledge_base_reference.v1,'SNP rsNumber']",
+              "children" : [ {
+                "id" : "knowledge_base_name",
+                "name" : "Knowledge base name",
+                "localizedName" : "Knowledge base name",
+                "rmType" : "DV_TEXT",
+                "nodeId" : "at0001",
+                "min" : 1,
+                "max" : 1,
+                "localizedNames" : {
+                  "en" : "Knowledge base name"
+                },
+                "localizedDescriptions" : {
+                  "en" : "The name of the knowledge base."
+                },
+                "annotations" : {
+                  "comment" : "For example: Galaxy/Snakemake; dbSNP; or CADD."
+                },
+                "aqlPath" : "/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1,'Pharmacogenetic laboratory test']/data[at0001]/events[at0002,'Point in time']/data[at0003]/items[openEHR-EHR-CLUSTER.laboratory_test_analyte.v1,'Laboratory result']/items[openEHR-EHR-CLUSTER.pharmacogenetic_result.v0,'Pharmacogenetic test result']/items[at0097]/items[openEHR-EHR-CLUSTER.knowledge_base_reference.v1,'SNP rsNumber']/items[at0001]/value",
+                "inputs" : [ {
+                  "type" : "TEXT",
+                  "defaultValue" : "dbSNP"
+                } ]
+              }, {
+                "id" : "item_name",
+                "name" : "Item name",
+                "localizedName" : "Item name",
+                "rmType" : "DV_TEXT",
+                "nodeId" : "at0005",
+                "min" : 0,
+                "max" : 1,
+                "localizedNames" : {
+                  "en" : "Item name"
+                },
+                "localizedDescriptions" : {
+                  "en" : "The name of the referenced item within the knowledge base."
+                },
+                "annotations" : {
+                  "comment" : "For example: rs139581412."
+                },
+                "aqlPath" : "/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1,'Pharmacogenetic laboratory test']/data[at0001]/events[at0002,'Point in time']/data[at0003]/items[openEHR-EHR-CLUSTER.laboratory_test_analyte.v1,'Laboratory result']/items[openEHR-EHR-CLUSTER.pharmacogenetic_result.v0,'Pharmacogenetic test result']/items[at0097]/items[openEHR-EHR-CLUSTER.knowledge_base_reference.v1,'SNP rsNumber']/items[at0005]/value",
+                "inputs" : [ {
+                  "type" : "TEXT"
+                } ]
+              } ]
+            } ]
+          }, {
+            "id" : "variant_detail",
+            "name" : "Variant detail",
+            "localizedName" : "Variant detail",
+            "rmType" : "CLUSTER",
+            "nodeId" : "openEHR-EHR-CLUSTER.genomic_variant_result.v1",
+            "min" : 0,
+            "max" : 1,
+            "localizedNames" : {
+              "en" : "Variant detail"
+            },
+            "localizedDescriptions" : {
+              "en" : "Findings and annotations related to one variant found in a human individual by a sequencing test."
+            },
+            "aqlPath" : "/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1,'Pharmacogenetic laboratory test']/data[at0001]/events[at0002,'Point in time']/data[at0003]/items[openEHR-EHR-CLUSTER.laboratory_test_analyte.v1,'Laboratory result']/items[openEHR-EHR-CLUSTER.pharmacogenetic_result.v0,'Pharmacogenetic test result']/items[openEHR-EHR-CLUSTER.genomic_variant_result.v1,'Variant detail']",
+            "children" : [ {
+              "id" : "ga4gh_vrs_attachment",
+              "name" : "GA4GH VRS attachment",
+              "localizedName" : "GA4GH VRS attachment",
+              "rmType" : "CLUSTER",
+              "nodeId" : "openEHR-EHR-CLUSTER.media_file.v1",
+              "min" : 0,
+              "max" : 1,
+              "localizedNames" : {
+                "en" : "GA4GH VRS attachment"
+              },
+              "localizedDescriptions" : {
+                "en" : "A media file that is acquired or used as part of the healthcare process, and associated metadata."
+              },
+              "aqlPath" : "/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1,'Pharmacogenetic laboratory test']/data[at0001]/events[at0002,'Point in time']/data[at0003]/items[openEHR-EHR-CLUSTER.laboratory_test_analyte.v1,'Laboratory result']/items[openEHR-EHR-CLUSTER.pharmacogenetic_result.v0,'Pharmacogenetic test result']/items[openEHR-EHR-CLUSTER.genomic_variant_result.v1,'Variant detail']/items[openEHR-EHR-CLUSTER.media_file.v1,'GA4GH VRS attachment']",
+              "children" : [ {
+                "id" : "content",
+                "name" : "Content",
+                "localizedName" : "Content",
+                "rmType" : "DV_MULTIMEDIA",
+                "nodeId" : "at0001",
+                "min" : 0,
+                "max" : 1,
+                "localizedNames" : {
+                  "en" : "Content"
+                },
+                "localizedDescriptions" : {
+                  "en" : "Digital representation of the media file."
+                },
+                "annotations" : {
+                  "comment" : "If the file is stored locally, the actual content will be captured and stored using the Multimedia data type. For example: RTF or PDF for a document; JPG for an image; MP4 for a video; or WAV for an audio file. If the file is stored at a location outside of the health record, the detailed path to the file is captured using the URI attribute in the Multimedia data type. The Multimedia data type has many RM attributes such as the size of file and URI to an external source - see https://specifications.openehr.org/releases/RM/latest/data_types.html#_dv_multimedia_class."
+                },
+                "aqlPath" : "/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1,'Pharmacogenetic laboratory test']/data[at0001]/events[at0002,'Point in time']/data[at0003]/items[openEHR-EHR-CLUSTER.laboratory_test_analyte.v1,'Laboratory result']/items[openEHR-EHR-CLUSTER.pharmacogenetic_result.v0,'Pharmacogenetic test result']/items[openEHR-EHR-CLUSTER.genomic_variant_result.v1,'Variant detail']/items[openEHR-EHR-CLUSTER.media_file.v1,'GA4GH VRS attachment']/items[at0001]/value",
+                "inputs" : [ {
+                  "type" : "TEXT"
+                } ]
+              }, {
+                "id" : "content_name",
+                "name" : "Content name",
+                "localizedName" : "Content name",
+                "rmType" : "DV_TEXT",
+                "nodeId" : "at0002",
+                "min" : 0,
+                "max" : 1,
+                "localizedNames" : {
+                  "en" : "Content name"
+                },
+                "localizedDescriptions" : {
+                  "en" : "Descriptive name or title for the media file."
+                },
+                "annotations" : {
+                  "comment" : "A description of the content of the media file. Use an agreed standardised naming convention, if available. For example: \"Right hand burn #1\" or \"Cardiology video consultation on May 2\"."
+                },
+                "aqlPath" : "/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1,'Pharmacogenetic laboratory test']/data[at0001]/events[at0002,'Point in time']/data[at0003]/items[openEHR-EHR-CLUSTER.laboratory_test_analyte.v1,'Laboratory result']/items[openEHR-EHR-CLUSTER.pharmacogenetic_result.v0,'Pharmacogenetic test result']/items[openEHR-EHR-CLUSTER.genomic_variant_result.v1,'Variant detail']/items[openEHR-EHR-CLUSTER.media_file.v1,'GA4GH VRS attachment']/items[at0002]/value",
+                "inputs" : [ {
+                  "type" : "TEXT",
+                  "defaultValue" : "G4AGH VRS file"
+                } ]
+              }, {
+                "id" : "created",
+                "name" : "Created",
+                "localizedName" : "Created",
+                "rmType" : "ELEMENT",
+                "nodeId" : "at0004",
+                "min" : 0,
+                "max" : 1,
+                "localizedNames" : {
+                  "en" : "Created"
+                },
+                "localizedDescriptions" : {
+                  "en" : "The date/time, partial date or period when the media file was generated or authored."
+                },
+                "aqlPath" : "/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1,'Pharmacogenetic laboratory test']/data[at0001]/events[at0002,'Point in time']/data[at0003]/items[openEHR-EHR-CLUSTER.laboratory_test_analyte.v1,'Laboratory result']/items[openEHR-EHR-CLUSTER.pharmacogenetic_result.v0,'Pharmacogenetic test result']/items[openEHR-EHR-CLUSTER.genomic_variant_result.v1,'Variant detail']/items[openEHR-EHR-CLUSTER.media_file.v1,'GA4GH VRS attachment']/items[at0004]",
+                "children" : [ {
+                  "id" : "date_time_value",
+                  "localizedName" : "Created",
+                  "rmType" : "DV_DATE_TIME",
+                  "nodeId" : "",
+                  "min" : 0,
+                  "max" : 1,
+                  "localizedNames" : {
+                    "en" : "Created"
+                  },
+                  "localizedDescriptions" : {
+                    "en" : "The date/time, partial date or period when the media file was generated or authored."
+                  },
+                  "aqlPath" : "/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1,'Pharmacogenetic laboratory test']/data[at0001]/events[at0002,'Point in time']/data[at0003]/items[openEHR-EHR-CLUSTER.laboratory_test_analyte.v1,'Laboratory result']/items[openEHR-EHR-CLUSTER.pharmacogenetic_result.v0,'Pharmacogenetic test result']/items[openEHR-EHR-CLUSTER.genomic_variant_result.v1,'Variant detail']/items[openEHR-EHR-CLUSTER.media_file.v1,'GA4GH VRS attachment']/items[at0004]/value",
+                  "inputs" : [ {
+                    "type" : "DATETIME"
+                  } ]
+                }, {
+                  "id" : "interval_of_date_time_value",
+                  "localizedName" : "Created",
+                  "rmType" : "DV_INTERVAL<DV_DATE_TIME>",
+                  "nodeId" : "",
+                  "min" : 0,
+                  "max" : 1,
+                  "localizedNames" : {
+                    "en" : "Created"
+                  },
+                  "localizedDescriptions" : {
+                    "en" : "The date/time, partial date or period when the media file was generated or authored."
+                  },
+                  "aqlPath" : "/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1,'Pharmacogenetic laboratory test']/data[at0001]/events[at0002,'Point in time']/data[at0003]/items[openEHR-EHR-CLUSTER.laboratory_test_analyte.v1,'Laboratory result']/items[openEHR-EHR-CLUSTER.pharmacogenetic_result.v0,'Pharmacogenetic test result']/items[openEHR-EHR-CLUSTER.genomic_variant_result.v1,'Variant detail']/items[openEHR-EHR-CLUSTER.media_file.v1,'GA4GH VRS attachment']/items[at0004]/value",
+                  "children" : [ {
+                    "id" : "lower",
+                    "rmType" : "DV_DATE_TIME",
+                    "nodeId" : "",
+                    "min" : 1,
+                    "max" : 1,
+                    "aqlPath" : "/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1,'Pharmacogenetic laboratory test']/data[at0001]/events[at0002,'Point in time']/data[at0003]/items[openEHR-EHR-CLUSTER.laboratory_test_analyte.v1,'Laboratory result']/items[openEHR-EHR-CLUSTER.pharmacogenetic_result.v0,'Pharmacogenetic test result']/items[openEHR-EHR-CLUSTER.genomic_variant_result.v1,'Variant detail']/items[openEHR-EHR-CLUSTER.media_file.v1,'GA4GH VRS attachment']/items[at0004]/value/lower",
+                    "inputs" : [ {
+                      "type" : "DATETIME"
+                    } ]
+                  }, {
+                    "id" : "upper",
+                    "rmType" : "DV_DATE_TIME",
+                    "nodeId" : "",
+                    "min" : 1,
+                    "max" : 1,
+                    "aqlPath" : "/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1,'Pharmacogenetic laboratory test']/data[at0001]/events[at0002,'Point in time']/data[at0003]/items[openEHR-EHR-CLUSTER.laboratory_test_analyte.v1,'Laboratory result']/items[openEHR-EHR-CLUSTER.pharmacogenetic_result.v0,'Pharmacogenetic test result']/items[openEHR-EHR-CLUSTER.genomic_variant_result.v1,'Variant detail']/items[openEHR-EHR-CLUSTER.media_file.v1,'GA4GH VRS attachment']/items[at0004]/value/upper",
+                    "inputs" : [ {
+                      "type" : "DATETIME"
+                    } ]
+                  } ]
+                } ]
+              } ]
+            } ]
+          } ]
+        } ]
+      }, {
+        "id" : "overall_recommendation",
+        "name" : "Overall recommendation",
+        "localizedName" : "Overall recommendation",
+        "rmType" : "DV_TEXT",
+        "nodeId" : "at0057",
+        "min" : 0,
+        "max" : 1,
+        "localizedNames" : {
+          "en" : "Overall recommendation"
+        },
+        "localizedDescriptions" : {
+          "en" : "Narrative description of the key findings."
+        },
+        "annotations" : {
+          "comment" : "For example: 'Pattern suggests significant renal impairment'. The content of the conclusion will vary, depending on the investigation performed. This conclusion should be aligned with the coded 'Test diagnosis'."
+        },
+        "aqlPath" : "/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1,'Pharmacogenetic laboratory test']/data[at0001]/events[at0002,'Point in time']/data[at0003]/items[at0057,'Overall recommendation']/value",
+        "inputs" : [ {
+          "type" : "TEXT"
+        } ]
+      }, {
+        "id" : "time",
+        "name" : "Time",
+        "rmType" : "DV_DATE_TIME",
+        "min" : 1,
+        "max" : 1,
+        "aqlPath" : "/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1,'Pharmacogenetic laboratory test']/data[at0001]/events[at0002,'Point in time']/time",
+        "inputs" : [ {
+          "type" : "DATETIME"
+        } ],
+        "inContext" : true
+      }, {
+        "id" : "test_method",
+        "name" : "Test method",
+        "localizedName" : "Test method",
+        "rmType" : "DV_TEXT",
+        "nodeId" : "at0121",
+        "min" : 0,
+        "max" : 1,
+        "dependsOn" : [ "laboratory_result", "overall_recommendation", "clinical_information_provided", "test_name" ],
+        "localizedNames" : {
+          "en" : "Test method"
+        },
+        "localizedDescriptions" : {
+          "en" : "Description about the method used to perform the test."
+        },
+        "annotations" : {
+          "comment" : "Coding with a terminology is desirable, where possible."
+        },
+        "aqlPath" : "/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1,'Pharmacogenetic laboratory test']/protocol[at0004]/items[at0121]/value",
+        "inputs" : [ {
+          "type" : "TEXT"
+        } ]
+      }, {
+        "id" : "testing_device",
+        "name" : "Testing device",
+        "localizedName" : "Testing device",
+        "rmType" : "CLUSTER",
+        "nodeId" : "openEHR-EHR-CLUSTER.device.v1",
+        "min" : 0,
+        "max" : 1,
+        "dependsOn" : [ "laboratory_result", "overall_recommendation", "clinical_information_provided", "test_name" ],
+        "localizedNames" : {
+          "en" : "Testing device"
+        },
+        "localizedDescriptions" : {
+          "en" : "An instrument, apparatus, implant, material or similar, used in the provision of healthcare. In this context, a medical device includes a broad range of devices which act through a variety of physical, mechanical, thermal or similar means but specifically excludes devices which act through medicinal means such as pharmacological, metabolic or immunological methods.  The scope is inclusive of disposable devices as well as durable or persisting devices that require tracking, maintenance activities or regular calibration, recognising that each type of device has specific data recording requirements."
+        },
+        "aqlPath" : "/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1,'Pharmacogenetic laboratory test']/protocol[at0004]/items[openEHR-EHR-CLUSTER.device.v1,'Testing device']",
+        "children" : [ {
+          "id" : "device_name",
+          "name" : "Device name",
+          "localizedName" : "Device name",
+          "rmType" : "DV_TEXT",
+          "nodeId" : "at0001",
+          "min" : 1,
+          "max" : 1,
+          "localizedNames" : {
+            "en" : "Device name"
+          },
+          "localizedDescriptions" : {
+            "en" : "Identification of the medical device, preferably by a common name, a formal fully descriptive name or, if required, by class or category of device."
+          },
+          "annotations" : {
+            "comment" : "This data element will capture the term, phrase or category used in clinical practice. For example: <brand name><machine> (XYZ Audiometer); <size> <brand name> <intravenous catheter> (14G Jelco IV catheter); or <brand name/type> <implant>. Coding with a terminology is desirable, where possible, although this may be local and depending on local supplies available.\r\n"
+          },
+          "aqlPath" : "/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1,'Pharmacogenetic laboratory test']/protocol[at0004]/items[openEHR-EHR-CLUSTER.device.v1,'Testing device']/items[at0001]/value",
+          "inputs" : [ {
+            "type" : "TEXT"
+          } ]
+        }, {
+          "id" : "type",
+          "name" : "Type",
+          "localizedName" : "Type",
+          "rmType" : "DV_TEXT",
+          "nodeId" : "at0003",
+          "min" : 0,
+          "max" : 1,
+          "localizedNames" : {
+            "en" : "Type"
+          },
+          "localizedDescriptions" : {
+            "en" : "The category or kind of device."
+          },
+          "annotations" : {
+            "comment" : "Not applicable if a category is already recorded in 'Device name'.\r\n Example: if the 'Device' is named as a 'urinary catheter'; the 'Type' may be recorded as 'indwelling' or 'condom'.Coding with a terminology is desirable, where possible. This may include use of GTIN or EAN numbers."
+          },
+          "aqlPath" : "/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1,'Pharmacogenetic laboratory test']/protocol[at0004]/items[openEHR-EHR-CLUSTER.device.v1,'Testing device']/items[at0003]/value",
+          "inputs" : [ {
+            "type" : "TEXT"
+          } ]
+        } ]
+      }, {
+        "id" : "language",
+        "name" : "Language",
+        "rmType" : "CODE_PHRASE",
+        "min" : 1,
+        "max" : 1,
+        "aqlPath" : "/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1,'Pharmacogenetic laboratory test']/language",
+        "inContext" : true
+      }, {
+        "id" : "encoding",
+        "name" : "Encoding",
+        "rmType" : "CODE_PHRASE",
+        "min" : 1,
+        "max" : 1,
+        "aqlPath" : "/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1,'Pharmacogenetic laboratory test']/encoding",
+        "inContext" : true
+      }, {
+        "id" : "subject",
+        "name" : "Subject",
+        "rmType" : "PARTY_PROXY",
+        "min" : 1,
+        "max" : 1,
+        "aqlPath" : "/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1,'Pharmacogenetic laboratory test']/subject",
+        "inputs" : [ {
+          "suffix" : "id",
+          "type" : "TEXT"
+        }, {
+          "suffix" : "id_scheme",
+          "type" : "TEXT"
+        }, {
+          "suffix" : "id_namespace",
+          "type" : "TEXT"
+        }, {
+          "suffix" : "name",
+          "type" : "TEXT"
+        } ],
+        "inContext" : true
+      } ]
+    }, {
+      "id" : "category",
+      "rmType" : "DV_CODED_TEXT",
+      "nodeId" : "",
+      "min" : 1,
+      "max" : 1,
+      "aqlPath" : "/category",
+      "inputs" : [ {
+        "suffix" : "code",
+        "type" : "CODED_TEXT",
+        "list" : [ {
+          "value" : "433",
+          "label" : "event",
+          "localizedLabels" : {
+            "en" : "event"
+          }
+        } ],
+        "terminology" : "openehr"
+      } ],
+      "inContext" : true
+    }, {
+      "id" : "language",
+      "name" : "Language",
+      "rmType" : "CODE_PHRASE",
+      "min" : 1,
+      "max" : 1,
+      "aqlPath" : "/language",
+      "inContext" : true
+    }, {
+      "id" : "territory",
+      "name" : "Territory",
+      "rmType" : "CODE_PHRASE",
+      "min" : 1,
+      "max" : 1,
+      "aqlPath" : "/territory",
+      "inContext" : true
+    }, {
+      "id" : "composer",
+      "name" : "Composer",
+      "rmType" : "PARTY_PROXY",
+      "min" : 1,
+      "max" : 1,
+      "aqlPath" : "/composer",
+      "inputs" : [ {
+        "suffix" : "id",
+        "type" : "TEXT"
+      }, {
+        "suffix" : "id_scheme",
+        "type" : "TEXT"
+      }, {
+        "suffix" : "id_namespace",
+        "type" : "TEXT"
+      }, {
+        "suffix" : "name",
+        "type" : "TEXT"
+      } ],
+      "inContext" : true
+    } ]
+  }
+}
