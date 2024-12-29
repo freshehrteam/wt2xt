@@ -1,5 +1,5 @@
 import axios from 'axios';
-import path from 'node:path';
+import path from 'path';
 import { TemplateNode } from '../TemplateNodes';
 
 export type ArchetypeProvenance = {

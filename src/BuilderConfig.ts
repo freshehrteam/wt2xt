@@ -1,4 +1,4 @@
-import fs from 'node:fs';
+import fs from 'fs';
 import { ExportFormat } from './formatters/DocFormatter';
 
 export enum WtxRegenerate  {

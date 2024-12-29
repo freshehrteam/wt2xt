@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 import yargs from "yargs"
 import ora from 'ora';
-import  * as fs from 'node:fs';
+import  * as fs from 'fs';
 import { DocBuilder } from './DocBuilder';
 import type { Config } from './BuilderConfig';
 import { importConfig } from './BuilderConfig';
