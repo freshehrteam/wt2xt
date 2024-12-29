@@ -171,11 +171,11 @@ export const updateArchetypeList = async (repoAccount: string,repoName: string, 
 
 export const updateArchetypeLists = (remoteArchetypeList: ArchetypeList, localArchetypeList: ArchetypeList, provenance: ArchetypeProvenance) => {
 
-  let targetList: ArchetypeList = [];
+  let targetList: ArchetypeList;
   if (provenance.originalNamespace && formalPublicationNamespaces.includes(provenance.originalNamespace))
    targetList = remoteArchetypeList
   else
-    targetList = localArchetypeList
+      targetList = localArchetypeList
 
 
   if (!targetList.some(item => item.archetypeId === provenance.archetypeId))
