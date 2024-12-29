@@ -16,3 +16,5 @@ yarn-error.log*
 /config/hidden/*
 
 /out
+/wt2xtools
+/templates/GENOC - Research registration.v1.wtx.json

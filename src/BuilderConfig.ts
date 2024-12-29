@@ -22,6 +22,7 @@ export type Config = {
   ADRepositoryId: string
   ADUsername: string
   ADPassword:string
+  repositoryToken: string
   inFilePath: string
   outFilePath?: string
   outFileDir: string
@@ -49,6 +50,7 @@ const defaultConfig: Config = {
   ADRepositoryId: '',
   ADUsername: '',
   ADPassword: '',
+  repositoryToken: '',
   inFilePath: '',
   outFilePath: '',
   outFileDir: './out',

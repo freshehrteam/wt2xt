@@ -27,7 +27,7 @@ export const xmind = {
       sb.append(`${headerIndent} attributes`)
   },
 
-  formatCompositionContextHeader: (dBuilder: DocBuilder, f: TemplateNode) => {
+  formatCompositionContextHeader: (dBuilder: DocBuilder, _f: TemplateNode) => {
     const { sb} = dBuilder;
     sb.append(`${headerIndent} context`);
   },
@@ -39,7 +39,7 @@ export const xmind = {
     console.log(`\n Exported : ${outFile}`)
   },
 
-  formatNodeContent: (dBuilder: DocBuilder, f: TemplateNode, isChoice: boolean) => {
+  formatNodeContent: (dBuilder: DocBuilder, f: TemplateNode, _isChoice: boolean) => {
     const { sb, config } = dBuilder;
     const localName = f.localizedName ? f.localizedName : f.name
     const nodeName = localName ? localName : f.id

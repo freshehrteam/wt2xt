@@ -1,12 +1,14 @@
 import { fshl } from '../../src/formatters/FshLogicalModelFormatter'
 import { DocBuilder } from '../../src/DocBuilder';
-import fs from 'fs';
+import fs from 'node:fs';
 import { Config, importConfig } from '../../src/BuilderConfig';
-import { TemplateNode } from '../../src/TemplateNodes';
 import { StringBuilder } from '../../src/StringBuilder';
+
+import {test, describe, beforeAll, expect } from "bun:test";
 
 let builder: DocBuilder;
 let testBuilder: StringBuilder
+
 beforeAll(() => {
   // This will run once before all tests.
   const config:Config = importConfig('')
@@ -16,26 +18,6 @@ beforeAll(() => {
 });
 
 describe('fsh Logical test', () => {
-  test('should  create FSH-LM template header', () => {
-
-    testBuilder.clear()
-    testBuilder.append('Logical: test_-_complete_template')
-    testBuilder.append('Title: TEST - Complete template')
-
-    const expectedOutput = testBuilder.toString()
-
-    const template: string = `{
-          "templateId" : "TEST - Complete template",
-          "semVer" : "1.0.0",
-          "version" : "2.3",
-          "defaultLanguage" : "en",
-          "languages" : [ "en" ],}
-          `
-
-      fshl.formatTemplateHeader(builder);
-
-    expect(builder.sb.toString()).toEqual(expectedOutput);
-  });
 
   test('should  create FSH-LM Composition header', () => {
 

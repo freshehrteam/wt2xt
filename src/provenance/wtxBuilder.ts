@@ -41,7 +41,7 @@ export const resolveTemplateFiles = (config: Config): ResolvedTemplateFiles => {
 
   const {config} = docBuilder
 
-  await fetchADArchetype(f.nodeId,config.ADUsername, config.ADPassword, config.ADRepositoryId)
+  await fetchADArchetype(f.nodeId,config.ADUsername, config.ADPassword, config.ADRepositoryId, config.repositoryToken)
     .then((data) => {
 
       f.lifecycleState = data?.description?.lifecycleState.codeString

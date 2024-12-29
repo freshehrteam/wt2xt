@@ -26,13 +26,12 @@ type FormatNodeContentFn = (dBuilder: DocBuilder, f: TemplateNode, isChoice: boo
 
 export const formatTemplateHeader = (docBuilder: DocBuilder): void => {
 
-   let fn: (dBuilder: DocBuilder) => void;
+   let fn: (dBuilder: DocBuilder) => void = () => {};
    switch (docBuilder.config.exportFormat){
     case ExportFormat.xmind:
       fn= xmind.formatHeader
       break;
      case ExportFormat.fshl:
-       fn = fshl.formatTemplateHeader
        break;
      default:
         fn= adoc.formatTemplateHeader

@@ -5,7 +5,7 @@ import { formatLeafHeader } from './DocFormatter';
 import { formatValueSetDefinition } from './FshTerminologyFormatter';
 
 const formatLocalName = (f:TemplateNode) => f.localizedName ? f.localizedName : f.name;
-const formatSpaces = (f:TemplateNode) =>  " ".repeat(f.depth*2);
+const formatSpaces = (f:TemplateNode) => f.depth ? " ".repeat(f.depth * 2) : "";
 const formatNodeId = (f: TemplateNode):string => f.nodeId?f.nodeId:`RM`
 
 const formatDescription = (dBuilder:DocBuilder,f:TemplateNode,typeConstraint: string = '') =>
@@ -51,10 +51,6 @@ const formatFSHDefinition = (dBuilder: DocBuilder, f: TemplateNode) => {
 
 export const fshl = {
 
-  formatTemplateHeader: (dBuilder: DocBuilder) => {
-    const { wt, sb } = dBuilder;
-  },
-
   formatCompositionHeader: (dBuilder: DocBuilder, f: TemplateNode) => {
 
     const { config } = dBuilder;
@@ -70,8 +66,7 @@ export const fshl = {
 
 
 
-  formatNodeContent: (dBuilder: DocBuilder, f: TemplateNode, isChoice: boolean) => {
-    const { wt, sb, config } = dBuilder;
+  formatNodeContent: (_docBuilder: DocBuilder | null, f: TemplateNode, isChoice: boolean) => {
     // Stop Choice being called twice as alreadty handled by Choice Header
     if (f.rmType === 'ELEMENT' || isChoice ) return
 
@@ -102,7 +97,7 @@ export const fshl = {
 
   },
 
-  formatChoiceHeader: (dBuilder: DocBuilder, f: TemplateNode, isChoice = true) => {
+  formatChoiceHeader: (dBuilder: DocBuilder, f: TemplateNode, _isChoice = true) => {
     const { sb} = dBuilder;
 
     let rmTypeText = '';
@@ -149,7 +144,7 @@ export const fshl = {
     },
 
 formatDvText: (dBuilder: DocBuilder, f: TemplateNode) => {
-  const { ab , config} = dBuilder;
+  const { ab} = dBuilder;
 
    appendFSHLM(dBuilder,f)
 

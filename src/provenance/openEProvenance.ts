@@ -1,5 +1,5 @@
 import axios from 'axios';
-import path from 'path';
+import path from 'node:path';
 import { TemplateNode } from '../TemplateNodes';
 
 export type ArchetypeProvenance = {
@@ -10,16 +10,16 @@ export type ArchetypeProvenance = {
   lifecycleStatus?:string
 }
 
+/*
 type RemoteGHRepo = {
   repoTag: string,
   repoAccount: string,
   repoName: string,
   repoNamespace: string
 }
+*/
 
 export type ArchetypeList = ArchetypeProvenance[];
-
-const archetypeList: ArchetypeList = []
 
 const formalPublicationNamespaces: string[] = ['org.openehr', 'org.apperta']
 
@@ -83,16 +83,17 @@ export const getADTemplatesList = (username: string, password: string, repositor
 
 
 
-export const fetchADArchetype = async ( archetypeId: string,ADUsername: string, ADPassword: string, repositoryId: string) => {
+export const fetchADArchetype = async ( archetypeId: string,ADUsername: string, ADPassword: string, repositoryId: string,repositoryToken: string) => {
     // 👇️ const data: GetUsersResponse
     const authString = `${ADUsername}:${ADPassword}`
     const authToken = `BASIC ${btoa(authString)}`
     const url = `${ADRootUrl}/repository/archetype/get?repositoryId=${repositoryId}&archetypeId=${archetypeId}`
-    const { data, status } = await axios.get(url,
+    const { data} = await axios.get(url,
       {
         headers: {
-          Accept: 'application/json',
-          Authorization: authToken
+            Accept: 'application/json',
+           Authorization: authToken,
+            'Repository-Token': repositoryToken
         },
       },
     );
@@ -100,7 +101,7 @@ export const fetchADArchetype = async ( archetypeId: string,ADUsername: string, 
 
 }
 
-export const searchGHRepo = async (username: string, password: string, repoAccount: string, repoName: string, repoNamespace: string): Promise<ArchetypeList> => {
+export const searchGHRepo = async (repoAccount: string, repoName: string, repoNamespace: string): Promise<ArchetypeList>  => {
 
 //  const token = btoa(username + ":" + password);
 
@@ -121,20 +122,21 @@ export const searchGHRepo = async (username: string, password: string, repoAccou
 
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        console.log('error message: ', error.message);
+        console.log('Axios error message: ', error.message);
       } else {
         console.log('unexpected error: ', error);
       }
+      return []; // Return an empty ArchetypeList in case of errors
     }
 
 };
 
-export const searchCKMRepo = async (username: string, password: string, repoName: string): Promise<any> => {
+export const searchCKMRepo = async (username: string, password: string): Promise<any> => {
 
   const token = btoa(username + ":" + password);
   const url:string = formatCKMSearchUrl()
     // 👇️ const data: GetUsersResponse
-    const { data, status } = await axios.get(
+    const { data} = await axios.get(
       url,
       {
         headers: {
@@ -146,6 +148,7 @@ export const searchCKMRepo = async (username: string, password: string, repoName
     return data;
 };
 
+/*
 export const updateArchetypeList = async (repoAccount: string,repoName: string, repoNamespace: string, list: ArchetypeList) : Promise<ArchetypeList> => {
 
  // await readRemoteFileCache(repoAccount,repoName, repoNamespace,refreshCache)
@@ -154,8 +157,7 @@ export const updateArchetypeList = async (repoAccount: string,repoName: string, 
 
     list.forEach(localItem => {
 
-    //  upDatedList.push({...item, provenance: 'local'})
-      const match = archetypeList.find(remoteItem =>
+    //  upDatedList.push({...item, provenance: 'local'})archetypeList.find(remoteItem =>
       {
         const local: string = path.parse(remoteItem.archetypeId).name
         const remote: string = path.parse(localItem.archetypeId).name
@@ -165,6 +167,7 @@ export const updateArchetypeList = async (repoAccount: string,repoName: string, 
 
     return upDatedList
 }
+*/
 
 export const updateArchetypeLists = (remoteArchetypeList: ArchetypeList, localArchetypeList: ArchetypeList, provenance: ArchetypeProvenance) => {
 
@@ -172,10 +175,8 @@ export const updateArchetypeLists = (remoteArchetypeList: ArchetypeList, localAr
   if (provenance.originalNamespace && formalPublicationNamespaces.includes(provenance.originalNamespace))
    targetList = remoteArchetypeList
   else
- // if (provenance.originalNamespace.endsWith('.local'))
     targetList = localArchetypeList
- // else
- //  targetList = candidateArchetypeList
+
 
   if (!targetList.some(item => item.archetypeId === provenance.archetypeId))
     targetList.push(provenance)

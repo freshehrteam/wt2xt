@@ -60,9 +60,9 @@ export class DocBuilder {
 
   config: Config;
   localArchetypeList : ArchetypeList = [];
-  candidateArchetypeList: ArchetypeList = []
+//  candidateArchetypeList: ArchetypeList = []
   remoteArchetypeList: ArchetypeList = [];
-  resolvedTemplateFiles: ResolvedTemplateFiles;
+  resolvedTemplateFiles!: ResolvedTemplateFiles;
 
   readonly _wt: WebTemplate;
 
@@ -86,11 +86,11 @@ export class DocBuilder {
 
 // If the archetypeLists are empty, then the wtx Augmentation process has failed
   private isWtxAugmented(): boolean {
-    const archetypesAdded = this.localArchetypeList.length + this .candidateArchetypeList.length + this.remoteArchetypeList.length
+    const archetypesAdded = this.localArchetypeList.length  + this.remoteArchetypeList.length
     return (archetypesAdded > 0)
   }
 
-  private handleOutPath(infile :string, outputFile: string , ext: string, outDir: string) {
+  private handleOutPath(infile :string, outputFile: string | undefined, ext: string, outDir: string) {
     {
       if (outputFile) return outputFile;
 
@@ -122,7 +122,7 @@ export class DocBuilder {
   private async walkChildren(f: TemplateNode, useSameDepth :boolean, nonContextOnly: boolean = false, ) {
     if (f.children) {
 
-      const newDepth = useSameDepth?f.depth:f.depth+1
+      const newDepth = f.depth?useSameDepth?f.depth:f.depth+1:0
 
       for( const child of f.children) {
         child.parentNode = f;
@@ -280,7 +280,7 @@ export class DocBuilder {
   private async walkRmChildren(f: TemplateNode, useSameDepth: boolean) {
 
     const rmAttributes = new Array<TemplateNode>();
-    const newDepth = useSameDepth?f.depth:f.depth+1
+    const newDepth = f.depth?(useSameDepth?f.depth:f.depth+1):0
 
     if (f.children) {
       f.children.forEach((child) => {
@@ -415,7 +415,7 @@ export class DocBuilder {
             break;
         }
       }
-      return rmDescriptions[rmTag] ? rmDescriptions[rmTag][language] : ''
+      return (rmDescriptions[rmTag as keyof typeof rmDescriptions] as Record<string, string>)?.[language] ?? ''
 
     }
 
