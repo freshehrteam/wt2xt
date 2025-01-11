@@ -1,7 +1,7 @@
 import { DocBuilder } from "../DocBuilder";
 import fs from "fs";
-import { findParentNodeId, TemplateNode,  TemplateInput } from "../TemplateNodes";
-import { formatOccurrences, isAnyChoice, isDisplayableNode, mapRmTypeText} from "../TemplateTypes";
+import { findParentNodeId, TemplateNode,  TemplateInput } from "../types/TemplateNodes";
+import { formatOccurrences, isAnyChoice, isDisplayableNode, mapRmTypeText} from "../types/TemplateTypes";
 import { formatAnnotations, formatOccurrencesText } from './DocFormatter';
 import { ArchetypeList} from '../provenance/openEProvenance';
 

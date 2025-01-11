@@ -1,4 +1,4 @@
-import { DocBuilder } from './DocBuilder';
+import { DocBuilder } from '../DocBuilder';
 
 // Original schema from Better Web templates
 

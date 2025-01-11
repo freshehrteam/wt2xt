@@ -1,8 +1,8 @@
 
 
 import { StringBuilder } from '../StringBuilder';
-import {snakeToCamel} from "../TemplateTypes.ts";
-import {TemplateNode} from "../TemplateNodes.ts";
+import {snakeToCamel} from "../types/TemplateTypes";
+import {TemplateNode} from "../types/TemplateNodes";
 
 export const formatValueSetDefinition = ( f: TemplateNode) => {
 

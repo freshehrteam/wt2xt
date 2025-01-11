@@ -1,11 +1,12 @@
 import { DocBuilder } from "../DocBuilder";
 import  {adoc }from "./AdocFormatter"
 import {xmind } from "./XmindFormatter"
-import { TemplateNode } from "../TemplateNodes";
-import { formatOccurrences } from "../TemplateTypes";
+import { TemplateNode } from "../types/TemplateNodes";
+import { formatOccurrences } from "../types/TemplateTypes";
 import { docx, pdf } from "./PanDocFormatter";
 import { fshl } from './FshLogicalModelFormatter';
 import { fsh } from './FshCommon';
+import { fshq } from './FshQuestionnaireFormatter.ts';
 
 export enum ExportFormat {
   adoc = 'adoc',
@@ -14,6 +15,7 @@ export enum ExportFormat {
   pdf = 'pdf',
   fshl  = 'fshl',
   fsht = 'fsht',
+  fshq = 'fshq',
 }
 
 
@@ -32,6 +34,8 @@ export const formatTemplateHeader = (docBuilder: DocBuilder): void => {
       fn= xmind.formatHeader
       break;
      case ExportFormat.fshl:
+       break;
+     case ExportFormat.fshq:
        break;
      default:
         fn= adoc.formatTemplateHeader
@@ -53,6 +57,10 @@ export const formatCompositionHeader = (docBuilder: DocBuilder, f: TemplateNode)
     case ExportFormat.fshl:
       fn = fshl.formatCompositionHeader
       break;
+    case ExportFormat.fshq:
+      fn = fshq.formatCompositionHeader
+      break;
+
     default:
       fn = adoc.formatCompositionHeader
       break;
