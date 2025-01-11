@@ -55,7 +55,7 @@ export const snakeToCamel = (s: string, forceInitialCap : boolean) => {
     const indexInit = forceInitialCap?-1:0
 
   return s
-    .replace(/[_/-/(/)/[//.]/g,' ')
+    .replace(/[_/-/[/.]/g,' ')
     .replace(/(?:^\w|[A-Z]|\b\w)/g, (letter, index) =>
       index === indexInit
         ? letter.toLowerCase()
@@ -95,8 +95,7 @@ export const mapRmType2FHIR = (rmTypeString: string) => {
   if (rmTypeString.startsWith('DV_INTERVAL')) {
     intervalPrefix = "Interval of "
     rmType = rmTypeString.replace(/(^.*<|>.*$)/g, '');
-
-    return dataValueIntervalFHIRMapper(rmType)
+ //   return dataValueIntervalFHIRMapper(rmType)
   }
 
   return `${intervalPrefix}${dataValueFHIRMapper(rmType)}`
