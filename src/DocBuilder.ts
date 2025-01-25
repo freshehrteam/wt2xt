@@ -1,5 +1,5 @@
-import { findParentNodeId, TemplateNode } from './TemplateNodes';
-import { WebTemplate } from "./WebTemplate";
+import { findParentNodeId, TemplateNode } from './types/TemplateNodes';
+import { WebTemplate } from "./types/WebTemplate";
 import {
   isActivity,
   isAnyChoice, isArchetype, isCluster, isComposition,
@@ -7,7 +7,7 @@ import {
   isEntry,
   isEvent, isEventContext,
   isSection,
-} from './TemplateTypes';
+} from './types/TemplateTypes';
 import { StringBuilder } from "./StringBuilder";
 import rmDescriptions from "../resources/rm_descriptions.json";
 import {
@@ -47,16 +47,11 @@ export class DocBuilder {
   // stringified Tree
   sb: StringBuilder = new StringBuilder();
 
-  // vstringified Valuesets
-  vb: StringBuilder = new StringBuilder()
-
   // Stringified Codesystema
   cb: StringBuilder = new StringBuilder()
 
   // Stringified Codesystem Aliases
   ab: StringBuilder = new StringBuilder()
-
-
 
   config: Config;
   localArchetypeList : ArchetypeList = [];
@@ -283,13 +278,13 @@ export class DocBuilder {
     const newDepth = f.depth?(useSameDepth?f.depth:f.depth+1):0
 
     if (f.children) {
-      f.children.forEach((child) => {
+      f.children.forEach((child: TemplateNode) => {
         child.parentNode = f;
         if (!child?.inContext) return
 
         if (['ism_transition'].includes(child.id)) {
           if (child.children) {
-            child.children.forEach((ismChild) => {
+            child.children.forEach((ismChild: TemplateNode) => {
               ismChild.parentNode = f;
               this.stripExcludedRmTypes(ismChild, rmAttributes);
             });
@@ -424,10 +419,10 @@ export class DocBuilder {
   private walkChoiceHeader(f: TemplateNode) {
 
     formatChoiceHeader(this,f)
-    if (f.children && isAnyChoice(f.children.map(child => child.rmType)))
+    if (f.children && isAnyChoice(f.children.map((child: { rmType: any; }) => child.rmType)))
       return
 
-    f.children?.forEach((child) => {
+    f.children?.forEach((child : TemplateNode) => {
       child.parentNode = f
       this.walkChoice(child)
     });

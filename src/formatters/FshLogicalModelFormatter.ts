@@ -1,6 +1,6 @@
 import { DocBuilder } from "../DocBuilder";
-import { TemplateInput, TemplateNode } from '../TemplateNodes';
-import { formatOccurrences, isEntry, mapRmType2FHIR, snakeToCamel } from '../TemplateTypes';
+import { TemplateInput, TemplateNode } from '../types/TemplateNodes';
+import { formatOccurrences, isEntry, mapRmType2FHIR, snakeToCamel } from '../types/TemplateTypes';
 import { formatLeafHeader } from './DocFormatter';
 import { formatValueSetDefinition } from './FshTerminologyFormatter';
 

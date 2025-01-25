@@ -1,5 +1,4 @@
 import { DocBuilder } from "../DocBuilder";
-import fs from "fs";
 import { findParentNodeId, TemplateNode,  TemplateInput } from "../types/TemplateNodes";
 import { formatOccurrences, isAnyChoice, isDisplayableNode, mapRmTypeText} from "../types/TemplateTypes";
 import { formatAnnotations, formatOccurrencesText } from './DocFormatter';
@@ -29,8 +28,8 @@ export const adoc = {
     sb.append(`${f.localizedDescriptions["en"]}`).newline()
   },
 
-  saveFile: async (dBuilder: DocBuilder, outFile: string) => {
-    fs.writeFileSync(outFile, dBuilder.toString());
+  saveFile: async (docBuilder: DocBuilder, outFile: string) => {
+    await Bun.write(outFile, docBuilder.toString());
     console.log(`\n Exported : ${outFile}`)
   },
 

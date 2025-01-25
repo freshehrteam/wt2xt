@@ -1,4 +1,4 @@
-import { TemplateNode } from '../TemplateNodes';
+import { TemplateNode } from '../types/TemplateNodes';
 import { fetchADArchetype } from './openEProvenance';
 import { DocBuilder } from '../DocBuilder';
 import path from 'path';

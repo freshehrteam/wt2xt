@@ -1,9 +1,9 @@
-import fs from "fs";
+//import fs from "fs";
 import { parseXMindMarkToXMindFile} from "xmindmark";
 
 import { DocBuilder } from "../DocBuilder";
-import {  TemplateNode, TemplateInput } from "../TemplateNodes";
-import { formatOccurrences, isAnyChoice, mapRmTypeText } from '../TemplateTypes';
+import {  TemplateNode, TemplateInput } from "../types/TemplateNodes";
+import { formatOccurrences, isAnyChoice, mapRmTypeText } from '../types/TemplateTypes';
 import { formatRawOccurrencesText } from "./DocFormatter";
 import { extractTextInBrackets} from './FormatterUtils';
 
@@ -34,8 +34,11 @@ export const xmind = {
 
   saveFile: async (dBuilder: DocBuilder, outFile: any): Promise <void>  => {
     const xmindArrayBuffer = await parseXMindMarkToXMindFile(dBuilder.toString())
-    fs.writeFileSync('./tmp/tmp.md', dBuilder.toString(), {encoding: "utf8"});
-    fs.writeFileSync(outFile, Buffer.from(xmindArrayBuffer), {encoding: "utf8"});
+    await Bun.write('./tmp/tmp.md', dBuilder.toString());
+    await Bun.write(outFile, Buffer.from(xmindArrayBuffer));
+
+   // fs.writeFileSync(', {encoding: "utf8"});
+   // fs.writeFileSync(outFile, Buffer.from(xmindArrayBuffer), {encoding: "utf8"});
     console.log(`\n Exported : ${outFile}`)
   },
 

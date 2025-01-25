@@ -23,7 +23,7 @@ export const fsh = {
              const fhirType: string = fhirObject.resourceType;
              const fhirId: string = fhirObject.id;
            exportFileName = `${outFile}-${fhirType}-${fhirId}.json`
-          fs.writeFileSync(exportFileName, JSON.stringify(fhirObject), { encoding: "utf8" });
+          Bun.write(exportFileName, JSON.stringify(fhirObject));
           console.log(`\n Exported : ${exportFileName}`)
            })// handle results
         })

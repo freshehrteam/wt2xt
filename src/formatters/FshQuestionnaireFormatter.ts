@@ -1,5 +1,3 @@
-import fs from "fs";
-
 import { DocBuilder } from "../DocBuilder";
 import {  TemplateNode} from "../types/TemplateNodes";
 import { formatOccurrences, mapRmType2FHIR, snakeToCamel } from '../types/TemplateTypes';
@@ -49,7 +47,7 @@ export const fshq = {
   },
 
   saveFile: async (dBuilder: DocBuilder, outFile: any): Promise<void> => {
-    fs.writeFileSync(outFile, dBuilder.toString(), { encoding: "utf8" });
+    await Bun.write(outFile, dBuilder.toString());
     console.log(`\n Exported : ${outFile}`)
   },
 
