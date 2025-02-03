@@ -57,14 +57,12 @@ export const fshl = {
 
     if (config.entriesOnly) return
 
-     formatFSHDefinition(dBuilder,f)
+    formatFSHDefinition(dBuilder,f)
   },
 
   formatCompositionContextHeader: (dBuilder: DocBuilder, f: TemplateNode) => {
     appendFSHLM(dBuilder,f)
   },
-
-
 
   formatNodeContent: (_docBuilder: DocBuilder | null, f: TemplateNode, isChoice: boolean) => {
     // Stop Choice being called twice as alreadty handled by Choice Header
@@ -122,7 +120,6 @@ export const fshl = {
       const { ab } = dBuilder;
 
       appendFSHLM(dBuilder, f)
-
 
       formatValueSetDefinition(f)
 

@@ -1,35 +1,49 @@
 import { DocBuilder } from "../DocBuilder";
 import {TemplateInput, TemplateNode} from "../types/TemplateNodes";
+
 import {
   dataValueFHIRQuestionTypeMapper,
-  formatOccurrences,
-  isEntry,
-  mapRmType2FHIR,
-  snakeToCamel
+  formatOccurrences, isEntry, isMandatory, isMultiple, isRMAttribute, mapRmType2FHIR, snakeToCamel
 } from '../types/TemplateTypes';
 import {formatValueSetDefinition} from "./FshTerminologyFormatter";
 import {formatLeafHeader} from "./DocFormatter.ts";
 
+import {Questionnaire} from "@smile-cdr/fhirts/dist/FHIR-R4/classes/questionnaire";
+import {QuestionnaireItem} from "@smile-cdr/fhirts/dist/FHIR-R4/classes/questionnaireItem";
+import {Coding} from "@smile-cdr/fhirts/dist/FHIR-R4/classes/coding";
+import StatusEnum = Questionnaire.StatusEnum;
+import TypeEnum = QuestionnaireItem.TypeEnum;
+
 const formatLocalName = (f:TemplateNode) => f.localizedName ? f.localizedName : f.name;
 const formatSpaces = (f:TemplateNode) => f.depth ? " ".repeat(f.depth * 2) : "";
 
-const appendFSHQ = (dBuilder: DocBuilder, f: TemplateNode, _isChoice: boolean = false) => {
-  const { sb } = dBuilder;
+const formatCode = (node:TemplateNode) :Coding  => {
+  return {code: node.id, system: isRMAttribute(node)? 'openehr.rm': 'openehr.local'}
+};
+
+const appendFSHQ = (dBuilder: DocBuilder, node: TemplateNode, isLeafNode: boolean ) => {
 
   // const choiceSuffix: string = isChoice?'x':'';
   // const nodeId: string = f.nodeId?f.nodeId:`RM`
-  const multiOccurrence : boolean = f.max > 0
 
-  sb.append(`* item[=].item[+].linkId = "1"`)
-  sb.append(`* item[=].repeats = ${multiOccurrence}`)
-  sb.append(`* item[=].item[=].definition = "http://example.org/sdh/dtr/aslp/StructureDefinition/aslp-sleep-study-order#ServiceRequest.code"`)
-  sb.append(`* item[=].item[=].text = "${dBuilder.getDescription(f)}"`)
-  sb.append(`* item[=].item[=].type = #${dataValueFHIRQuestionTypeMapper(f.rmType)}`)
-  sb.append(`* item[=].item[=].answerValueSet = "http://example.org/sdh/dtr/aslp/ValueSet/aslp-a1-de1-codes-grouper"`)
+  const qItem: QuestionnaireItem = new (QuestionnaireItem)
 
- // sb.append(`${formatSpaces(f)}* ${snakeToCamel(f.id,true)}${choiceSuffix} ${formatOccurrences(f,true)} ${mapRmType2FHIR(f.rmType)} "${formatLocalName(f)}" "${nodeId}: "`)
-
+  qItem.linkId = (++dBuilder.idCounter).toString();
+  qItem.code = [formatCode(node)]
+  qItem.definition = node.aqlPath
+  qItem.readOnly = false
+  qItem.required = isMandatory(node)
+  qItem.type = dataValueFHIRQuestionTypeMapper(node.rmType) as TypeEnum | undefined
+  // qItem.answerOption
+  // qItem.answerValueSet
+  qItem.repeats = isMultiple(node)
+  qItem.text = node.name;
+  qItem.item = []
+ // node.push(qItem);
+  if( isLeafNode)
+    dBuilder.currentItem = qItem.item;
 }
+
 const appendExternalBinding = (f: TemplateNode, input: TemplateInput) => {
   const { sb } = f.builder;
   // Pick up an external valueset description annotation
@@ -47,67 +61,60 @@ const appendLocalBinding = (f: TemplateNode, input: TemplateInput) => {
   sb.append(`${formatSpaces(f)}* ${nodeName} ${bindingFSH}`)
 };
 
+
 export const fshq = {
 
-  formatTemplateHeader: (dBuilder: DocBuilder) => {
-    const { wt, sb} = dBuilder;
+  formatTemplateHeader: (docBuilder: DocBuilder) => {
+    let { wt,jb} = docBuilder;
+
     const techName = snakeToCamel(wt.templateId,true);
-    sb.append(`Instance: ${techName}`)
-    sb.append(`InstanceOf: Questionnaire`)
-    sb.append(`Title: "${wt.templateId}"`)
-    sb.append(`Parent: Questionnaire`)
-    sb.append(`Usage: #example`)
-  },
-
-  formatCompositionHeader: (docBuilder: DocBuilder, f: TemplateNode) => {
-    const { sb } = docBuilder;
-
     const dateObj: Date = new Date()
     const currentIsoDate : string  = dateObj.toISOString()
 
-    sb.append(`Description:  "${f.localizedDescriptions['en']}"`)
-    sb.append(`* name = "${snakeToCamel(f.id,true)}"`)
-    sb.append(`* status = #active`)
-    sb.append(`* version = "${docBuilder.wt.semVer}"`)
-    sb.append(`* url = "http://hl7.org/fhir/Questionnaire/bb"`)
-    sb.append(`* publisher = "New South Wales Department of Health"`)
-    sb.append(`* date = "${currentIsoDate}"`)
-    sb.append(`* jurisdiction = urn:iso:std:iso:3166#`)
-    sb.append(`* useContext.code = ""`)
-    sb.append(`* meta.lastUpdated = "${currentIsoDate}"`)
+    const questionnaire = jb;
+
+    // questionnaire.code =
+    questionnaire.resourceType = 'Questionnaire'
+    questionnaire.meta = {};
+    questionnaire.meta.source = `${wt.templateId}`;
+    questionnaire.meta.versionId = `${wt.templateId}:${wt.semVer}`;
+    questionnaire.date = `${currentIsoDate}`
+    questionnaire.id = techName
+    questionnaire.name =  techName
+    questionnaire.title = `${wt.templateId}`
+    questionnaire.status = StatusEnum.Active
+    questionnaire.version = `${wt.semVer}`
+    questionnaire.url = "http://hl7.org/fhir/Questionnaire/bb";
+    questionnaire.item = []
+    docBuilder.currentItem = questionnaire.item
+  },
+
+  formatCompositionHeader: (_docBuilder: DocBuilder, _f: TemplateNode) => {
    },
 
   formatCompositionContextHeader: (dBuilder: DocBuilder, f: TemplateNode) => {
-    appendFSHQ(dBuilder,f)
+    appendFSHQ(dBuilder,f, true)
   },
 
-  formatNodeContent: (_dBuilder: DocBuilder, f: TemplateNode, isChoice: boolean) => {
+  formatNodeContent: (dBuilder: DocBuilder, f: TemplateNode, _isChoice: boolean) => {
     // Stop Choice being called twice as alreadty handled by Choice Header
-    if (f.rmType === 'ELEMENT' || isChoice) return
-
-  //  appendFSHLM(dBuilder,f)
+  //  if (f.rmType === 'ELEMENT' || isChoice) return
+    appendFSHQ(dBuilder,f,false)
   },
 
   formatLeafHeader: (dBuilder: DocBuilder, f: TemplateNode) => {
-    appendFSHQ(dBuilder,f)
+    appendFSHQ(dBuilder,f,true)
   },
 
   formatCluster: (dBuilder: DocBuilder, f: TemplateNode) => {
-    appendFSHQ(dBuilder,f)
+    appendFSHQ(dBuilder,f,true)
   },
 
   formatObservationEvent: (dBuilder: DocBuilder, f: TemplateNode) => {
-    appendFSHQ(dBuilder,f)
+    appendFSHQ(dBuilder,f,true)
   },
   formatEntryHeader: (dBuilder: DocBuilder, f: TemplateNode) => {
-//    sb.append(`${spaces}* ${nodeName} ${occurrencesText} ${rmTypeText} "${localName}" "${f.nodeId}: ${localizedDescription}"`)
-    //const { config } = dBuilder;
-
-    //if (config.entriesOnly)
-      //formatFSHDefinition(dBuilder, f);
-    //else
       formatLeafHeader(dBuilder,f)
-
   },
 
   formatChoiceHeader: (dBuilder: DocBuilder, f: TemplateNode, _isChoice = true) => {
@@ -132,7 +139,7 @@ export const fshq = {
     formatDvCodedText: (dBuilder: DocBuilder, f: TemplateNode) => {
       const { ab } = dBuilder;
 
-      appendFSHQ(dBuilder, f)
+      appendFSHQ(dBuilder, f,false)
 return
       formatValueSetDefinition(f)
 
@@ -156,7 +163,7 @@ return
     formatDvText: (dBuilder: DocBuilder, f: TemplateNode) => {
      // const { ab} = dBuilder;
 
-      appendFSHQ(dBuilder,f)
+      appendFSHQ(dBuilder,f,false)
 
   /*    f.inputs?.forEach((input: TemplateInput) => {
         if (input.suffix && !['other'].includes(input.suffix))
@@ -196,11 +203,11 @@ return
         }
       });
 
-     appendFSHQ(dBuilder, f)
+     appendFSHQ(dBuilder, f,false)
     },
 
     formatDvDefault: (dBuilder: DocBuilder, f: TemplateNode) => {
-      appendFSHQ(dBuilder,f)
+      appendFSHQ(dBuilder,f,false)
     },
 
   }

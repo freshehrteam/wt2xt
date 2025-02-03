@@ -1,17 +1,24 @@
-import fs from "fs";
 import { sushiClient } from 'fsh-sushi';
 import { DocBuilder } from '../DocBuilder';
 
 export const fsh = {
 
-  saveFile: async (dBuilder: DocBuilder, outFile: any): Promise<void> => {
+    saveJson: async (dBuilder: DocBuilder, outFile: any): Promise<void> => {
 
-    fs.writeFileSync(outFile, dBuilder.toString(), { encoding: "utf8" });
-    console.log(`\n Exported : ${outFile}`)
-    await fsh.convertFSH(dBuilder, outFile)
+        const exportFileName = `${outFile}.json`
+        await Bun.write(exportFileName, JSON.stringify(dBuilder.jb,null,2));
+        console.log(`\n Exported : ${exportFileName}`)
+    },
+
+    saveFile: async (dBuilder: DocBuilder, outFile: any): Promise<void> => {
+
+      const exportFileName = `${outFile}.fsh`
+      await Bun.write(exportFileName, dBuilder.toString());
+    console.log(`\n Exported : ${exportFileName}`)
+    fsh.convertFSH(outFile, exportFileName)
   },
 
-  convertFSH: async (dBuilder: DocBuilder, outFile: any):Promise<void> => {
+  convertFSH: (dBuilder: DocBuilder, outFile: any) => {
     const str = dBuilder.toString()
     let exportFileName: string = '';
     sushiClient.fshToFhir(str, {
@@ -19,11 +26,11 @@ export const fsh = {
         logLevel: "error",
       })
         .then((results) => {
-           results.fhir.forEach((fhirObject) => {
+           results.fhir.forEach( async (fhirObject) => {
              const fhirType: string = fhirObject.resourceType;
              const fhirId: string = fhirObject.id;
            exportFileName = `${outFile}-${fhirType}-${fhirId}.json`
-          Bun.write(exportFileName, JSON.stringify(fhirObject));
+          await Bun.write(exportFileName, JSON.stringify(fhirObject));
           console.log(`\n Exported : ${exportFileName}`)
            })// handle results
         })

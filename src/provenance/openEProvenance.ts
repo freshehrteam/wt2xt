@@ -1,6 +1,6 @@
 import axios from 'axios';
 import path from 'path';
-import { TemplateNode } from '../TemplateNodes';
+import { TemplateNode } from '../types/TemplateNodes';
 
 export type ArchetypeProvenance = {
   archetypeId: string,

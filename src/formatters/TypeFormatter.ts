@@ -2,7 +2,7 @@ import { DocBuilder } from "../DocBuilder";
 import { TemplateNode } from "../types/TemplateNodes";
 import { ExportFormat, FormatElementFn } from "./DocFormatter";
 import { fshl } from "./FshLogicalModelFormatter";
-// import { fshq } from "./FshQuestionnaireFormatter";
+ import { fshq } from "./FshQuestionnaireFormatter";
 import { adoc } from "./AdocFormatter";
 import { xmind } from "./XmindFormatter";
 
@@ -16,6 +16,9 @@ export const formatDvCodedText = (docBuilder: DocBuilder, f: TemplateNode): void
       break;
     case ExportFormat.fshl:
       fn = fshl.dvTypes.formatDvCodedText
+      break;
+      case ExportFormat.fshq:
+      fn = fshq.dvTypes.formatDvCodedText
       break;
     default:
       fn = adoc.dvTypes.formatDvCodedText
@@ -55,6 +58,9 @@ export const formatDvText = (docBuilder: DocBuilder, f: TemplateNode): void => {
     case ExportFormat.fshl:
       fn = fshl.dvTypes.formatDvText
       break;
+    case ExportFormat.fshq:
+      fn = fshq.dvTypes.formatDvText
+      break;
     default:
       fn = adoc.dvTypes.formatDvText
       break;
@@ -70,6 +76,7 @@ export const formatDvCount = (docBuilder: DocBuilder, f: TemplateNode): void => 
   switch (docBuilder.config.exportFormat) {
     case ExportFormat.xmind:
     case ExportFormat.fshl:
+    case ExportFormat.fshq:
       break;
     default:
       fn = adoc.dvTypes.formatDvCount
@@ -89,6 +96,9 @@ export const formatDvQuantity = (docBuilder: DocBuilder, f: TemplateNode): void 
     case ExportFormat.fshl:
       fn = fshl.dvTypes.formatDvQuantity
       break;
+      case ExportFormat.fshq:
+      fn = fshq.dvTypes.formatDvQuantity
+      break;
     default:
       fn = adoc.dvTypes.formatDvQuantity
       break;
@@ -107,6 +117,8 @@ export const formatDvOrdinal = (docBuilder: DocBuilder, f: TemplateNode): void =
       break;
     case ExportFormat.fshl:
       break;
+      case ExportFormat.fshq:
+      break;
     default:
       fn = adoc.dvTypes.formatDvOrdinal
       break;
@@ -123,6 +135,9 @@ export const formatDvDefault = (docBuilder: DocBuilder, f: TemplateNode): void =
       break;
     case ExportFormat.fshl:
       fn = fshl.dvTypes.formatDvDefault
+      break;
+      case ExportFormat.fshq:
+      fn = fshq.dvTypes.formatDvDefault
       break;
     default:
       fn = adoc.dvTypes.formatDvDefault

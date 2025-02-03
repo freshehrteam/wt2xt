@@ -32,13 +32,18 @@ export function isCluster(rmType: string) {
   return ['CLUSTER'].includes(rmType);
 }
 
+export function isPartyProxy(rmType: string) {
+  return ['PARTY_PROXY'].includes(rmType);
+}
+
 export function isDvChoice(rmType: string) {
   return ['ELEMENT'].includes(rmType);
 }
 
 export function isBranchNode(rmType:string) {
-  return isEntry(rmType) || isEventContext(rmType) || isActivity(rmType) || isEvent(rmType) || isISMTransition(rmType) || isSection(rmType) || isCluster(rmType)
+  return !isDataValue(rmType) || isPartyProxy(rmType) || isEntry(rmType) || isEventContext(rmType) || isActivity(rmType) || isEvent(rmType) || isISMTransition(rmType) || isSection(rmType) || isCluster(rmType)
 }
+
 export function isAnyChoice(rmType: string[]) {
   // compares the list of Choices with the whole DataValues array and sends true if all the values exist.
   const dvDataTypes: string[] = Object.keys(DvDataValues).filter(key => isNaN(+key))
@@ -64,10 +69,11 @@ export const snakeToCamel = (s: string, forceInitialCap : boolean) => {
     .replace(/\s+|[_-]/g, '')
 }
 
+export const isRMAttribute= (node: TemplateNode) :boolean => node.inContext || false
 
 export const isArchetype= (rmType: string, nodeId: string) => {
   return ['COMPOSITION','OBSERVATION', 'EVALUATION', 'INSTRUCTION', 'SECTION', 'ACTION', 'ADMIN_ENTRY', 'GENERIC_ENTRY', 'CLUSTER', 'ELEMENT'].includes(rmType)
-         &&  nodeId.substring(0,2) !== 'at'
+      &&  nodeId.substring(0,2) !== 'at'
 }
 
 export const mapRmTypeText = (rmTypeString: string) => {
@@ -143,6 +149,7 @@ export function isDisplayableNode(rmType: string)
 {
   return Object.keys(DvDataValues).includes(rmType) || Object.keys(OtherDisplayableNodes).includes(rmType)
 }
+
 const displayableNodeTextTable = {
   ELEMENT: 'Choice',
   DV_CODED_TEXT: 'Coded text',
@@ -192,6 +199,32 @@ export const openEHR2FHIRDatatypeTable = {
   PARTY_PROXY: "BackboneElement",
   STRING: "String",
 }
+
+export const openEHR2FHIRQuestionTypeTable = {
+  ELEMENT: 'choice',
+  DV_CODED_TEXT: 'choice',
+  DV_TEXT: 'string',
+  DV_ORDINAL: 'choice',
+  DV_SCALE: 'choice',
+  DV_QUANTITY: 'quantity',
+  DV_DURATION: 'duration',
+  DV_COUNT: 'quantity',
+  DV_DATE_TIME: 'dateTime',
+  DV_IDENTIFIER: 'identifier',
+  DV_MULTIMEDIA: 'attachment',
+  DV_URI: "uri",
+  DV_EHR_URI: "uri",
+  DV_PARSABLE: "string",
+  DV_PROPORTION: "Proportion",
+  DV_STATE: "State",
+  DV_BOOLEAN: "boolean",
+  DV_DATE: "date",
+  DV_TIME: "time",
+  CODE_PHRASE: "coding",
+  PARTY_PROXY: "group",
+  STRING: "string",
+}
+
 export const openEHRInterval2FHIRTable = {
   DV_QUANTITY: 'Range',
   DV_DURATION: 'Duration',
@@ -213,9 +246,20 @@ export const dataValueFHIRMapper = (dataValue:string) => {
      return openEHR2FHIRDatatypeTable[dataValue as keyof typeof openEHR2FHIRDatatypeTable] || `(FHIR mapping not supported) ${dataValue}`
 }
 
+export const dataValueFHIRQuestionTypeMapper = (dataValue:string) :string => {
+  if (isBranchNode(dataValue))
+    return 'group'
+  else
+    return openEHR2FHIRQuestionTypeTable[dataValue as keyof typeof openEHR2FHIRDatatypeTable] || `(FHIR Question type not supported) ${dataValue}`
+}
+
 export const dataValueIntervalFHIRMapper = (dataValue: string) =>
   openEHRInterval2FHIRTable[dataValue as keyof typeof openEHRInterval2FHIRTable] || `RM Interval type not supported ${dataValue}`
 
+
+export const isMandatory = (node: TemplateNode): boolean => node.min > 0
+
+export const isMultiple = (node: TemplateNode): boolean => (node.max != 1)
 
 export const formatOccurrences = (f: TemplateNode, techDisplay :boolean = true) => {
 

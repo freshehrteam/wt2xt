@@ -40,6 +40,9 @@ import { Config } from './BuilderConfig';
 import path from 'path';
 import { augmentWebTemplate, ResolvedTemplateFiles, resolveTemplateFiles, saveWtxFile } from './provenance/wtxBuilder';
 import axios from 'axios';
+import {FHIRInstance} from "./types/JSONBuilder.ts";
+import {Questionnaire} from "@smile-cdr/fhirts/dist/FHIR-R4/classes/questionnaire";
+import {QuestionnaireItem} from "@smile-cdr/fhirts/dist/FHIR-R4/classes/questionnaireItem";
 
 
 export class DocBuilder {
@@ -53,11 +56,17 @@ export class DocBuilder {
   // Stringified Codesystem Aliases
   ab: StringBuilder = new StringBuilder()
 
+  // JSONBuilder
+   jb: FHIRInstance = new Questionnaire();
+
+  currentItem: Array<QuestionnaireItem> | undefined = [];
+
   config: Config;
   localArchetypeList : ArchetypeList = [];
 //  candidateArchetypeList: ArchetypeList = []
   remoteArchetypeList: ArchetypeList = [];
   resolvedTemplateFiles!: ResolvedTemplateFiles;
+  idCounter = 0;
 
   readonly _wt: WebTemplate;
 
@@ -115,6 +124,7 @@ export class DocBuilder {
   }
 
   private async walkChildren(f: TemplateNode, useSameDepth :boolean, nonContextOnly: boolean = false, ) {
+
     if (f.children) {
 
       const newDepth = f.depth?useSameDepth?f.depth:f.depth+1:0
