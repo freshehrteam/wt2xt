@@ -93,18 +93,8 @@ export const mapRmTypeText = (rmTypeString: string) => {
 
 export const mapRmType2FHIR = (rmTypeString: string) => {
 
-  // if (!isDisplayableNode(rmTypeString)) return ''
+  return dataValueFHIRMapper(rmTypeString)
 
-  let rmType = rmTypeString
-  let intervalPrefix = ''
-
-  if (rmTypeString.startsWith('DV_INTERVAL')) {
-    intervalPrefix = "Interval of "
-    rmType = rmTypeString.replace(/(^.*<|>.*$)/g, '');
-    return dataValueIntervalFHIRMapper(rmType)
-  }
-
-  return `${intervalPrefix}${dataValueFHIRMapper(rmType)}`
 }
 
 export enum DvDataValues{
