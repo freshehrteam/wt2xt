@@ -11,7 +11,7 @@ export const formatValueSetDefinition = ( f: TemplateNode) => {
 
   ab.newline('');
 
-  ab.append(`Alias: $local = http://openehr.org/${f.archetype_id}`);
+  ab.append(`Alias: $local${techName} = http://openehr.org/${f.archetype_id}/${f.id}`);
   ab.append(`ValueSet: ${techName}`);
   ab.append(`Title: "${f.localizedName}"`);
 }

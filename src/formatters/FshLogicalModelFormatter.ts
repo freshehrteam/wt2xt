@@ -18,6 +18,7 @@ const appendFSHLM = (dBuilder: DocBuilder, f: TemplateNode, typeConstraint: stri
   const { sb } = dBuilder;
   sb.append(`${formatSpaces(f)}* ${snakeToCamel(f.localizedName?f.localizedName:f.id,isEntry(f.rmType))} ${formatOccurrences(f,true)} ${mapRmType2FHIR(f.rmType)} "${formatLocalName(f)}" ${formatDescription(dBuilder,f,typeConstraint)}`)
 }
+
 const appendExternalBinding = (f: TemplateNode, input: TemplateInput) => {
   const { sb } = f.builder;
   // Pick up an external valueset description annotation
@@ -38,6 +39,7 @@ const appendLocalBinding = (f: TemplateNode, input: TemplateInput) => {
 const formatFSHDefinition = (dBuilder: DocBuilder, f: TemplateNode) => {
   const { sb,wt,config } = dBuilder;
   const techName = snakeToCamel(f.localizedName, true);
+
   sb.append(`Logical: ${techName}`);
   sb.append(`Title: "${wt.templateId}"`);
   sb.append(`Parent: Element`);
@@ -79,7 +81,6 @@ export const fshl = {
       formatFSHDefinition(dBuilder, f);
     else
       formatLeafHeader(dBuilder,f)
-
   },
 
   formatLeafHeader: (dBuilder: DocBuilder, f: TemplateNode) => {
@@ -92,7 +93,6 @@ export const fshl = {
 
   formatObservationEvent: (dBuilder: DocBuilder, f: TemplateNode) => {
     appendFSHLM(dBuilder,f)
-
   },
 
   formatChoiceHeader: (dBuilder: DocBuilder, f: TemplateNode, _isChoice = true) => {
@@ -131,7 +131,7 @@ export const fshl = {
             else
             if (input?.list.length >0) {
               input?.list?.forEach((item) => {
-                ab.append(`* $local#${item.value} "${item.label}"`);
+                ab.append(`* $local${snakeToCamel(f.localizedName, true)}#${item.value} "${item.label}"`);
               })
               appendLocalBinding(f, input)
             }

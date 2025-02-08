@@ -125,13 +125,28 @@ export class DocBuilder {
 
   private async walkChildren(f: TemplateNode, useSameDepth :boolean, nonContextOnly: boolean = false, ) {
 
+    f.depth = f.depth || 0;
+
     if (f.children) {
 
-      const newDepth = f.depth?useSameDepth?f.depth:f.depth+1:0
+
+ //     const newDepth:number = f.depth
+ //         ?(usf.depthSameDepth?f.depth:f.depth+1)
+ //         :0;
+
+      const childDepth = useSameDepth?f.depth: f.depth + 1;
+
+      console.log('Use same depth', useSameDepth);
+
+      console.log('Depth', f.depth);
+
 
       for( const child of f.children) {
         child.parentNode = f;
-        child.depth = newDepth;
+        child.depth = childDepth;
+        console.log('Child id', child.id)
+        console.log('Child Depth', child.depth)
+
         if (!nonContextOnly || (nonContextOnly && !child.inContext)) {
           await this.walk(child,this)
         }
@@ -261,8 +276,8 @@ export class DocBuilder {
 //    this.archetypeList.push(f.nodeId)
     formatEntryHeader(this, f)
     formatNodeHeader(this)
-    await this.walkRmChildren(f,true);
-    await this.walkNonRMChildren(f,true)
+    await this.walkRmChildren(f,false);
+    await this.walkNonRMChildren(f,false)
     formatNodeFooter(this,f)
   }
 

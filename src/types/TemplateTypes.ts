@@ -101,7 +101,7 @@ export const mapRmType2FHIR = (rmTypeString: string) => {
   if (rmTypeString.startsWith('DV_INTERVAL')) {
     intervalPrefix = "Interval of "
     rmType = rmTypeString.replace(/(^.*<|>.*$)/g, '');
- //   return dataValueIntervalFHIRMapper(rmType)
+    return dataValueIntervalFHIRMapper(rmType)
   }
 
   return `${intervalPrefix}${dataValueFHIRMapper(rmType)}`
@@ -190,14 +190,14 @@ export const openEHR2FHIRDatatypeTable = {
   DV_URI: "uri",
   DV_EHR_URI: "uri",
   DV_PARSABLE: "string",
-  DV_PROPORTION: "Proportion",
+  DV_PROPORTION: "Ratio",
   DV_STATE: "State",
   DV_BOOLEAN: "boolean",
   DV_DATE: "date",
   DV_TIME: "time",
   CODE_PHRASE: "Coding",
   PARTY_PROXY: "BackboneElement",
-  STRING: "String",
+  STRING: "string"
 }
 
 export const openEHR2FHIRQuestionTypeTable = {
