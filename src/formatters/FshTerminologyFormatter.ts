@@ -1,38 +1,36 @@
 
 
-import { StringBuilder } from '../StringBuilder';
 import {snakeToCamel} from "../types/TemplateTypes";
 import {TemplateNode} from "../types/TemplateNodes";
+import {CodeSystem} from "@smile-cdr/fhirts/dist/FHIR-R4/classes/codeSystem";
 
-export const formatValueSetDefinition = ( f: TemplateNode) => {
+export const appendCodesystem = ( node : TemplateNode): string => {
 
-  const { ab } = f.builder;
-  const techName = snakeToCamel(f.localizedName, true);
+  const { codeSystems } = node.builder;
+
+  const csUrl = `http://openehr.org/localCS/${node.archetype_id}`;
+
+  const hasSystem = codeSystems.some(system => system.url === csUrl);
+
+  if (hasSystem) return csUrl || ''
+
+  const newCS = new CodeSystem();
+  newCS.url = csUrl
+  newCS.id = node.archetype_id
+  codeSystems.push(newCS)
+  return newCS.url || ''
+
+}
+
+
+export const formatValueSetDefinition = ( node: TemplateNode) => {
+
+  const { ab } = node.builder;
+  const techName = snakeToCamel(node.localizedName, true);
 
   ab.newline('');
-
-  ab.append(`Alias: $local${techName} = http://openehr.org/${f.archetype_id}/${f.id}`);
   ab.append(`ValueSet: ${techName}`);
-  ab.append(`Title: "${f.localizedName}"`);
+  ab.append(`Title: "${node.localizedName}"`);
 }
 
-export const formatCodeSystemDefinition = ( f: TemplateNode) => {
 
-  const { cb } = f.builder;
-
-  cb.newline('')
-  cb.append(`CodeSystem: http://openehr.org/${f.archetype_id}CS`);
-  cb.append(`Id: ${f.archetype_id}}`);
-  // url, status, purpose, and other metadata could be defined here using caret syntax (omitted)
-}
-
-export const appendCodeSystemItem = (cb : StringBuilder, itemCode: string, itemDescription:string, itemRubric: string) => {
-  cb.append(`* #${itemCode} ${itemRubric} 
-      "${itemDescription}"`)
-}
-
-export const fsht = {
-
-
-
-}

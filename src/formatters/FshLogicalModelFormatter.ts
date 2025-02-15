@@ -2,10 +2,15 @@ import { DocBuilder } from "../DocBuilder";
 import { TemplateInput, TemplateNode } from '../types/TemplateNodes';
 import { formatOccurrences, isEntry, mapRmType2FHIR, snakeToCamel } from '../types/TemplateTypes';
 import { formatLeafHeader } from './DocFormatter';
-import { formatValueSetDefinition } from './FshTerminologyFormatter';
+import {appendCodesystem, formatValueSetDefinition} from './FshTerminologyFormatter';
 
 const formatLocalName = (f:TemplateNode) => f.localizedName ? f.localizedName : f.name;
-const formatSpaces = (f:TemplateNode) => f.depth ? " ".repeat(f.depth * 2) : "";
+const formatSpaces = (node:TemplateNode) => {
+  if (!node.depth)
+    node.depth = 0
+  return " ".repeat(node.depth * 2)
+}
+
 const formatNodeId = (f: TemplateNode):string => f.nodeId?f.nodeId:`RM`
 
 const formatDescription = (dBuilder:DocBuilder,f:TemplateNode,typeConstraint: string = '') =>
@@ -19,6 +24,8 @@ const appendFSHLM = (dBuilder: DocBuilder, f: TemplateNode, typeConstraint: stri
   sb.append(`${formatSpaces(f)}* ${snakeToCamel(f.localizedName?f.localizedName:f.id,isEntry(f.rmType))} ${formatOccurrences(f,true)} ${mapRmType2FHIR(f.rmType)} "${formatLocalName(f)}" ${formatDescription(dBuilder,f,typeConstraint)}`)
 }
 
+
+
 const appendExternalBinding = (f: TemplateNode, input: TemplateInput) => {
   const { sb } = f.builder;
   // Pick up an external valueset description annotation
@@ -29,6 +36,8 @@ const appendExternalBinding = (f: TemplateNode, input: TemplateInput) => {
 
 const appendLocalBinding = (f: TemplateNode, input: TemplateInput) => {
   const { sb } = f.builder;
+
+
   const nodeName = snakeToCamel(f.localizedName ? f.localizedName : f.id, false)
   const vsName = snakeToCamel(f.localizedName ? f.localizedName : f.id, true)
   // Pick up an external valueset description annotation
@@ -121,6 +130,8 @@ export const fshl = {
 
       appendFSHLM(dBuilder, f)
 
+      const alias = appendCodesystem(f)
+
       formatValueSetDefinition(f)
 
       f?.inputs?.forEach((input: TemplateInput) => {
@@ -131,7 +142,7 @@ export const fshl = {
             else
             if (input?.list.length >0) {
               input?.list?.forEach((item) => {
-                ab.append(`* $local${snakeToCamel(f.localizedName, true)}#${item.value} "${item.label}"`);
+                ab.append(`* ${alias}#${item.value} "${item.label}"`);
               })
               appendLocalBinding(f, input)
             }
@@ -144,6 +155,7 @@ formatDvText: (dBuilder: DocBuilder, f: TemplateNode) => {
   const { ab} = dBuilder;
 
    appendFSHLM(dBuilder,f)
+  appendCodesystem(f)
 
       f.inputs?.forEach((input: TemplateInput) => {
         if (input.suffix && !['other'].includes(input.suffix))
@@ -162,6 +174,7 @@ formatDvText: (dBuilder: DocBuilder, f: TemplateNode) => {
   formatDvOrdinal: (dBuilder: DocBuilder, f: TemplateNode) => {
   const { sb , config} = dBuilder;
 
+    appendCodesystem(f)
   f.inputs?.forEach((input) => {
     if (input.list)
       input.list.forEach((listItem) => {

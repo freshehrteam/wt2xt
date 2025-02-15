@@ -43,6 +43,8 @@ import axios from 'axios';
 import {FHIRInstance} from "./types/JSONBuilder.ts";
 import {Questionnaire} from "@smile-cdr/fhirts/dist/FHIR-R4/classes/questionnaire";
 import {QuestionnaireItem} from "@smile-cdr/fhirts/dist/FHIR-R4/classes/questionnaireItem";
+import {CodeSystem} from "@smile-cdr/fhirts/dist/FHIR-R4/classes/codeSystem";
+
 
 
 export class DocBuilder {
@@ -58,6 +60,8 @@ export class DocBuilder {
 
   // JSONBuilder
    jb: FHIRInstance = new Questionnaire();
+
+   codeSystems: CodeSystem[] = [];
 
   currentItem: Array<QuestionnaireItem> | undefined = [];
 
@@ -107,8 +111,8 @@ export class DocBuilder {
 
     const sb:string = this.sb?`${this.sb.toString()}`:''
     const vb:string = this.ab?`${this.ab.toString()}`:''
-  //  const cb:string = this.cb?`${this.cb.toString()}`:''
-    return sb+vb
+    const cb:string = this.cb?`${this.cb.toString()}`:''
+    return sb+vb+cb
   }
 
   get wt(): WebTemplate {
@@ -155,7 +159,7 @@ export class DocBuilder {
   }
 
   private async walkNonRMChildren(f: TemplateNode, useSameDepth: boolean) {
-    await this.walkChildren(f, useSameDepth, true)
+    await this.walkChildren(f, useSameDepth, true )
   }
   private async walkCompositionContent(f: TemplateNode) {
     await this.walkChildren(f, true,true)
@@ -286,7 +290,7 @@ export class DocBuilder {
     if (this.config.entriesOnly) return
 
       f.name = 'context';
-    f.depth = 0;
+  //  f.depth = 0;
     formatCompositionContextHeader(this, f);
     if (f.children?.length) {
       formatNodeHeader(this)
@@ -294,7 +298,7 @@ export class DocBuilder {
       await this.walkNonRMChildren(f, false)
       formatNodeFooter(this,f)
     }
-    f.depth = 0;
+    //f.depth = 0;
   }
 
   private async walkRmChildren(f: TemplateNode, useSameDepth: boolean) {

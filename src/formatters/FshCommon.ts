@@ -1,6 +1,15 @@
 import { sushiClient } from 'fsh-sushi';
 import { DocBuilder } from '../DocBuilder';
 
+const appendCodeSystemFSH = ( docBuilder :DocBuilder) => {
+    const {cb, codeSystems} = docBuilder;
+    for (const cs of codeSystems) {
+        cb.newline('')
+        cb.append(`CodeSystem: ${cs.url}CS`);
+        cb.append(`Id: ${cs.id}}`);
+        cb.append( `Alias: "${cs.id}"`);
+    }
+}
 export const fsh = {
 
     saveJson: async (dBuilder: DocBuilder, outFile: any): Promise<void> => {
@@ -12,6 +21,7 @@ export const fsh = {
 
     saveFile: async (dBuilder: DocBuilder, outFile: any): Promise<void> => {
 
+      appendCodeSystemFSH(dBuilder)
       const exportFileName = `${outFile}.fsh`
       await Bun.write(exportFileName, dBuilder.toString());
     console.log(`\n Exported : ${exportFileName}`)
