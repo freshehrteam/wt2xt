@@ -29,7 +29,7 @@ export interface TemplateNode extends WebTemplateNode{
   // Extensions to formal webTemplate
   original_namespace?: string;
   original_publisher?: string;
-  archetype_id?:string
+  archetype_id:string
   custodian_namespace?: string;
   custodian_organisation?: string;
   revision?: string;

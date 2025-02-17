@@ -41,7 +41,7 @@ const appendFSHQ = (dBuilder: DocBuilder, node: TemplateNode, isLeafNode: boolea
   qItem.item = []
  // node.push(qItem);
   if( isLeafNode)
-    dBuilder.currentItem = qItem.item;
+    dBuilder.currentQuestionnaireItem = qItem.item;
 }
 
 const appendExternalBinding = (f: TemplateNode, input: TemplateInput) => {
@@ -86,7 +86,7 @@ export const fshq = {
     questionnaire.version = `${wt.semVer}`
     questionnaire.url = "http://hl7.org/fhir/Questionnaire/bb";
     questionnaire.item = []
-    docBuilder.currentItem = questionnaire.item
+    docBuilder.currentQuestionnaireItem = questionnaire.item
   },
 
   formatCompositionHeader: (_docBuilder: DocBuilder, _f: TemplateNode) => {

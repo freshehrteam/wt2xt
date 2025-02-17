@@ -44,6 +44,7 @@ import {FHIRInstance} from "./types/JSONBuilder.ts";
 import {Questionnaire} from "@smile-cdr/fhirts/dist/FHIR-R4/classes/questionnaire";
 import {QuestionnaireItem} from "@smile-cdr/fhirts/dist/FHIR-R4/classes/questionnaireItem";
 import {CodeSystem} from "@smile-cdr/fhirts/dist/FHIR-R4/classes/codeSystem";
+import {ValueSet} from "@smile-cdr/fhirts/dist/FHIR-R4/classes/valueSet";
 
 
 
@@ -62,8 +63,9 @@ export class DocBuilder {
    jb: FHIRInstance = new Questionnaire();
 
    codeSystems: CodeSystem[] = [];
+   valueSets: ValueSet[] = []
 
-  currentItem: Array<QuestionnaireItem> | undefined = [];
+  currentQuestionnaireItem: Array<QuestionnaireItem> | undefined = [];
 
   config: Config;
   localArchetypeList : ArchetypeList = [];
@@ -129,7 +131,6 @@ export class DocBuilder {
 
   private async walkChildren(f: TemplateNode, useSameDepth :boolean, nonContextOnly: boolean = false, ) {
 
-    f.depth = f.depth || 0;
 
     if (f.children) {
 
@@ -137,8 +138,7 @@ export class DocBuilder {
  //     const newDepth:number = f.depth
  //         ?(usf.depthSameDepth?f.depth:f.depth+1)
  //         :0;
-
-      const childDepth = useSameDepth?f.depth: f.depth + 1;
+      const childDepth = this.calcNewNodeDepth(f, useSameDepth);
 
       console.log('Use same depth', useSameDepth);
 
@@ -156,6 +156,12 @@ export class DocBuilder {
         }
       }
     }
+  }
+
+  private calcNewNodeDepth (f: TemplateNode, useSameDepth: boolean) {
+    f.depth = f.depth || 0;
+    const childDepth = useSameDepth ? f.depth : f.depth + 1;
+    return childDepth;
   }
 
   private async walkNonRMChildren(f: TemplateNode, useSameDepth: boolean) {
@@ -304,7 +310,6 @@ export class DocBuilder {
   private async walkRmChildren(f: TemplateNode, useSameDepth: boolean) {
 
     const rmAttributes = new Array<TemplateNode>();
-    const newDepth = f.depth?(useSameDepth?f.depth:f.depth+1):0
 
     if (f.children) {
       f.children.forEach((child: TemplateNode) => {
@@ -326,9 +331,11 @@ export class DocBuilder {
 
     if (rmAttributes.length === 0) return
 
+    const childDepth = this.calcNewNodeDepth(f, useSameDepth);
+
     rmAttributes.forEach(child => {
       child.localizedName = child.id
-      child.depth = newDepth
+      child.depth = childDepth
       this.walk(child, this);
     });
 
