@@ -19,13 +19,14 @@ export const fsh = {
         console.log(`\n Exported : ${exportFileName}`)
     },
 
-    saveFile: async (dBuilder: DocBuilder, outFile: any): Promise<void> => {
+    saveFile: async (dBuilder: DocBuilder, outFile: any): Promise<number> => {
 
       appendCodeSystemFSH(dBuilder)
       const exportFileName = `${outFile}.fsh`
-      await Bun.write(exportFileName, dBuilder.toString());
+      const writeNumber = await Bun.write(exportFileName, dBuilder.toString());
     console.log(`\n Exported : ${exportFileName}`)
     fsh.convertFSH(outFile, exportFileName)
+        return writeNumber
   },
 
   convertFSH: (dBuilder: DocBuilder, outFile: any) => {

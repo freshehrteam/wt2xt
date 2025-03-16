@@ -29,8 +29,9 @@ export const adoc = {
   },
 
   saveFile: async (docBuilder: DocBuilder, outFile: string) => {
-    await Bun.write(outFile, docBuilder.toString());
-    console.log(`\n Exported : ${outFile}`)
+    const result = await Bun.write(outFile, docBuilder.toString(),{createPath: true});
+  //  console.log(`\n Exported : ${outFile}`)
+    return result
   },
 
   formatNodeHeader: (dBuilder: DocBuilder) => {

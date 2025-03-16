@@ -6,13 +6,22 @@ import {CodeSystem} from "@smile-cdr/fhirts/dist/FHIR-R4/classes/codeSystem";
 import {ValueSet} from "@smile-cdr/fhirts/dist/FHIR-R4/classes/valueSet";
 import {ValueSetInclude} from "@smile-cdr/fhirts/dist/FHIR-R4/classes/valueSetInclude";
 import {ValueSetConcept} from "@smile-cdr/fhirts/dist/FHIR-R4/classes/valueSetConcept";
+import {ValueSetDesignation} from "@smile-cdr/fhirts/dist/FHIR-R4/classes/valueSetDesignation";
+
+const formatCodeSystemUrl = (node : TemplateNode) : string => `http://openehr.org/ckm/archetypes/${node.archetype_id}`
+
+const formatValueSetId = (node : TemplateNode) : string =>`${snakeToCamel(node.archetype_id,false)}-${snakeToCamel(node.localizedName,false)}`
+
+const formatValueSetUrl = (node : TemplateNode) : string => `http://openehr.org/ckm/archetypes/${node.archetype_id}`
+// ``
+
+//const formatValuesetName = (node : TemplateNode) : string => `http://openehr.org/ckm/archetypes/${node.archetype_id}`
 
 export const appendCodesystem = ( node : TemplateNode): string => {
 
   const { codeSystems } = node.builder;
 
-  const csUrl = `http://openehr.org/localCS/${node.archetype_id}`;
-
+  const csUrl: string = formatCodeSystemUrl(node)
   const hasSystem = codeSystems.some(system => system.url === csUrl);
 
   if (hasSystem) return csUrl || ''
@@ -30,17 +39,19 @@ export const appendValueset = ( node : TemplateNode): string => {
 
   const { valueSets } = node.builder;
 
-  const vsId  = `${snakeToCamel(node.archetype_id,false)}-${snakeToCamel(node.localizedName,false)}`
-  const vsUrl = `http://openehr.org/localVS/${vsId}`;
-  const csUrl = `http://openehr.org/localCS/${node.archetype_id}`;
 
-  const hasValueset = valueSets.some(system => system.url === vsUrl);
+  const vsId: string  = formatValueSetId(node)
+  const vsUrl = formatValueSetUrl(node)
+  const csUrl = formatCodeSystemUrl(node)
+
+  const hasValueset = valueSets.some( valueSet => valueSet.id === vsId);
 
   if (hasValueset) return vsUrl || ''
 
   const newVS = new ValueSet();
   newVS.url = vsUrl
-  newVS.id = node.archetype_id
+  newVS.id = vsId
+
 
   const vsInclude: ValueSetInclude = new ValueSetInclude();
 
@@ -49,8 +60,15 @@ export const appendValueset = ( node : TemplateNode): string => {
 
   vsConcept.code = 'at005'
   vsConcept.display = 'Test'
+  const vsDesignation: ValueSetDesignation = new ValueSetDesignation()
+
+  vsDesignation.language = 'no-nb'
+  vsDesignation.value = 'asasdad'
+
+  vsConcept.designation?.push(vsDesignation)
 
   vsInclude.concept = []
+
   vsInclude.concept.push(vsConcept)
 
   newVS.compose?.include.push(vsInclude)

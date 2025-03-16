@@ -20,7 +20,7 @@ export enum ExportFormat {
 
 
 type FormatHeaderFn = (db: DocBuilder) => void;
-type SaveFileFn = (db: DocBuilder, outFile: string) =>  Promise<void>;
+type SaveFileFn = (db: DocBuilder, outFile: string) =>  Promise<number|void>;
 type FormatCompositionHeaderFn = (dBuilder: DocBuilder, f: TemplateNode) => void;
 export type FormatElementFn  = (docBuilder: DocBuilder, f: TemplateNode) => void;
 type FormatNodeContentFn = (dBuilder: DocBuilder, f: TemplateNode, isChoice: boolean) => void;
@@ -278,7 +278,7 @@ export const formatCluster = (docBuilder: DocBuilder, f: TemplateNode): void => 
     fn(docBuilder, f);
 }
 
-export const saveFile  = async (docBuilder: DocBuilder, outFile: string): Promise<void> => {
+export const saveFile  = async (docBuilder: DocBuilder, outFile: string): Promise<number|void> => {
   let fn: SaveFileFn;
 
   switch (docBuilder.config.exportFormat) {

@@ -80,18 +80,20 @@ export class DocBuilder {
     this._wt = wt;
     this.config = config;
     this.config.defaultLang = wt.defaultLanguage;
-    this.generate().then( () => {
-
-      const outFilePath = this.handleOutPath(this.config.inFilePath, this.config.outFilePath, this.config.exportFormat,this.config.outFileDir);
-      saveFile(this, outFilePath).catch();
-
-      if (this.regenWtx() && this.isWtxAugmented() )
-        saveWtxFile(this).catch()
-    });
   }
 
   private regenWtx(): boolean {
     return (this.resolvedTemplateFiles.wtxOutPath !== null)
+  }
+
+  public run(): void{
+    this.generate().then( () => {
+      const outFilePath = this.handleOutPath(this.config.inFilePath, this.config.outFilePath, this.config.exportFormat,this.config.outFileDir);
+       saveFile(this, outFilePath).then( () => {
+       if (this.regenWtx() && this.isWtxAugmented())
+          saveWtxFile(this).catch()
+      })
+    })
   }
 
 // If the archetypeLists are empty, then the wtx Augmentation process has failed
@@ -140,16 +142,16 @@ export class DocBuilder {
  //         :0;
       const childDepth = this.calcNewNodeDepth(f, useSameDepth);
 
-      console.log('Use same depth', useSameDepth);
+//      console.log('Use same depth', useSameDepth);
 
-      console.log('Depth', f.depth);
+//      console.log('Depth', f.depth);
 
 
       for( const child of f.children) {
         child.parentNode = f;
         child.depth = childDepth;
-        console.log('Child id', child.id)
-        console.log('Child Depth', child.depth)
+//        console.log('Child id', child.id)
+//        console.log('Child Depth', child.depth)
 
         if (!nonContextOnly || (nonContextOnly && !child.inContext)) {
           await this.walk(child,this)

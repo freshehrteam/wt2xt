@@ -32,10 +32,10 @@ export const xmind = {
     sb.append(`${headerIndent} context`);
   },
 
-  saveFile: async (dBuilder: DocBuilder, outFile: any): Promise <void>  => {
+  saveFile: async (dBuilder: DocBuilder, outFile: any): Promise <number>  => {
     const xmindArrayBuffer = await parseXMindMarkToXMindFile(dBuilder.toString())
     await Bun.write('./tmp/tmp.md', dBuilder.toString());
-    await Bun.write(outFile, Buffer.from(xmindArrayBuffer));
+    return await Bun.write(outFile, Buffer.from(xmindArrayBuffer));
 
    // fs.writeFileSync(', {encoding: "utf8"});
    // fs.writeFileSync(outFile, Buffer.from(xmindArrayBuffer), {encoding: "utf8"});
