@@ -23,3 +23,5 @@ yarn-error.log*
 /cli.zip
 /cli 2.zip
 /wt2xmacos
+/cli/wt2xmacos
+/cli/wt2xwin.exe
