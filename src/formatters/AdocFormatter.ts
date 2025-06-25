@@ -30,7 +30,7 @@ export const adoc = {
 
   saveFile: async (docBuilder: DocBuilder, outFile: string) => {
     const result = await Bun.write(outFile, docBuilder.toString(),{createPath: true});
-  //  console.log(`\n Exported : ${outFile}`)
+    console.log(`\n Exported : ${outFile}`)
     return result
   },
 

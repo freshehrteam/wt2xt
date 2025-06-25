@@ -10,7 +10,11 @@ import {
 import {formatValueSetDefinition} from "./FshTerminologyFormatter";
 import {formatLeafHeader} from "./DocFormatter.ts";
 
-const formatLocalName = (f:TemplateNode) => f.localizedName ? f.localizedName : f.name;
+const formatLocalName = (f:TemplateNode) => {
+  const name = f.localizedName ? f.localizedName : f.name;
+  // Strip out any characters that are not numeric, alphabetical, underscore (_) or hyphen (-)
+  return name ? name.replace(/[^a-zA-Z0-9_-]/g, '') : name;
+};
 const formatSpaces = (f:TemplateNode) => f.depth ? " ".repeat(f.depth * 2) : "";
 
 const appendFSHQ = (dBuilder: DocBuilder, f: TemplateNode, _isChoice: boolean = false) => {

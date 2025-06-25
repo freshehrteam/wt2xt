@@ -14,7 +14,11 @@ import {Coding} from "@smile-cdr/fhirts/dist/FHIR-R4/classes/coding";
 import StatusEnum = Questionnaire.StatusEnum;
 import TypeEnum = QuestionnaireItem.TypeEnum;
 
-const formatLocalName = (f:TemplateNode) => f.localizedName ? f.localizedName : f.name;
+const formatLocalName = (f:TemplateNode) => {
+  const name = f.localizedName ? f.localizedName : f.name;
+  // Strip out any characters that are not numeric, alphabetical, underscore (_) or hyphen (-)
+  return name ? name.replace(/[^a-zA-Z0-9_-]/g, '') : name;
+};
 const formatSpaces = (f:TemplateNode) => f.depth ? " ".repeat(f.depth * 2) : "";
 
 const formatCode = (node:TemplateNode) :Coding  => {

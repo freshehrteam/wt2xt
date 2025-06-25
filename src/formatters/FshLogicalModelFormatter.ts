@@ -4,7 +4,10 @@ import { formatOccurrences, isEntry, mapRmType2FHIR, snakeToCamel } from '../typ
 import { formatLeafHeader } from './DocFormatter';
 import {appendCodesystem, formatValueSetDefinition} from './FshTerminologyFormatter';
 
+//const sanitiseFhirName  = (name: string): string  => name.replace(/[^a-zA-Z0-9_-]/g, '_')
+
 const formatLocalName = (f:TemplateNode) => f.localizedName ? f.localizedName : f.name;
+  // Strip out any characters that are not numeric, alphabetical, underscore (_) or hyphen (-)
 const formatSpaces = (node:TemplateNode) => {
   if (!node.depth)
     node.depth = 0
@@ -14,7 +17,8 @@ const formatSpaces = (node:TemplateNode) => {
 const formatNodeId = (f: TemplateNode):string => f.nodeId?f.nodeId:`RM`
 
 const formatDescription = (dBuilder:DocBuilder,f:TemplateNode,typeConstraint: string = '') =>
-  wrapTripleQuote(`\`[${formatNodeId(f)} ${typeConstraint}]\`
+
+    wrapTripleQuote(`\`[${formatNodeId(f)}${typeConstraint}]\`
                              ${dBuilder.getDescription(f)})`)
 
 const wrapTripleQuote = (inString: string) => `"""${inString}"""`
@@ -23,7 +27,6 @@ const appendFSHLM = (dBuilder: DocBuilder, f: TemplateNode, typeConstraint: stri
   const { sb } = dBuilder;
   sb.append(`${formatSpaces(f)}* ${snakeToCamel(f.localizedName?f.localizedName:f.id,isEntry(f.rmType))} ${formatOccurrences(f,true)} ${mapRmType2FHIR(f.rmType)} "${formatLocalName(f)}" ${formatDescription(dBuilder,f,typeConstraint)}`)
 }
-
 
 
 const appendExternalBinding = (f: TemplateNode, input: TemplateInput) => {
@@ -36,7 +39,6 @@ const appendExternalBinding = (f: TemplateNode, input: TemplateInput) => {
 
 const appendLocalBinding = (f: TemplateNode, input: TemplateInput) => {
   const { sb } = f.builder;
-
 
   const nodeName = snakeToCamel(f.localizedName ? f.localizedName : f.id, false)
   const vsName = snakeToCamel(f.localizedName ? f.localizedName : f.id, true)
@@ -130,24 +132,25 @@ export const fshl = {
 
       appendFSHLM(dBuilder, f)
 
-      const alias = appendCodesystem(f)
+      const csUrl = appendCodesystem(f)
 
       formatValueSetDefinition(f)
 
       f?.inputs?.forEach((input: TemplateInput) => {
-        if (input?.list) {
           if (input.suffix === 'code') {
             if (f?.annotations?.['vset_description'])
               appendExternalBinding(f, input)
             else
-            if (input?.list.length >0) {
-              input?.list?.forEach((item) => {
-                ab.append(`* ${alias}#${item.value} "${item.label}"`);
+            {
+              if (input.list && input.list.length >0) {
+                input.list?.forEach((item) => {
+                ab.append(`* ${csUrl}#${item.value} "${item.label}"`);
               })
+
+              }
               appendLocalBinding(f, input)
-            }
+             }
           }
-        }
       })
     },
 
@@ -195,7 +198,7 @@ formatDvText: (dBuilder: DocBuilder, f: TemplateNode) => {
           }
         });
 
-      appendFSHLM(dBuilder, f, unitStr)
+      appendFSHLM(dBuilder, f, ' '+ unitStr)
     },
 
     formatDvDefault: (dBuilder: DocBuilder, f: TemplateNode) => {
