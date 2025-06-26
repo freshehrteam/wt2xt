@@ -76,7 +76,7 @@ The default configuration is
 
 This application can be run using Docker, which eliminates the need to install dependencies locally. The Docker image includes Pandoc and TeX Live (BasicTex equivalent for Linux), so you can generate DOCX and PDF formats without installing these dependencies on your local machine.
 
-The Dcoker compose file also iincludes the Pandoc and BasicText dependencies
+The Dockerfile also includes the Pandoc and BasicTex dependencies
 
 ### Building the Docker Image
 
