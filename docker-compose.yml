@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  wt2docbx:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./templates:/app/templates
+      - ./out:/app/out
+      - ./config:/app/config
+    # Example command (can be overridden with docker-compose run wt2docbx [args])
+    # command: --web-template=./templates/example.json --export-format=adoc
+    user: "1001:1001"  # Use the non-root user created in the Dockerfile

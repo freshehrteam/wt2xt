@@ -26,26 +26,28 @@ export const fsh = {
       appendCodeSystemFSH(dBuilder)
       dBuilder.cb.newline('')
       const exportFileName = `${outFile}.fsh`
-      const writeNumber = await Bun.write(exportFileName, dBuilder.toString());
-      console.log(`\n Exported : ${exportFileName}`)
-      fsh.convertFSH(outFile, exportFileName)
+      const exportFSH = dBuilder.toString()
+      const writeNumber = await Bun.write(exportFileName, exportFSH);
+      console.log(`\nExported : ${exportFileName}`)
+      fsh.convertFSH(exportFSH, exportFileName)
         return writeNumber
   },
 
-  convertFSH: (dBuilder: DocBuilder, outFile: any) => {
-    const str = dBuilder.toString()
+  convertFSH: (exportFSH: string, outFile: any) => {
     let exportFileName: string = '';
-    sushiClient.fshToFhir(str, {
+    sushiClient.fshToFhir(exportFSH, {
         //  dependencies: [{ packageId: "hl7.fhir.us.core", version: "4.0.1" }],
         logLevel: "error",
       })
         .then((results) => {
-           results.fhir.forEach( async (fhirObject) => {
+           results.fhir.forEach((fhirObject) => {
              const fhirType: string = fhirObject.resourceType;
              const fhirId: string = fhirObject.id;
-           exportFileName = `${outFile}-${fhirType}-${fhirId}.json`
-          await Bun.write(exportFileName, JSON.stringify(fhirObject));
-          console.log(`\n Exported : ${exportFileName}`)
+             exportFileName = `${outFile}-${fhirType}-${fhirId}.json`
+             Bun.write(exportFileName, JSON.stringify(fhirObject))
+               .then(() => {
+                 console.log(`Converted from FSH : ${outFile}-${fhirType}-${fhirId}.json`)
+               })
            })// handle results
         })
         .catch((err) => {
