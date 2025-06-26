@@ -1,11 +1,12 @@
 import { DocBuilder } from "../DocBuilder";
 import  {adoc }from "./AdocFormatter"
 import {xmind } from "./XmindFormatter"
-import { TemplateNode } from "../TemplateNodes";
-import { formatOccurrences } from "../TemplateTypes";
+import { TemplateNode } from "../types/TemplateNodes";
+import { formatOccurrences } from "../types/TemplateTypes";
 import { docx, pdf } from "./PanDocFormatter";
 import { fshl } from './FshLogicalModelFormatter';
 import { fsh } from './FshCommon';
+import { fshq } from './QuestionnaireFormatter.ts';
 
 export enum ExportFormat {
   adoc = 'adoc',
@@ -14,11 +15,12 @@ export enum ExportFormat {
   pdf = 'pdf',
   fshl  = 'fshl',
   fsht = 'fsht',
+  fshq = 'fshq',
 }
 
 
 type FormatHeaderFn = (db: DocBuilder) => void;
-type SaveFileFn = (db: DocBuilder, outFile: string) =>  Promise<void>;
+type SaveFileFn = (db: DocBuilder, outFile: string) =>  Promise<number|void>;
 type FormatCompositionHeaderFn = (dBuilder: DocBuilder, f: TemplateNode) => void;
 export type FormatElementFn  = (docBuilder: DocBuilder, f: TemplateNode) => void;
 type FormatNodeContentFn = (dBuilder: DocBuilder, f: TemplateNode, isChoice: boolean) => void;
@@ -32,6 +34,9 @@ export const formatTemplateHeader = (docBuilder: DocBuilder): void => {
       fn= xmind.formatHeader
       break;
      case ExportFormat.fshl:
+       break;
+     case ExportFormat.fshq:
+       fn = fshq.formatTemplateHeader
        break;
      default:
         fn= adoc.formatTemplateHeader
@@ -53,6 +58,10 @@ export const formatCompositionHeader = (docBuilder: DocBuilder, f: TemplateNode)
     case ExportFormat.fshl:
       fn = fshl.formatCompositionHeader
       break;
+    case ExportFormat.fshq:
+      fn = fshq.formatCompositionHeader
+      break;
+
     default:
       fn = adoc.formatCompositionHeader
       break;
@@ -75,6 +84,7 @@ export const formatProvenanceTable = (docBuilder: DocBuilder) => {
     case ExportFormat.xmind:
       break;
     case ExportFormat.fshl:
+    case ExportFormat.fshq:
       break;
   }
 
@@ -93,6 +103,9 @@ export const formatChoiceHeader = (docBuilder: DocBuilder, f: TemplateNode): voi
     case ExportFormat.fshl:
       fn = fshl.formatChoiceHeader
       break;
+    case ExportFormat.fshq:
+      fn = fshq.formatChoiceHeader
+      break;
     default:
       fn = adoc.formatChoiceHeader
       break;
@@ -110,6 +123,7 @@ export const formatNodeHeader = (docBuilder: DocBuilder): void => {
     case ExportFormat.xmind:
       break;
     case ExportFormat.fshl:
+    case ExportFormat.fshq:
       break;
     default:
       fn = adoc.formatNodeHeader
@@ -127,6 +141,7 @@ export const formatNodeFooter = (docBuilder: DocBuilder, f: TemplateNode): void 
   switch (docBuilder.config.exportFormat) {
     case ExportFormat.xmind:
     case ExportFormat.fshl:
+    case ExportFormat.fshq:
       break;
     default:
       fn = adoc.formatNodeFooter
@@ -148,6 +163,9 @@ export const formatCompositionContextHeader = (docBuilder: DocBuilder, f: Templa
     case ExportFormat.fshl:
       fn = fshl.formatCompositionContextHeader
       break;
+      case ExportFormat.fshq:
+      fn = fshq.formatCompositionContextHeader
+      break;
     default:
       fn = adoc.formatCompositionContextHeader
       break;
@@ -166,6 +184,9 @@ export const formatEntryHeader = (docBuilder: DocBuilder, f: TemplateNode): void
       break;
     case ExportFormat.fshl:
       fn = fshl.formatEntryHeader;
+      break;
+      case ExportFormat.fshq:
+      fn = fshq.formatEntryHeader;
       break;
     default:
       fn = adoc.formatLeafHeader
@@ -186,6 +207,9 @@ export const formatLeafHeader = (docBuilder: DocBuilder, f: TemplateNode): void 
       case ExportFormat.fshl:
         fn = fshl.formatLeafHeader;
         break;
+        case ExportFormat.fshq:
+        fn = fshq.formatLeafHeader;
+        break;
     default:
         fn = adoc.formatLeafHeader
         break;
@@ -205,6 +229,9 @@ export const formatObservationEvent = (docBuilder: DocBuilder, f: TemplateNode):
     case ExportFormat.fshl:
       fn = fshl.formatObservationEvent
       break;
+    case ExportFormat.fshq:
+      fn = fshq.formatObservationEvent
+      break;
     default:
       fn = adoc.formatObservationEvent
       break;
@@ -219,9 +246,8 @@ export const formatInstructionActivity = (docBuilder: DocBuilder, f: TemplateNod
 
   switch (docBuilder.config.exportFormat) {
     case ExportFormat.xmind:
-  //    fn = xmind.formatObservationEvent
-      break;
     case ExportFormat.fshl:
+    case ExportFormat.fshq:
       break;
     default:
       fn = adoc.formatInstructionActivity
@@ -240,6 +266,9 @@ export const formatCluster = (docBuilder: DocBuilder, f: TemplateNode): void => 
     case ExportFormat.fshl:
       fn = fshl.formatCluster
       break;
+      case ExportFormat.fshq:
+      fn = fshq.formatCluster
+      break;
     default:
       fn = adoc.formatCluster
       break;
@@ -249,7 +278,7 @@ export const formatCluster = (docBuilder: DocBuilder, f: TemplateNode): void => 
     fn(docBuilder, f);
 }
 
-export const saveFile  = async (docBuilder: DocBuilder, outFile: string): Promise<void> => {
+export const saveFile  = async (docBuilder: DocBuilder, outFile: string): Promise<number|void> => {
   let fn: SaveFileFn;
 
   switch (docBuilder.config.exportFormat) {
@@ -259,6 +288,9 @@ export const saveFile  = async (docBuilder: DocBuilder, outFile: string): Promis
     case ExportFormat.fsht:
     case ExportFormat.fshl:
       fn = fsh.saveFile
+      break;
+    case ExportFormat.fshq:
+      fn = fsh.saveJson
       break;
 
     case ExportFormat.docx:
@@ -285,6 +317,9 @@ export const formatNodeContent= (dBuilder: DocBuilder, f: TemplateNode, isChoice
     case ExportFormat.fshl:
       fn = fshl.formatNodeContent
       break
+    case ExportFormat.fshq:
+      fn = fshq.formatNodeContent
+      break
     default:
       fn = adoc.formatNodeContent
       break
@@ -299,6 +334,7 @@ export const formatAnnotations= (dBuilder: DocBuilder, f: TemplateNode) =>{
 
   switch (dBuilder.config.exportFormat) {
     case ExportFormat.fshl:
+    case ExportFormat.fshq:
       break;
     case ExportFormat.xmind:
     default:
@@ -316,6 +352,7 @@ export const formatUnsupported= (dBuilder: DocBuilder, f: TemplateNode) =>{
   switch (dBuilder.config.exportFormat) {
     case ExportFormat.xmind:
     case ExportFormat.fshl:
+    case ExportFormat.fshq:
      break;
     default:
       fn = adoc.formatUnsupported

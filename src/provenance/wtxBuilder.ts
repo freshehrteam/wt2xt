@@ -1,4 +1,4 @@
-import { TemplateNode } from '../TemplateNodes';
+import { TemplateNode } from '../types/TemplateNodes';
 import { fetchADArchetype } from './openEProvenance';
 import { DocBuilder } from '../DocBuilder';
 import path from 'path';
@@ -41,6 +41,8 @@ export const resolveTemplateFiles = (config: Config): ResolvedTemplateFiles => {
 
   const {config} = docBuilder
 
+     if(!config.ADPassword || !config.ADUsername) return
+
   await fetchADArchetype(f.nodeId,config.ADUsername, config.ADPassword, config.ADRepositoryId, config.repositoryToken)
     .then((data) => {
 
@@ -67,13 +69,17 @@ export const resolveTemplateFiles = (config: Config): ResolvedTemplateFiles => {
 
 export const saveWtxFile = async (dBuilder: DocBuilder) => {
 
-  const outFile = dBuilder.resolvedTemplateFiles.wtxOutPath
+    const {config} = dBuilder
+
+    if(!config.ADPassword || !config.ADUsername) return
+
+    const outFile = dBuilder.resolvedTemplateFiles.wtxOutPath
  const wtString: string = JSON.stringify(dBuilder.wt, (key, value) => key ==='parentNode' || key === 'builder' ? undefined : value)
  // const wtString: string = JSON.stringify(dBuilder.wt)
 
   if (outFile) {
       fs.writeFileSync(outFile, wtString);
-      console.log(`\n Exported : ${outFile}`)
+      console.log(`\nExported : ${outFile}`)
   }
 }
 

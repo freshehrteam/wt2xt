@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/freshehr/wt2doc"
+    "url": "https://github.com/freshehrteam/wt2xt2"
   },
   "keywords": [
     "openEHR",
@@ -21,6 +21,7 @@
   "dependencies": {
     "@asciidoctor/core": "^3.0.2",
     "@asciidoctor/docbook-converter": "^3.0.0-beta.1",
+    "@smile-cdr/fhirts": "^2.2.8",
     "@types/node": "^20.14.10",
     "@types/node-fetch": "^2.6.10",
     "@types/ora": "^3.2.0",

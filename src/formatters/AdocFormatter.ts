@@ -1,7 +1,6 @@
 import { DocBuilder } from "../DocBuilder";
-import fs from "fs";
-import { findParentNodeId, TemplateNode,  TemplateInput } from "../TemplateNodes";
-import { formatOccurrences, isAnyChoice, isDisplayableNode, mapRmTypeText} from "../TemplateTypes";
+import { findParentNodeId, TemplateNode,  TemplateInput } from "../types/TemplateNodes";
+import { formatOccurrences, isAnyChoice, isDisplayableNode, mapRmTypeText} from "../types/TemplateTypes";
 import { formatAnnotations, formatOccurrencesText } from './DocFormatter';
 import { ArchetypeList} from '../provenance/openEProvenance';
 
@@ -29,9 +28,10 @@ export const adoc = {
     sb.append(`${f.localizedDescriptions["en"]}`).newline()
   },
 
-  saveFile: async (dBuilder: DocBuilder, outFile: string) => {
-    fs.writeFileSync(outFile, dBuilder.toString());
+  saveFile: async (docBuilder: DocBuilder, outFile: string) => {
+    const result = await Bun.write(outFile, docBuilder.toString(),{createPath: true});
     console.log(`\n Exported : ${outFile}`)
+    return result
   },
 
   formatNodeHeader: (dBuilder: DocBuilder) => {

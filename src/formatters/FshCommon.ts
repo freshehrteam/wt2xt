@@ -1,20 +1,41 @@
-import fs from "fs";
 import { sushiClient } from 'fsh-sushi';
 import { DocBuilder } from '../DocBuilder';
 
+const appendCodeSystemFSH = ( docBuilder :DocBuilder) => {
+   return
+    const {cb, codeSystems} = docBuilder;
+    for (const cs of codeSystems) {
+        cb.newline('')
+        cb.append(`CodeSystem: ${cs.id}`);
+        cb.append(`Id: ${cs.id}`);
+        cb.append( `Title: "${cs.title}"`);
+        cb.newline(`* ^url = "${cs.url}"`)
+    }
+}
 export const fsh = {
 
-  saveFile: async (dBuilder: DocBuilder, outFile: any): Promise<void> => {
+    saveJson: async (dBuilder: DocBuilder, outFile: any): Promise<void> => {
 
-    fs.writeFileSync(outFile, dBuilder.toString(), { encoding: "utf8" });
-    console.log(`\n Exported : ${outFile}`)
-    await fsh.convertFSH(dBuilder, outFile)
+        const exportFileName = `${outFile}.json`
+        await Bun.write(exportFileName, JSON.stringify(dBuilder.jb,null,2));
+        console.log(`\n Exported : ${exportFileName}`)
+    },
+
+    saveFile: async (dBuilder: DocBuilder, outFile: any): Promise<number> => {
+
+      appendCodeSystemFSH(dBuilder)
+      dBuilder.cb.newline('')
+      const exportFileName = `${outFile}.fsh`
+      const exportFSH = dBuilder.toString()
+      const writeNumber = await Bun.write(exportFileName, exportFSH);
+      console.log(`\nExported : ${exportFileName}`)
+      fsh.convertFSH(exportFSH, exportFileName)
+        return writeNumber
   },
 
-  convertFSH: async (dBuilder: DocBuilder, outFile: any):Promise<void> => {
-    const str = dBuilder.toString()
+  convertFSH: (exportFSH: string, outFile: any) => {
     let exportFileName: string = '';
-    sushiClient.fshToFhir(str, {
+    sushiClient.fshToFhir(exportFSH, {
         //  dependencies: [{ packageId: "hl7.fhir.us.core", version: "4.0.1" }],
         logLevel: "error",
       })
@@ -22,9 +43,11 @@ export const fsh = {
            results.fhir.forEach((fhirObject) => {
              const fhirType: string = fhirObject.resourceType;
              const fhirId: string = fhirObject.id;
-           exportFileName = `${outFile}-${fhirType}-${fhirId}.json`
-          fs.writeFileSync(exportFileName, JSON.stringify(fhirObject), { encoding: "utf8" });
-          console.log(`\n Exported : ${exportFileName}`)
+             exportFileName = `${outFile}-${fhirType}-${fhirId}.json`
+             Bun.write(exportFileName, JSON.stringify(fhirObject))
+               .then(() => {
+                 console.log(`Converted from FSH : ${outFile}-${fhirType}-${fhirId}.json`)
+               })
            })// handle results
         })
         .catch((err) => {

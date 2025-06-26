@@ -1,5 +1,5 @@
-import { findParentNodeId, TemplateNode } from './TemplateNodes';
-import { WebTemplate } from "./WebTemplate";
+import { findParentNodeId, TemplateNode } from './types/TemplateNodes';
+import { WebTemplate } from "./types/WebTemplate";
 import {
   isActivity,
   isAnyChoice, isArchetype, isCluster, isComposition,
@@ -7,7 +7,7 @@ import {
   isEntry,
   isEvent, isEventContext,
   isSection,
-} from './TemplateTypes';
+} from './types/TemplateTypes';
 import { StringBuilder } from "./StringBuilder";
 import rmDescriptions from "../resources/rm_descriptions.json";
 import {
@@ -40,6 +40,12 @@ import { Config } from './BuilderConfig';
 import path from 'path';
 import { augmentWebTemplate, ResolvedTemplateFiles, resolveTemplateFiles, saveWtxFile } from './provenance/wtxBuilder';
 import axios from 'axios';
+import {FHIRInstance} from "./types/JSONBuilder.ts";
+import {Questionnaire} from "@smile-cdr/fhirts/dist/FHIR-R4/classes/questionnaire";
+import {QuestionnaireItem} from "@smile-cdr/fhirts/dist/FHIR-R4/classes/questionnaireItem";
+import {CodeSystem} from "@smile-cdr/fhirts/dist/FHIR-R4/classes/codeSystem";
+import {ValueSet} from "@smile-cdr/fhirts/dist/FHIR-R4/classes/valueSet";
+
 
 
 export class DocBuilder {
@@ -47,22 +53,26 @@ export class DocBuilder {
   // stringified Tree
   sb: StringBuilder = new StringBuilder();
 
-  // vstringified Valuesets
-  vb: StringBuilder = new StringBuilder()
-
   // Stringified Codesystema
   cb: StringBuilder = new StringBuilder()
 
   // Stringified Codesystem Aliases
   ab: StringBuilder = new StringBuilder()
 
+  // JSONBuilder
+   jb: FHIRInstance = new Questionnaire();
 
+   codeSystems: CodeSystem[] = [];
+   valueSets: ValueSet[] = []
+
+  currentQuestionnaireItem: Array<QuestionnaireItem> | undefined = [];
 
   config: Config;
   localArchetypeList : ArchetypeList = [];
 //  candidateArchetypeList: ArchetypeList = []
   remoteArchetypeList: ArchetypeList = [];
   resolvedTemplateFiles!: ResolvedTemplateFiles;
+  idCounter = 0;
 
   readonly _wt: WebTemplate;
 
@@ -70,18 +80,20 @@ export class DocBuilder {
     this._wt = wt;
     this.config = config;
     this.config.defaultLang = wt.defaultLanguage;
-    this.generate().then( () => {
-
-      const outFilePath = this.handleOutPath(this.config.inFilePath, this.config.outFilePath, this.config.exportFormat,this.config.outFileDir);
-      saveFile(this, outFilePath).catch();
-
-      if (this.regenWtx() && this.isWtxAugmented() )
-        saveWtxFile(this).catch()
-    });
   }
 
   private regenWtx(): boolean {
     return (this.resolvedTemplateFiles.wtxOutPath !== null)
+  }
+
+  public run(): void{
+    this.generate().then( () => {
+      const outFilePath = this.handleOutPath(this.config.inFilePath, this.config.outFilePath, this.config.exportFormat,this.config.outFileDir);
+       saveFile(this, outFilePath).then( () => {
+       if (this.regenWtx() && this.isWtxAugmented())
+          saveWtxFile(this).catch()
+      })
+    })
   }
 
 // If the archetypeLists are empty, then the wtx Augmentation process has failed
@@ -103,8 +115,8 @@ export class DocBuilder {
 
     const sb:string = this.sb?`${this.sb.toString()}`:''
     const vb:string = this.ab?`${this.ab.toString()}`:''
-  //  const cb:string = this.cb?`${this.cb.toString()}`:''
-    return sb+vb
+    const cb:string = this.cb?`${this.cb.toString()}`:''
+    return sb+vb+cb
   }
 
   get wt(): WebTemplate {
@@ -120,13 +132,27 @@ export class DocBuilder {
   }
 
   private async walkChildren(f: TemplateNode, useSameDepth :boolean, nonContextOnly: boolean = false, ) {
+
+
     if (f.children) {
 
-      const newDepth = f.depth?useSameDepth?f.depth:f.depth+1:0
+
+ //     const newDepth:number = f.depth
+ //         ?(usf.depthSameDepth?f.depth:f.depth+1)
+ //         :0;
+      const childDepth = this.calcNewNodeDepth(f, useSameDepth);
+
+//      console.log('Use same depth', useSameDepth);
+
+//      console.log('Depth', f.depth);
+
 
       for( const child of f.children) {
         child.parentNode = f;
-        child.depth = newDepth;
+        child.depth = childDepth;
+//        console.log('Child id', child.id)
+//        console.log('Child Depth', child.depth)
+
         if (!nonContextOnly || (nonContextOnly && !child.inContext)) {
           await this.walk(child,this)
         }
@@ -134,8 +160,14 @@ export class DocBuilder {
     }
   }
 
+  private calcNewNodeDepth (f: TemplateNode, useSameDepth: boolean) {
+    f.depth = f.depth || 0;
+    const childDepth = useSameDepth ? f.depth : f.depth + 1;
+    return childDepth;
+  }
+
   private async walkNonRMChildren(f: TemplateNode, useSameDepth: boolean) {
-    await this.walkChildren(f, useSameDepth, true)
+    await this.walkChildren(f, useSameDepth, true )
   }
   private async walkCompositionContent(f: TemplateNode) {
     await this.walkChildren(f, true,true)
@@ -256,8 +288,8 @@ export class DocBuilder {
 //    this.archetypeList.push(f.nodeId)
     formatEntryHeader(this, f)
     formatNodeHeader(this)
-    await this.walkRmChildren(f,true);
-    await this.walkNonRMChildren(f,true)
+    await this.walkRmChildren(f,false);
+    await this.walkNonRMChildren(f,false)
     formatNodeFooter(this,f)
   }
 
@@ -266,7 +298,7 @@ export class DocBuilder {
     if (this.config.entriesOnly) return
 
       f.name = 'context';
-    f.depth = 0;
+  //  f.depth = 0;
     formatCompositionContextHeader(this, f);
     if (f.children?.length) {
       formatNodeHeader(this)
@@ -274,22 +306,21 @@ export class DocBuilder {
       await this.walkNonRMChildren(f, false)
       formatNodeFooter(this,f)
     }
-    f.depth = 0;
+    //f.depth = 0;
   }
 
   private async walkRmChildren(f: TemplateNode, useSameDepth: boolean) {
 
     const rmAttributes = new Array<TemplateNode>();
-    const newDepth = f.depth?(useSameDepth?f.depth:f.depth+1):0
 
     if (f.children) {
-      f.children.forEach((child) => {
+      f.children.forEach((child: TemplateNode) => {
         child.parentNode = f;
         if (!child?.inContext) return
 
         if (['ism_transition'].includes(child.id)) {
           if (child.children) {
-            child.children.forEach((ismChild) => {
+            child.children.forEach((ismChild: TemplateNode) => {
               ismChild.parentNode = f;
               this.stripExcludedRmTypes(ismChild, rmAttributes);
             });
@@ -302,9 +333,11 @@ export class DocBuilder {
 
     if (rmAttributes.length === 0) return
 
+    const childDepth = this.calcNewNodeDepth(f, useSameDepth);
+
     rmAttributes.forEach(child => {
       child.localizedName = child.id
-      child.depth = newDepth
+      child.depth = childDepth
       this.walk(child, this);
     });
 
@@ -424,10 +457,10 @@ export class DocBuilder {
   private walkChoiceHeader(f: TemplateNode) {
 
     formatChoiceHeader(this,f)
-    if (f.children && isAnyChoice(f.children.map(child => child.rmType)))
+    if (f.children && isAnyChoice(f.children.map((child: { rmType: any; }) => child.rmType)))
       return
 
-    f.children?.forEach((child) => {
+    f.children?.forEach((child : TemplateNode) => {
       child.parentNode = f
       this.walkChoice(child)
     });

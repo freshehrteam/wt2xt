@@ -1,7 +1,7 @@
 import { DocBuilder } from "../DocBuilder";
 import { adoc } from "./AdocFormatter";
 
-const CreateDocbook = (src: string): void => {
+ const CreateDocbook = (src: string): void => {
 
   const asciidoctor = require('@asciidoctor/core')()
   const docbookConverter = require('@asciidoctor/docbook-converter')
@@ -11,8 +11,10 @@ const CreateDocbook = (src: string): void => {
   const docbookContent = asciidoctor.convert(src, { backend: "docbook" });
 
   // Write DocBook content to a temporary file
-  const fs = require('fs');
-  fs.writeFileSync(`./tmp/tmpDocbook.xml`, docbookContent.toString());
+//  const fs = require('fs');
+ // fs.writeFileSync(`./tmp/tmpDocbook.xml`, docbookContent.toString());
+
+   Bun.write(`./tmp/tmpDocbook.xml`, docbookContent.toString());
 
 }
 

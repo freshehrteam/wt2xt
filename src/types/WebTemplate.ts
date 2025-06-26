@@ -7,4 +7,5 @@ export interface WebTemplate {
   defaultLanguage: string;
   languages: string[];
   tree: TemplateNode;
+  idCounter: number;
 }

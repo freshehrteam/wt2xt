@@ -1,0 +1,751 @@
+{
+  "resourceType": "StructureDefinition",
+  "id": "DiabetesAnnualReview",
+  "url": "http://openehr.org/StructureDefinition/DiabetesAnnualReview",
+  "version": "4.2.0",
+  "name": "DiabetesAnnualReview",
+  "title": "Diabetes - Annual care review",
+  "status": "active",
+  "description": "`[openEHR-EHR-COMPOSITION.encounter.v1 ]`\n                             Interaction, contact or care event between a subject of care and healthcare provider(s).)",
+  "fhirVersion": "4.0.1",
+  "kind": "logical",
+  "abstract": false,
+  "type": "http://openehr.org/StructureDefinition/DiabetesAnnualReview",
+  "baseDefinition": "http://hl7.org/fhir/StructureDefinition/Element",
+  "derivation": "specialization",
+  "differential": {
+    "element": [
+      {
+        "id": "DiabetesAnnualReview",
+        "path": "DiabetesAnnualReview",
+        "short": "Diabetes - Annual care review",
+        "definition": "`[openEHR-EHR-COMPOSITION.encounter.v1 ]`\n                             Interaction, contact or care event between a subject of care and healthcare provider(s).)"
+      },
+      {
+        "id": "DiabetesAnnualReview.category",
+        "path": "DiabetesAnnualReview.category",
+        "short": "category",
+        "definition": "`[RM ]`\n                             Temporal category of this Composition, persistent / episodic or event.)",
+        "min": 1,
+        "max": "1",
+        "type": [
+          {
+            "code": "CodeableConcept"
+          }
+        ],
+        "binding": {
+          "strength": "required",
+          "valueSet": "http://example.org/ValueSet/Category"
+        }
+      },
+      {
+        "id": "DiabetesAnnualReview.composer",
+        "path": "DiabetesAnnualReview.composer",
+        "short": "composer",
+        "definition": "`[RM ]`\n                             The person primarily responsible for the content of the Composition (but not necessarily its committal into the EHR system). This is the identifier which should appear on the screen. It may or may not be the person who entered the data. When it is the patient, the special self instance of `PARTY_SELF` will be used.)",
+        "min": 1,
+        "max": "1",
+        "type": [
+          {
+            "code": "BackboneElement"
+          }
+        ]
+      },
+      {
+        "id": "DiabetesAnnualReview.context",
+        "path": "DiabetesAnnualReview.context",
+        "short": "context",
+        "definition": "`[RM ]`\n                             `COMPOSITION.context` - Documents the context information of a healthcare event involving the subject of care and the health system. The context information recorded here are independent of the attributes recorded in the version audit, which document the system interaction context, i.e. the context of a user interacting with the health record system. Healthcare events include patient contacts, and any other business activity, such as pathology investigations which take place on behalf of the patient.)",
+        "min": 1,
+        "max": "1",
+        "type": [
+          {
+            "code": "BackboneElement"
+          }
+        ]
+      },
+      {
+        "id": "DiabetesAnnualReview.startTime",
+        "path": "DiabetesAnnualReview.startTime",
+        "short": "start_time",
+        "definition": "`[RM ]`\n                             COMPOSITION.context.start_time - Start time of the clinical session or other kind of event during which a provider performs a service of any kind for the patient.)",
+        "min": 1,
+        "max": "1",
+        "type": [
+          {
+            "code": "dateTime"
+          }
+        ]
+      },
+      {
+        "id": "DiabetesAnnualReview.setting",
+        "path": "DiabetesAnnualReview.setting",
+        "short": "setting",
+        "definition": "`[RM ]`\n                             The setting in which the clinical session took place. Coded using the openEHR Terminology, setting group.)",
+        "min": 1,
+        "max": "1",
+        "type": [
+          {
+            "code": "CodeableConcept"
+          }
+        ]
+      },
+      {
+        "id": "DiabetesAnnualReview.bodyMassMetrics",
+        "path": "DiabetesAnnualReview.bodyMassMetrics",
+        "short": "Body mass metrics",
+        "definition": "`[openEHR-EHR-SECTION.adhoc.v1 ]`\n                             A generic section header which should be renamed in a template to suit a specific clinical context.)",
+        "min": 0,
+        "max": "1",
+        "type": [
+          {
+            "code": "BackboneElement"
+          }
+        ]
+      },
+      {
+        "id": "DiabetesAnnualReview.bodyMassMetrics.Height",
+        "path": "DiabetesAnnualReview.bodyMassMetrics.Height",
+        "short": "Height",
+        "definition": "`[openEHR-EHR-OBSERVATION.height.v2 ]`\n                             Height, or body length, is measured from crown of head to sole of foot.)",
+        "min": 0,
+        "max": "1",
+        "type": [
+          {
+            "code": "BackboneElement"
+          }
+        ]
+      },
+      {
+        "id": "DiabetesAnnualReview.bodyMassMetrics.Height.time",
+        "path": "DiabetesAnnualReview.bodyMassMetrics.Height.time",
+        "short": "time",
+        "definition": "`[RM ]`\n                             `OBSERVATION.EVENT.time` - Time of this Observation event. If the width is non-zero, it is the time point of the trailing edge of the event.)",
+        "min": 1,
+        "max": "1",
+        "type": [
+          {
+            "code": "dateTime"
+          }
+        ]
+      },
+      {
+        "id": "DiabetesAnnualReview.bodyMassMetrics.Height.height",
+        "path": "DiabetesAnnualReview.bodyMassMetrics.Height.height",
+        "short": "Height",
+        "definition": "`[at0004  | cm[in_i]]`\n                             The length of the body from crown of head to sole of foot.)",
+        "min": 1,
+        "max": "1",
+        "type": [
+          {
+            "code": "Quantity"
+          }
+        ]
+      },
+      {
+        "id": "DiabetesAnnualReview.bodyMassMetrics.Weight",
+        "path": "DiabetesAnnualReview.bodyMassMetrics.Weight",
+        "short": "Weight",
+        "definition": "`[openEHR-EHR-OBSERVATION.body_weight.v2 ]`\n                             Measurement of the body weight of an individual.)",
+        "min": 0,
+        "max": "1",
+        "type": [
+          {
+            "code": "BackboneElement"
+          }
+        ]
+      },
+      {
+        "id": "DiabetesAnnualReview.bodyMassMetrics.Weight.time",
+        "path": "DiabetesAnnualReview.bodyMassMetrics.Weight.time",
+        "short": "time",
+        "definition": "`[RM ]`\n                             `OBSERVATION.EVENT.time` - Time of this Observation event. If the width is non-zero, it is the time point of the trailing edge of the event.)",
+        "min": 1,
+        "max": "1",
+        "type": [
+          {
+            "code": "dateTime"
+          }
+        ]
+      },
+      {
+        "id": "DiabetesAnnualReview.bodyMassMetrics.Weight.weight",
+        "path": "DiabetesAnnualReview.bodyMassMetrics.Weight.weight",
+        "short": "Weight",
+        "definition": "`[at0004  | kg[lb_av]g]`\n                             The weight of the individual.)",
+        "min": 1,
+        "max": "1",
+        "type": [
+          {
+            "code": "Quantity"
+          }
+        ]
+      },
+      {
+        "id": "DiabetesAnnualReview.bodyMassMetrics.BodyMassIndex",
+        "path": "DiabetesAnnualReview.bodyMassMetrics.BodyMassIndex",
+        "short": "Body mass index",
+        "definition": "`[openEHR-EHR-OBSERVATION.body_mass_index.v2 ]`\n                             Calculated measurement which compares a person's weight and height.)",
+        "min": 0,
+        "max": "1",
+        "type": [
+          {
+            "code": "BackboneElement"
+          }
+        ]
+      },
+      {
+        "id": "DiabetesAnnualReview.bodyMassMetrics.BodyMassIndex.time",
+        "path": "DiabetesAnnualReview.bodyMassMetrics.BodyMassIndex.time",
+        "short": "time",
+        "definition": "`[RM ]`\n                             `OBSERVATION.EVENT.time` - Time of this Observation event. If the width is non-zero, it is the time point of the trailing edge of the event.)",
+        "min": 1,
+        "max": "1",
+        "type": [
+          {
+            "code": "dateTime"
+          }
+        ]
+      },
+      {
+        "id": "DiabetesAnnualReview.bodyMassMetrics.BodyMassIndex.bodyMassIndex",
+        "path": "DiabetesAnnualReview.bodyMassMetrics.BodyMassIndex.bodyMassIndex",
+        "short": "Body mass index",
+        "definition": "`[at0004  | kg/m2[lb_av]/[in_i]2]`\n                             Index describing ratio of weight to height.)",
+        "min": 1,
+        "max": "1",
+        "type": [
+          {
+            "code": "Quantity"
+          }
+        ]
+      },
+      {
+        "id": "DiabetesAnnualReview.cardiovascular",
+        "path": "DiabetesAnnualReview.cardiovascular",
+        "short": "Cardiovascular",
+        "definition": "`[openEHR-EHR-SECTION.adhoc.v1 ]`\n                             A generic section header which should be renamed in a template to suit a specific clinical context.)",
+        "min": 0,
+        "max": "1",
+        "type": [
+          {
+            "code": "BackboneElement"
+          }
+        ]
+      },
+      {
+        "id": "DiabetesAnnualReview.cardiovascular.StandingBP",
+        "path": "DiabetesAnnualReview.cardiovascular.StandingBP",
+        "short": "Standing BP",
+        "definition": "`[openEHR-EHR-OBSERVATION.blood_pressure.v2 ]`\n                             The local measurement of arterial blood pressure which is a surrogate for arterial pressure in the systemic circulation.)",
+        "min": 0,
+        "max": "1",
+        "type": [
+          {
+            "code": "BackboneElement"
+          }
+        ]
+      },
+      {
+        "id": "DiabetesAnnualReview.cardiovascular.StandingBP.time",
+        "path": "DiabetesAnnualReview.cardiovascular.StandingBP.time",
+        "short": "time",
+        "definition": "`[RM ]`\n                             `OBSERVATION.EVENT.time` - Time of this Observation event. If the width is non-zero, it is the time point of the trailing edge of the event.)",
+        "min": 1,
+        "max": "1",
+        "type": [
+          {
+            "code": "dateTime"
+          }
+        ]
+      },
+      {
+        "id": "DiabetesAnnualReview.cardiovascular.StandingBP.systolic",
+        "path": "DiabetesAnnualReview.cardiovascular.StandingBP.systolic",
+        "short": "Systolic",
+        "definition": "`[at0004  | mm[Hg]]`\n                             Peak systemic arterial blood pressure  - measured in systolic or contraction phase of the heart cycle.)",
+        "min": 0,
+        "max": "1",
+        "type": [
+          {
+            "code": "Quantity"
+          }
+        ]
+      },
+      {
+        "id": "DiabetesAnnualReview.cardiovascular.StandingBP.diastolic",
+        "path": "DiabetesAnnualReview.cardiovascular.StandingBP.diastolic",
+        "short": "Diastolic",
+        "definition": "`[at0005  | mm[Hg]]`\n                             Minimum systemic arterial blood pressure - measured in the diastolic or relaxation phase of the heart cycle.)",
+        "min": 0,
+        "max": "1",
+        "type": [
+          {
+            "code": "Quantity"
+          }
+        ]
+      },
+      {
+        "id": "DiabetesAnnualReview.cardiovascular.StandingBP.position",
+        "path": "DiabetesAnnualReview.cardiovascular.StandingBP.position",
+        "short": "Position",
+        "definition": "`[at0008 ]`\n                             The position of the individual at the time of measurement.)",
+        "min": 0,
+        "max": "1",
+        "type": [
+          {
+            "code": "CodeableConcept"
+          }
+        ],
+        "binding": {
+          "strength": "required",
+          "valueSet": "http://example.org/ValueSet/Position"
+        }
+      },
+      {
+        "id": "DiabetesAnnualReview.cardiovascular.PulseRate",
+        "path": "DiabetesAnnualReview.cardiovascular.PulseRate",
+        "short": "Pulse rate",
+        "definition": "`[openEHR-EHR-OBSERVATION.pulse.v2 ]`\n                             The rate and associated attributes for a pulse or heart beat.)",
+        "min": 0,
+        "max": "1",
+        "type": [
+          {
+            "code": "BackboneElement"
+          }
+        ]
+      },
+      {
+        "id": "DiabetesAnnualReview.cardiovascular.PulseRate.time",
+        "path": "DiabetesAnnualReview.cardiovascular.PulseRate.time",
+        "short": "time",
+        "definition": "`[RM ]`\n                             `OBSERVATION.EVENT.time` - Time of this Observation event. If the width is non-zero, it is the time point of the trailing edge of the event.)",
+        "min": 1,
+        "max": "1",
+        "type": [
+          {
+            "code": "dateTime"
+          }
+        ]
+      },
+      {
+        "id": "DiabetesAnnualReview.cardiovascular.PulseRate.rate",
+        "path": "DiabetesAnnualReview.cardiovascular.PulseRate.rate",
+        "short": "Rate",
+        "definition": "`[at0004  | /min]`\n                             The rate of the pulse or heart beat, measured in beats per minute.)",
+        "min": 0,
+        "max": "1",
+        "type": [
+          {
+            "code": "Quantity"
+          }
+        ]
+      },
+      {
+        "id": "DiabetesAnnualReview.cardiovascular.SittingLyingBP",
+        "path": "DiabetesAnnualReview.cardiovascular.SittingLyingBP",
+        "short": "Sitting / lying BP",
+        "definition": "`[openEHR-EHR-OBSERVATION.blood_pressure.v2 ]`\n                             The local measurement of arterial blood pressure which is a surrogate for arterial pressure in the systemic circulation.)",
+        "min": 0,
+        "max": "1",
+        "type": [
+          {
+            "code": "BackboneElement"
+          }
+        ]
+      },
+      {
+        "id": "DiabetesAnnualReview.cardiovascular.SittingLyingBP.time",
+        "path": "DiabetesAnnualReview.cardiovascular.SittingLyingBP.time",
+        "short": "time",
+        "definition": "`[RM ]`\n                             `OBSERVATION.EVENT.time` - Time of this Observation event. If the width is non-zero, it is the time point of the trailing edge of the event.)",
+        "min": 1,
+        "max": "1",
+        "type": [
+          {
+            "code": "dateTime"
+          }
+        ]
+      },
+      {
+        "id": "DiabetesAnnualReview.cardiovascular.SittingLyingBP.systolic",
+        "path": "DiabetesAnnualReview.cardiovascular.SittingLyingBP.systolic",
+        "short": "Systolic",
+        "definition": "`[at0004  | mm[Hg]]`\n                             Peak systemic arterial blood pressure  - measured in systolic or contraction phase of the heart cycle.)",
+        "min": 0,
+        "max": "1",
+        "type": [
+          {
+            "code": "Quantity"
+          }
+        ]
+      },
+      {
+        "id": "DiabetesAnnualReview.cardiovascular.SittingLyingBP.diastolic",
+        "path": "DiabetesAnnualReview.cardiovascular.SittingLyingBP.diastolic",
+        "short": "Diastolic",
+        "definition": "`[at0005  | mm[Hg]]`\n                             Minimum systemic arterial blood pressure - measured in the diastolic or relaxation phase of the heart cycle.)",
+        "min": 0,
+        "max": "1",
+        "type": [
+          {
+            "code": "Quantity"
+          }
+        ]
+      },
+      {
+        "id": "DiabetesAnnualReview.cardiovascular.SittingLyingBP.position",
+        "path": "DiabetesAnnualReview.cardiovascular.SittingLyingBP.position",
+        "short": "Position",
+        "definition": "`[at0008 ]`\n                             The position of the individual at the time of measurement.)",
+        "min": 0,
+        "max": "1",
+        "type": [
+          {
+            "code": "CodeableConcept"
+          }
+        ],
+        "binding": {
+          "strength": "required",
+          "valueSet": "http://example.org/ValueSet/Position"
+        }
+      },
+      {
+        "id": "DiabetesAnnualReview.visualAcuity",
+        "path": "DiabetesAnnualReview.visualAcuity",
+        "short": "Visual Acuity",
+        "definition": "`[openEHR-EHR-SECTION.adhoc.v1 ]`\n                             A generic section header which should be renamed in a template to suit a specific clinical context.)",
+        "min": 0,
+        "max": "1",
+        "type": [
+          {
+            "code": "BackboneElement"
+          }
+        ]
+      },
+      {
+        "id": "DiabetesAnnualReview.visualAcuity.VisualAcuity",
+        "path": "DiabetesAnnualReview.visualAcuity.VisualAcuity",
+        "short": "Visual acuity",
+        "definition": "`[openEHR-EHR-OBSERVATION.visual_acuity.v0 ]`\n                             Visual acuity is a measure of the spatial resolution of the visual processing system.)",
+        "min": 0,
+        "max": "1",
+        "type": [
+          {
+            "code": "BackboneElement"
+          }
+        ]
+      },
+      {
+        "id": "DiabetesAnnualReview.visualAcuity.VisualAcuity.anyEvent",
+        "path": "DiabetesAnnualReview.visualAcuity.VisualAcuity.anyEvent",
+        "short": "Any event",
+        "definition": "`[at0134 ]`\n                             Default, unspecified point in time or interval event which may be explicitly defined in a template or at run-time.)",
+        "min": 0,
+        "max": "*",
+        "type": [
+          {
+            "code": "BackboneElement"
+          }
+        ]
+      },
+      {
+        "id": "DiabetesAnnualReview.visualAcuity.VisualAcuity.anyEvent.resultDetails",
+        "path": "DiabetesAnnualReview.visualAcuity.VisualAcuity.anyEvent.resultDetails",
+        "short": "Result details",
+        "definition": "`[at0053 ]`\n                             Details of the visual field test result for each eye.)",
+        "min": 0,
+        "max": "2",
+        "type": [
+          {
+            "code": "BackboneElement"
+          }
+        ]
+      },
+      {
+        "id": "DiabetesAnnualReview.visualAcuity.VisualAcuity.anyEvent.resultDetails.eyeExamined",
+        "path": "DiabetesAnnualReview.visualAcuity.VisualAcuity.anyEvent.resultDetails.eyeExamined",
+        "short": "Eye examined",
+        "definition": "`[at0007 ]`\n                             The eye which is being examined.)",
+        "min": 1,
+        "max": "1",
+        "type": [
+          {
+            "code": "CodeableConcept"
+          }
+        ],
+        "binding": {
+          "strength": "required",
+          "valueSet": "http://example.org/ValueSet/EyeExamined"
+        }
+      },
+      {
+        "id": "DiabetesAnnualReview.visualAcuity.VisualAcuity.anyEvent.resultDetails.notation",
+        "path": "DiabetesAnnualReview.visualAcuity.VisualAcuity.anyEvent.resultDetails.notation",
+        "short": "Notation",
+        "definition": "`[at0028 ]`\n                             Details of a visual acuity result recorded using one of the result notation formats.)",
+        "min": 0,
+        "max": "1",
+        "type": [
+          {
+            "code": "BackboneElement"
+          }
+        ]
+      },
+      {
+        "id": "DiabetesAnnualReview.visualAcuity.VisualAcuity.anyEvent.resultDetails.notation.metricSnellen",
+        "path": "DiabetesAnnualReview.visualAcuity.VisualAcuity.anyEvent.resultDetails.notation.metricSnellen",
+        "short": "Metric Snellen",
+        "definition": "`[at0056 ]`\n                             The distance test result, recorded in Snellen format expressed in metres, where 6/6 is regarded as normal.)",
+        "min": 0,
+        "max": "1",
+        "type": [
+          {
+            "code": "Ratio"
+          }
+        ]
+      },
+      {
+        "id": "DiabetesAnnualReview.visualAcuity.VisualAcuity.anyEvent.resultDetails.notation.uSSnellen",
+        "path": "DiabetesAnnualReview.visualAcuity.VisualAcuity.anyEvent.resultDetails.notation.uSSnellen",
+        "short": "US Snellen",
+        "definition": "`[at0009 ]`\n                             The distance test result, recorded as Snellen visual acuity expressed in feet, where 20/20 is regarded as normal.)",
+        "min": 0,
+        "max": "1",
+        "type": [
+          {
+            "code": "Ratio"
+          }
+        ]
+      },
+      {
+        "id": "DiabetesAnnualReview.visualAcuity.VisualAcuity.anyEvent.resultDetails.notation.decimalSnellen",
+        "path": "DiabetesAnnualReview.visualAcuity.VisualAcuity.anyEvent.resultDetails.notation.decimalSnellen",
+        "short": "Decimal Snellen",
+        "definition": "`[at0057 ]`\n                             The distance test result,recorded as Sn ellen visual acuity expressed as a decimal ratio, where 1.0 is regarded as normal.)",
+        "min": 0,
+        "max": "1",
+        "type": [
+          {
+            "code": "Ratio"
+          }
+        ]
+      },
+      {
+        "id": "DiabetesAnnualReview.visualAcuity.VisualAcuity.anyEvent.resultDetails.notation.logMar",
+        "path": "DiabetesAnnualReview.visualAcuity.VisualAcuity.anyEvent.resultDetails.notation.logMar",
+        "short": "logMar",
+        "definition": "`[at0046  | 1]`\n                             The test result, recorded as logMar visual acuity, where a value of 0 is regarded as normal.)",
+        "min": 0,
+        "max": "1",
+        "type": [
+          {
+            "code": "Quantity"
+          }
+        ]
+      },
+      {
+        "id": "DiabetesAnnualReview.visualAcuity.VisualAcuity.anyEvent.resultDetails.interpretation",
+        "path": "DiabetesAnnualReview.visualAcuity.VisualAcuity.anyEvent.resultDetails.interpretation",
+        "short": "Interpretation",
+        "definition": "`[at0066 ]`\n                             Clinical interpretation of all results for the test eye.)",
+        "min": 0,
+        "max": "*",
+        "type": [
+          {
+            "code": "CodeableConcept"
+          }
+        ]
+      },
+      {
+        "id": "DiabetesAnnualReview.visualAcuity.VisualAcuity.anyEvent.resultDetails.noTestResult",
+        "path": "DiabetesAnnualReview.visualAcuity.VisualAcuity.anyEvent.resultDetails.noTestResult",
+        "short": "No test result",
+        "definition": "`[at0055 ]`\n                             No visual acuity test result is available for the test eye.)",
+        "min": 0,
+        "max": "1",
+        "type": [
+          {
+            "code": "boolean"
+          }
+        ]
+      },
+      {
+        "id": "DiabetesAnnualReview.visualAcuity.VisualAcuity.anyEvent.resultDetails.reasonForNoTestResult",
+        "path": "DiabetesAnnualReview.visualAcuity.VisualAcuity.anyEvent.resultDetails.reasonForNoTestResult",
+        "short": "Reason for no test result",
+        "definition": "`[at0140 ]`\n                             Reason why no visual acuity test result is available for the test eye.)",
+        "min": 0,
+        "max": "1",
+        "type": [
+          {
+            "code": "CodeableConcept"
+          }
+        ],
+        "binding": {
+          "strength": "preferred",
+          "valueSet": "http://example.org/ValueSet/ReasonForNoTestResult"
+        }
+      },
+      {
+        "id": "DiabetesAnnualReview.visualAcuity.VisualAcuity.anyEvent.time",
+        "path": "DiabetesAnnualReview.visualAcuity.VisualAcuity.anyEvent.time",
+        "short": "Time",
+        "definition": "`[RM ]`\n                             )",
+        "min": 1,
+        "max": "1",
+        "type": [
+          {
+            "code": "dateTime"
+          }
+        ]
+      },
+      {
+        "id": "DiabetesAnnualReview.visualAcuity.VisualAcuity.visualAcuityStatus",
+        "path": "DiabetesAnnualReview.visualAcuity.VisualAcuity.visualAcuityStatus",
+        "short": "Visual acuity status",
+        "definition": "`[openEHR-EHR-CLUSTER.visual_acuity_status.v0 ]`\n                             Visual acuity status)",
+        "min": 0,
+        "max": "1",
+        "type": [
+          {
+            "code": "BackboneElement"
+          }
+        ]
+      },
+      {
+        "id": "DiabetesAnnualReview.visualAcuity.VisualAcuity.visualAcuityStatus.registeredBlind",
+        "path": "DiabetesAnnualReview.visualAcuity.VisualAcuity.visualAcuityStatus.registeredBlind",
+        "short": "Registered blind",
+        "definition": "`[at0001 ]`\n                             )",
+        "min": 0,
+        "max": "1",
+        "type": [
+          {
+            "code": "CodeableConcept"
+          }
+        ],
+        "binding": {
+          "strength": "required",
+          "valueSet": "http://example.org/ValueSet/RegisteredBlind"
+        }
+      },
+      {
+        "id": "DiabetesAnnualReview.visualAcuity.VisualAcuity.visualAcuityStatus.attendsDiabeticEyeScreening",
+        "path": "DiabetesAnnualReview.visualAcuity.VisualAcuity.visualAcuityStatus.attendsDiabeticEyeScreening",
+        "short": "Attends diabetic eye screening",
+        "definition": "`[at0004 ]`\n                             )",
+        "min": 0,
+        "max": "1",
+        "type": [
+          {
+            "code": "CodeableConcept"
+          }
+        ],
+        "binding": {
+          "strength": "required",
+          "valueSet": "http://example.org/ValueSet/AttendsDiabeticEyeScreening"
+        }
+      },
+      {
+        "id": "DiabetesAnnualReview.visualAcuity.VisualAcuity.visualAcuityStatus.eyeAbsent",
+        "path": "DiabetesAnnualReview.visualAcuity.VisualAcuity.visualAcuityStatus.eyeAbsent",
+        "short": "Eye absent",
+        "definition": "`[at0008 ]`\n                             )",
+        "min": 0,
+        "max": "1",
+        "type": [
+          {
+            "code": "CodeableConcept"
+          }
+        ],
+        "binding": {
+          "strength": "required",
+          "valueSet": "http://example.org/ValueSet/EyeAbsent"
+        }
+      },
+      {
+        "id": "DiabetesAnnualReview.urineAssessment",
+        "path": "DiabetesAnnualReview.urineAssessment",
+        "short": "Urine assessment",
+        "definition": "`[openEHR-EHR-SECTION.adhoc.v1 ]`\n                             A generic section header which should be renamed in a template to suit a specific clinical context.)",
+        "min": 0,
+        "max": "1",
+        "type": [
+          {
+            "code": "BackboneElement"
+          }
+        ]
+      },
+      {
+        "id": "DiabetesAnnualReview.urineAssessment.Urinalysis",
+        "path": "DiabetesAnnualReview.urineAssessment.Urinalysis",
+        "short": "Urinalysis",
+        "definition": "`[openEHR-EHR-OBSERVATION.urinalysis.v1 ]`\n                             Qualitative and semi-quantitative test array using reagent test strips to indicate possible abnormalities in a sample of urine, often performed as part of Point of Care Testing (POCT).)",
+        "min": 0,
+        "max": "1",
+        "type": [
+          {
+            "code": "BackboneElement"
+          }
+        ]
+      },
+      {
+        "id": "DiabetesAnnualReview.urineAssessment.Urinalysis.time",
+        "path": "DiabetesAnnualReview.urineAssessment.Urinalysis.time",
+        "short": "time",
+        "definition": "`[RM ]`\n                             `OBSERVATION.EVENT.time` - Time of this Observation event. If the width is non-zero, it is the time point of the trailing edge of the event.)",
+        "min": 1,
+        "max": "1",
+        "type": [
+          {
+            "code": "dateTime"
+          }
+        ]
+      },
+      {
+        "id": "DiabetesAnnualReview.VisualCertificationUK",
+        "path": "DiabetesAnnualReview.VisualCertificationUK",
+        "short": "Visual certification UK",
+        "definition": "`[openEHR-EHR-ADMIN_ENTRY.visual_certification_uk.v0 ]`\n                             To record details of a formal assessment of visual impairment in the UK.)",
+        "min": 0,
+        "max": "1",
+        "type": [
+          {
+            "code": "BackboneElement"
+          }
+        ]
+      },
+      {
+        "id": "DiabetesAnnualReview.VisualCertificationUK.certifiedImpairment",
+        "path": "DiabetesAnnualReview.VisualCertificationUK.certifiedImpairment",
+        "short": "Certified impairment",
+        "definition": "`[at0002 ]`\n                             )",
+        "min": 0,
+        "max": "1",
+        "type": [
+          {
+            "code": "CodeableConcept"
+          }
+        ],
+        "binding": {
+          "strength": "required",
+          "valueSet": "http://example.org/ValueSet/CertifiedImpairment"
+        }
+      },
+      {
+        "id": "DiabetesAnnualReview.VisualCertificationUK.dateAssessed",
+        "path": "DiabetesAnnualReview.VisualCertificationUK.dateAssessed",
+        "short": "Date assessed",
+        "definition": "`[at0006 ]`\n                             )",
+        "min": 0,
+        "max": "1",
+        "type": [
+          {
+            "code": "dateTime"
+          }
+        ]
+      }
+    ]
+  }
+}

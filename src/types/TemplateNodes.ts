@@ -1,4 +1,5 @@
-import { DocBuilder } from './DocBuilder';
+import { DocBuilder } from '../DocBuilder';
+import {QuestionnaireItem} from "@smile-cdr/fhirts/dist/FHIR-R4/classes/questionnaireItem";
 
 // Original schema from Better Web templates
 
@@ -22,19 +23,21 @@ export interface WebTemplateNode {
 }
 
 export interface TemplateNode extends WebTemplateNode{
-  builder: DocBuilder; // parent Docbulider obect
+  builder: DocBuilder; // parent Docbuilder object
   parentNode: TemplateNode;
 
   // Extensions to formal webTemplate
   original_namespace?: string;
   original_publisher?: string;
-  archetype_id?:string
+  archetype_id:string
   custodian_namespace?: string;
   custodian_organisation?: string;
   revision?: string;
   lifecycleState?:string;
   build_id?:string;
+  questionnaireItemRoot: QuestionnaireItem[];
 }
+
 
 
 export interface TemplateInput {

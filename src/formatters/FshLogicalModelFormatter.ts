@@ -1,15 +1,24 @@
 import { DocBuilder } from "../DocBuilder";
-import { TemplateInput, TemplateNode } from '../TemplateNodes';
-import { formatOccurrences, isEntry, mapRmType2FHIR, snakeToCamel } from '../TemplateTypes';
+import { TemplateInput, TemplateNode } from '../types/TemplateNodes';
+import { formatOccurrences, isEntry, mapRmType2FHIR, snakeToCamel } from '../types/TemplateTypes';
 import { formatLeafHeader } from './DocFormatter';
-import { formatValueSetDefinition } from './FshTerminologyFormatter';
+import {appendCodesystem, formatValueSetDefinition} from './FshTerminologyFormatter';
+
+//const sanitiseFhirName  = (name: string): string  => name.replace(/[^a-zA-Z0-9_-]/g, '_')
 
 const formatLocalName = (f:TemplateNode) => f.localizedName ? f.localizedName : f.name;
-const formatSpaces = (f:TemplateNode) => f.depth ? " ".repeat(f.depth * 2) : "";
+  // Strip out any characters that are not numeric, alphabetical, underscore (_) or hyphen (-)
+const formatSpaces = (node:TemplateNode) => {
+  if (!node.depth)
+    node.depth = 0
+  return " ".repeat(node.depth * 2)
+}
+
 const formatNodeId = (f: TemplateNode):string => f.nodeId?f.nodeId:`RM`
 
 const formatDescription = (dBuilder:DocBuilder,f:TemplateNode,typeConstraint: string = '') =>
-  wrapTripleQuote(`\`[${formatNodeId(f)} ${typeConstraint}]\`
+
+    wrapTripleQuote(`\`[${formatNodeId(f)}${typeConstraint}]\`
                              ${dBuilder.getDescription(f)})`)
 
 const wrapTripleQuote = (inString: string) => `"""${inString}"""`
@@ -18,6 +27,8 @@ const appendFSHLM = (dBuilder: DocBuilder, f: TemplateNode, typeConstraint: stri
   const { sb } = dBuilder;
   sb.append(`${formatSpaces(f)}* ${snakeToCamel(f.localizedName?f.localizedName:f.id,isEntry(f.rmType))} ${formatOccurrences(f,true)} ${mapRmType2FHIR(f.rmType)} "${formatLocalName(f)}" ${formatDescription(dBuilder,f,typeConstraint)}`)
 }
+
+
 const appendExternalBinding = (f: TemplateNode, input: TemplateInput) => {
   const { sb } = f.builder;
   // Pick up an external valueset description annotation
@@ -28,6 +39,7 @@ const appendExternalBinding = (f: TemplateNode, input: TemplateInput) => {
 
 const appendLocalBinding = (f: TemplateNode, input: TemplateInput) => {
   const { sb } = f.builder;
+
   const nodeName = snakeToCamel(f.localizedName ? f.localizedName : f.id, false)
   const vsName = snakeToCamel(f.localizedName ? f.localizedName : f.id, true)
   // Pick up an external valueset description annotation
@@ -38,6 +50,7 @@ const appendLocalBinding = (f: TemplateNode, input: TemplateInput) => {
 const formatFSHDefinition = (dBuilder: DocBuilder, f: TemplateNode) => {
   const { sb,wt,config } = dBuilder;
   const techName = snakeToCamel(f.localizedName, true);
+
   sb.append(`Logical: ${techName}`);
   sb.append(`Title: "${wt.templateId}"`);
   sb.append(`Parent: Element`);
@@ -57,14 +70,12 @@ export const fshl = {
 
     if (config.entriesOnly) return
 
-     formatFSHDefinition(dBuilder,f)
+    formatFSHDefinition(dBuilder,f)
   },
 
   formatCompositionContextHeader: (dBuilder: DocBuilder, f: TemplateNode) => {
     appendFSHLM(dBuilder,f)
   },
-
-
 
   formatNodeContent: (_docBuilder: DocBuilder | null, f: TemplateNode, isChoice: boolean) => {
     // Stop Choice being called twice as alreadty handled by Choice Header
@@ -81,7 +92,6 @@ export const fshl = {
       formatFSHDefinition(dBuilder, f);
     else
       formatLeafHeader(dBuilder,f)
-
   },
 
   formatLeafHeader: (dBuilder: DocBuilder, f: TemplateNode) => {
@@ -94,7 +104,6 @@ export const fshl = {
 
   formatObservationEvent: (dBuilder: DocBuilder, f: TemplateNode) => {
     appendFSHLM(dBuilder,f)
-
   },
 
   formatChoiceHeader: (dBuilder: DocBuilder, f: TemplateNode, _isChoice = true) => {
@@ -123,23 +132,25 @@ export const fshl = {
 
       appendFSHLM(dBuilder, f)
 
+      const csUrl = appendCodesystem(f)
 
       formatValueSetDefinition(f)
 
       f?.inputs?.forEach((input: TemplateInput) => {
-        if (input?.list) {
           if (input.suffix === 'code') {
             if (f?.annotations?.['vset_description'])
               appendExternalBinding(f, input)
             else
-            if (input?.list.length >0) {
-              input?.list?.forEach((item) => {
-                ab.append(`* $local#${item.value} "${item.label}"`);
+            {
+              if (input.list && input.list.length >0) {
+                input.list?.forEach((item) => {
+                ab.append(`* ${csUrl}#${item.value} "${item.label}"`);
               })
+
+              }
               appendLocalBinding(f, input)
-            }
+             }
           }
-        }
       })
     },
 
@@ -147,6 +158,7 @@ formatDvText: (dBuilder: DocBuilder, f: TemplateNode) => {
   const { ab} = dBuilder;
 
    appendFSHLM(dBuilder,f)
+  appendCodesystem(f)
 
       f.inputs?.forEach((input: TemplateInput) => {
         if (input.suffix && !['other'].includes(input.suffix))
@@ -165,6 +177,7 @@ formatDvText: (dBuilder: DocBuilder, f: TemplateNode) => {
   formatDvOrdinal: (dBuilder: DocBuilder, f: TemplateNode) => {
   const { sb , config} = dBuilder;
 
+    appendCodesystem(f)
   f.inputs?.forEach((input) => {
     if (input.list)
       input.list.forEach((listItem) => {
@@ -185,7 +198,7 @@ formatDvText: (dBuilder: DocBuilder, f: TemplateNode) => {
           }
         });
 
-      appendFSHLM(dBuilder, f, unitStr)
+      appendFSHLM(dBuilder, f, ' '+ unitStr)
     },
 
     formatDvDefault: (dBuilder: DocBuilder, f: TemplateNode) => {
