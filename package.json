@@ -1,14 +1,14 @@
 {
-  "name": "wt2docbx",
+  "name": "wt2xt",
   "version": "1.0.0-rc2",
   "description": "WebTemplate to Asciidoc documentation - a util by Bifrost modified by freshEHR ",
   "main": "index.js",
   "bin": {
-    "wt2docbx": "./src/index.ts"
+    "wt2xt": "./src/index.ts"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/freshehrteam/wt2xt2"
+    "url": "https://github.com/freshehrteam/wt2xt"
   },
   "keywords": [
     "openEHR",
@@ -27,8 +27,8 @@
     "@types/ora": "^3.2.0",
     "asciidoctor": "^3.0.0",
     "axios": "^1.7.2",
-    "fsh-sushi": "^3.11.0",
-    "hl7.fhir.r4.core": "^0.0.1-security",
+    "fs-extra": "^11.2.0",
+    "fsh-sushi": "^3.16.0",
     "node-fetch": "^3.3.2",
     "node-pandoc": "^0.3.0",
     "ora": "^5.1.0",
@@ -38,7 +38,16 @@
     "yargs": "^16.1.0"
   },
   "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "@types/jest": "^29.5.12",
     "@types/yargs": "^15.0.9",
-    "@types/bun": "^1.0.0"
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.2",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.8.3"
+  },
+  "scripts": {
+    "test": "jest",
+    "dev": "ts-node src/index.ts"
   }
 }

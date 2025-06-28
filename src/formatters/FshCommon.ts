@@ -1,5 +1,6 @@
 import { sushiClient } from 'fsh-sushi';
 import { DocBuilder } from '../DocBuilder';
+import * as fs from 'fs-extra';
 
 const appendCodeSystemFSH = ( docBuilder :DocBuilder) => {
    return
@@ -17,7 +18,7 @@ export const fsh = {
     saveJson: async (dBuilder: DocBuilder, outFile: any): Promise<void> => {
 
         const exportFileName = `${outFile}.json`
-        await Bun.write(exportFileName, JSON.stringify(dBuilder.jb,null,2));
+        await fs.writeFile(exportFileName, JSON.stringify(dBuilder.jb,null,2));
         console.log(`\n Exported : ${exportFileName}`)
     },
 
@@ -27,16 +28,18 @@ export const fsh = {
       dBuilder.cb.newline('')
       const exportFileName = `${outFile}.fsh`
       const exportFSH = dBuilder.toString()
-      const writeNumber = await Bun.write(exportFileName, exportFSH);
+      await fs.writeFile(exportFileName, exportFSH);
       console.log(`\nExported : ${exportFileName}`)
       fsh.convertFSH(exportFSH, exportFileName)
-        return writeNumber
+      // Return the length of the written data as an approximation of bytes written
+      return Buffer.from(exportFSH).length;
   },
 
   convertFSH: (exportFSH: string, outFile: any) => {
     let exportFileName: string = '';
+
     sushiClient.fshToFhir(exportFSH, {
-        //  dependencies: [{ packageId: "hl7.fhir.us.core", version: "4.0.1" }],
+        fhirVersion: "4.0.1",
         logLevel: "error",
       })
         .then((results) => {
@@ -44,7 +47,7 @@ export const fsh = {
              const fhirType: string = fhirObject.resourceType;
              const fhirId: string = fhirObject.id;
              exportFileName = `${outFile}-${fhirType}-${fhirId}.json`
-             Bun.write(exportFileName, JSON.stringify(fhirObject))
+             fs.writeFile(exportFileName, JSON.stringify(fhirObject))
                .then(() => {
                  console.log(`Converted from FSH : ${outFile}-${fhirType}-${fhirId}.json`)
                })

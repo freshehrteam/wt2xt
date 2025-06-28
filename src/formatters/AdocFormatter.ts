@@ -3,7 +3,8 @@ import { findParentNodeId, TemplateNode,  TemplateInput } from "../types/Templat
 import { formatOccurrences, isAnyChoice, isDisplayableNode, mapRmTypeText} from "../types/TemplateTypes";
 import { formatAnnotations, formatOccurrencesText } from './DocFormatter';
 import { ArchetypeList} from '../provenance/openEProvenance';
-
+import * as fs from 'fs-extra';
+import * as path from 'path';
 
 export const adoc = {
 
@@ -29,9 +30,12 @@ export const adoc = {
   },
 
   saveFile: async (docBuilder: DocBuilder, outFile: string) => {
-    const result = await Bun.write(outFile, docBuilder.toString(),{createPath: true});
-    console.log(`\n Exported : ${outFile}`)
-    return result
+    // Ensure the directory exists
+    await fs.ensureDir(path.dirname(outFile));
+    await fs.writeFile(outFile, docBuilder.toString());
+    console.log(`\n Exported : ${outFile}`);
+    // Return the length of the written data as an approximation of bytes written
+    return Buffer.from(docBuilder.toString()).length;
   },
 
   formatNodeHeader: (dBuilder: DocBuilder) => {

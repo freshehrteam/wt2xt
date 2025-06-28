@@ -1,7 +1,8 @@
 import { DocBuilder } from "../DocBuilder";
 import { adoc } from "./AdocFormatter";
+import * as fs from 'fs-extra';
 
- const CreateDocbook = (src: string): void => {
+ const CreateDocbook = async (src: string): Promise<void> => {
 
   const asciidoctor = require('@asciidoctor/core')()
   const docbookConverter = require('@asciidoctor/docbook-converter')
@@ -10,11 +11,10 @@ import { adoc } from "./AdocFormatter";
 
   const docbookContent = asciidoctor.convert(src, { backend: "docbook" });
 
+  // Ensure tmp directory exists
+  await fs.ensureDir('./tmp');
   // Write DocBook content to a temporary file
-//  const fs = require('fs');
- // fs.writeFileSync(`./tmp/tmpDocbook.xml`, docbookContent.toString());
-
-   Bun.write(`./tmp/tmpDocbook.xml`, docbookContent.toString());
+  await fs.writeFile(`./tmp/tmpDocbook.xml`, docbookContent.toString());
 
 }
 
@@ -22,7 +22,7 @@ const runPandoc = async (src: string, format: string, outFile: string ): Promise
   const { exec } = require('child_process');
   const args = `-f docbook -t ${format}  -o './${outFile}'`
 
-  CreateDocbook(src)
+  await CreateDocbook(src)
 
   const command = `pandoc ${args} ./tmp/tmpDocbook.xml`
 

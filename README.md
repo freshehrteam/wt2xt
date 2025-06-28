@@ -81,7 +81,7 @@ The Dockerfile also includes the Pandoc and BasicTex dependencies
 ### Building the Docker Image
 
 ```bash
-docker build -t wt2docbx .
+docker build -t wt2xt .
 ```
 
 ### Running with Docker

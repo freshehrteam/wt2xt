@@ -1,4 +1,4 @@
-#!/usr/bin/env bun
+#!/usr/bin/env node
 import yargs from "yargs"
 //import ora from 'ora';
 import  * as fs from 'fs';

@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import { Config, importConfig } from '../../src/BuilderConfig';
 import { StringBuilder } from '../../src/StringBuilder';
 
-import {test, describe, beforeAll, expect } from "bun:test";
+import {test, describe, beforeAll, expect } from "@jest/globals";
 
 let builder: DocBuilder;
 let testBuilder: StringBuilder

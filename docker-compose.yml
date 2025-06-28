@@ -1,14 +1,16 @@
-version: '3.8'
-
 services:
-  wt2docbx:
+  wt2xt:
+    container_name: wt2xt
     build:
       context: .
       dockerfile: Dockerfile
+    network_mode: host
+    ports:
+      - "3000:3000"
     volumes:
       - ./templates:/app/templates
       - ./out:/app/out
       - ./config:/app/config
-    # Example command (can be overridden with docker-compose run wt2docbx [args])
+    # Example command (can be overridden with docker-compose run wt2xt [args])
     # command: --web-template=./templates/example.json --export-format=adoc
     user: "1001:1001"  # Use the non-root user created in the Dockerfile

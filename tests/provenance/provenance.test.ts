@@ -2,7 +2,7 @@ import { DocBuilder } from '../../src/DocBuilder';
 import fs from 'node:fs';
 import { Config, importConfig } from '../../src/BuilderConfig';
 import { fetchADArchetype } from '../../src/provenance/openEProvenance';
-import {describe, test,expect,beforeAll} from "bun:test";
+import {describe, test, expect, beforeAll} from "@jest/globals";
 
 let builder: DocBuilder;
 
@@ -29,4 +29,3 @@ describe('Provenance  tests', () => {
 
 
 });
-

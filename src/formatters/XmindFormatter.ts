@@ -1,4 +1,4 @@
-//import fs from "fs";
+import * as fs from 'fs-extra';
 import { parseXMindMarkToXMindFile} from "xmindmark";
 
 import { DocBuilder } from "../DocBuilder";
@@ -34,12 +34,13 @@ export const xmind = {
 
   saveFile: async (dBuilder: DocBuilder, outFile: any): Promise <number>  => {
     const xmindArrayBuffer = await parseXMindMarkToXMindFile(dBuilder.toString())
-    await Bun.write('./tmp/tmp.md', dBuilder.toString());
-    return await Bun.write(outFile, Buffer.from(xmindArrayBuffer));
-
-   // fs.writeFileSync(', {encoding: "utf8"});
-   // fs.writeFileSync(outFile, Buffer.from(xmindArrayBuffer), {encoding: "utf8"});
-    console.log(`\n Exported : ${outFile}`)
+    // Ensure tmp directory exists
+    await fs.ensureDir('./tmp');
+    await fs.writeFile('./tmp/tmp.md', dBuilder.toString());
+    await fs.writeFile(outFile, Buffer.from(xmindArrayBuffer));
+    console.log(`\n Exported : ${outFile}`);
+    // Return the length of the written data as an approximation of bytes written
+    return Buffer.from(xmindArrayBuffer).length;
   },
 
   formatNodeContent: (dBuilder: DocBuilder, f: TemplateNode, _isChoice: boolean) => {
