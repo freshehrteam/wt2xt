@@ -1,16 +1,16 @@
 # syntax=docker/dockerfile:1
 
-# Use a specific version of the Node.js image for better reproducibility
-FROM node:22 AS base
+# Use Bun as the base image
+FROM oven/bun:1 AS base
 WORKDIR /app
 
 # Create a stage for installing dependencies
 FROM base AS deps
 # Copy only package.json and lockfile to leverage Docker caching
-COPY package.json package-lock.json* ./
+COPY package.json bun.lockb* ./
 
 # Install dependencies including dev dependencies
-RUN npm ci
+RUN bun install
 
 # Create a stage for production
 FROM base AS build
@@ -21,6 +21,8 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 # Make the CLI tool executable
 RUN chmod +x ./src/index.ts
+# Build the application
+RUN bun run build
 
 # Create the final production image
 FROM base AS runtime
@@ -36,26 +38,26 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # Create a non-root user and set permissions
-RUN addgroup --system --gid 1001 nodeuser && \
-    adduser --system --uid 1001 --ingroup nodeuser nodeuser && \
-    chown -R nodeuser:nodeuser /app
+RUN addgroup --system --gid 1001 bunuser && \
+    adduser --system --uid 1001 --ingroup bunuser bunuser && \
+    chown -R bunuser:bunuser /app
 
 # Copy only the necessary files from the build stage
-COPY --from=build --chown=nodeuser:nodeuser /app/package.json ./package.json
-COPY --from=build --chown=nodeuser:nodeuser /app/tsconfig.json ./tsconfig.json
-COPY --from=build --chown=nodeuser:nodeuser /app/node_modules ./node_modules
-COPY --from=build --chown=nodeuser:nodeuser /app/src ./src
-COPY --from=build --chown=nodeuser:nodeuser /app/config ./config
-COPY --from=build --chown=nodeuser:nodeuser /app/resources ./resources
-COPY --from=build --chown=nodeuser:nodeuser /app/sushi-config.yaml ./sushi-config.yaml
+COPY --from=build --chown=bunuser:bunuser /app/package.json ./package.json
+COPY --from=build --chown=bunuser:bunuser /app/bun.lockb ./bun.lockb
+COPY --from=build --chown=bunuser:bunuser /app/node_modules ./node_modules
+COPY --from=build --chown=bunuser:bunuser /app/dist ./dist
+COPY --from=build --chown=bunuser:bunuser /app/config ./config
+COPY --from=build --chown=bunuser:bunuser /app/resources ./resources
+COPY --from=build --chown=bunuser:bunuser /app/sushi-config.yaml ./sushi-config.yaml
 # Create symbolic link to make the CLI tool available globally
-RUN ln -s /app/src/index.ts /usr/local/bin/wt2xt
+RUN ln -s /app/dist/index.js /usr/local/bin/wt2xt
 
 # Switch to non-root user
-USER nodeuser
+USER bunuser
 
 # Set the entrypoint to the CLI tool
-ENTRYPOINT ["node", "--require", "ts-node/register", "/app/src/index.ts"]
+ENTRYPOINT ["bun", "run", "/app/dist/index.js"]
 
 EXPOSE 3000
 # Default command (can be overridden)

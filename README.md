@@ -6,6 +6,36 @@ App to convert openEHR 'web templates' to Asciidoc, Xmind and other output forma
 Documentation for clinical applications should be written and maintained in one single truth. 
 The openEHR web template is such a resource. This project generates asciidoc files and other exports for a given template. 
 
+## Installation
+
+### Using Bun (recommended)
+
+This application can be run using [Bun](https://bun.sh/), a fast JavaScript runtime and package manager.
+
+1. Install Bun:
+```bash
+curl -fsSL https://bun.sh/install | bash
+```
+
+2. Install dependencies:
+```bash
+bun install
+```
+
+3. Build the application:
+```bash
+bun run build
+```
+
+### Using npm (legacy)
+
+Alternatively, you can use npm:
+
+```bash
+npm install
+npm run build
+```
+
 ## Usage 
 ```
 ❯ wt2xt
@@ -18,6 +48,18 @@ Options:
     -- config-file,  -cfg    default: "config/wtconfig.json"       [string]
 
  ``` 
+
+### Running with Bun
+
+```bash
+bun run start -- --web-template=./templates/example.json
+```
+
+Or for development:
+
+```bash
+bun run dev -- --web-template=./templates/example.json
+```
 
 ## Export formats
 
@@ -74,9 +116,7 @@ The default configuration is
 
 ## Docker Usage
 
-This application can be run using Docker, which eliminates the need to install dependencies locally. The Docker image includes Pandoc and TeX Live (BasicTex equivalent for Linux), so you can generate DOCX and PDF formats without installing these dependencies on your local machine.
-
-The Dockerfile also includes the Pandoc and BasicTex dependencies
+This application can be run using Docker, which eliminates the need to install dependencies locally. The Docker image is now based on Bun instead of Node.js for improved performance. It includes Pandoc and TeX Live (BasicTex equivalent for Linux), so you can generate DOCX and PDF formats without installing these dependencies on your local machine.
 
 ### Building the Docker Image
 
@@ -87,7 +127,7 @@ docker build -t wt2xt .
 ### Running with Docker
 
 ```bash
-docker run -v $(pwd)/templates:/app/templates -v $(pwd)/out:/app/out -v $(pwd)/config:/app/config wt2docbx --web-template=./templates/example.json --export-format=adoc
+docker run -v $(pwd)/templates:/app/templates -v $(pwd)/out:/app/out -v $(pwd)/config:/app/config wt2xt --web-template=./templates/example.json --export-format=adoc
 ```
 
 ### Using Docker Compose
@@ -95,7 +135,7 @@ docker run -v $(pwd)/templates:/app/templates -v $(pwd)/out:/app/out -v $(pwd)/c
 1. Build and run the application:
 
 ```bash
-docker-compose run wt2docbx --web-template=./templates/example.json --export-format=adoc
+docker-compose run wt2xt --web-template=./templates/example.json --export-format=adoc
 ```
 
 2. Or, modify the `command` in `docker-compose.yml` and run:
@@ -110,3 +150,11 @@ The Docker setup mounts the following directories as volumes:
 - `./config`: Configuration directory
 
 This allows you to work with files on your local machine while running the application in a container.
+
+### Performance Benefits with Bun
+
+The Docker image now uses Bun instead of Node.js, which provides several benefits:
+- Faster startup times
+- Reduced memory usage
+- Improved TypeScript compilation speed
+- Smaller image size
