@@ -1,13 +1,14 @@
 # syntax=docker/dockerfile:1
 
 # Use a specific version of the Node.js image for better reproducibility
-FROM node:21-slim AS base
+FROM node:22 AS base
 WORKDIR /app
 
 # Create a stage for installing dependencies
 FROM base AS deps
 # Copy only package.json and lockfile to leverage Docker caching
 COPY package.json package-lock.json* ./
+
 # Install dependencies including dev dependencies
 RUN npm ci
 
@@ -41,6 +42,7 @@ RUN addgroup --system --gid 1001 nodeuser && \
 
 # Copy only the necessary files from the build stage
 COPY --from=build --chown=nodeuser:nodeuser /app/package.json ./package.json
+COPY --from=build --chown=nodeuser:nodeuser /app/tsconfig.json ./tsconfig.json
 COPY --from=build --chown=nodeuser:nodeuser /app/node_modules ./node_modules
 COPY --from=build --chown=nodeuser:nodeuser /app/src ./src
 COPY --from=build --chown=nodeuser:nodeuser /app/config ./config
