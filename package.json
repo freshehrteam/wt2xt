@@ -3,8 +3,9 @@
   "version": "1.0.0-rc2",
   "description": "WebTemplate to Asciidoc documentation - a util by Bifrost modified by freshEHR ",
   "bin": {
-    "wt2xt": "./src/index.ts"
+    "wt2xt": "./dist/index.js"
   },
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "https://github.com/freshehrteam/wt2xt"
@@ -48,6 +49,9 @@
   },
   "scripts": {
     "test": "jest",
-    "dev": "ts-node src/index.ts"
+    "dev": "node --loader ts-node/esm src/index.ts",
+    "build": "tsc",
+    "start": "npm run build && node dist/index.js"
   }
+
 }
