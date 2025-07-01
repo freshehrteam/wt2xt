@@ -6,7 +6,6 @@
   "bin": {
     "wt2xt": "./src/index.ts"
   },
-  "type": "module",
   "repository": {
     "type": "git",
     "url": "https://github.com/freshehrteam/wt2xt"

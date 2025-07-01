@@ -29,11 +29,8 @@ WORKDIR /app
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     pandoc \
-    texlive-latex-base \
-    texlive-fonts-recommended \
-    texlive-latex-extra \
-    texlive-xetex \
-    texlive-fonts-extra && \
+    fonts-lmodern \
+    lmodern && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
