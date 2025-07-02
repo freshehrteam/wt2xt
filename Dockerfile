@@ -22,7 +22,7 @@ COPY . .
 # Make the CLI tool executable
 RUN chmod +x ./src/index.ts
 # Build the application
-RUN bun run build
+RUN bun run bun-build
 
 # Create the final production image
 FROM base AS runtime

@@ -40,5 +40,10 @@
   "devDependencies": {
     "@types/yargs": "^15.0.9",
     "@types/bun": "^1.0.0"
+  },
+  "scripts": {
+    "dev": "bun --watch src/index.ts",
+    "build": "tsc",
+    "bun-build": "bun build ./src/index.ts --outdir ./dist --target bun"
   }
 }
