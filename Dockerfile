@@ -55,8 +55,8 @@ COPY --from=build --chown=bunuser:bunuser /app/sushi-config.yaml /app/sushi-conf
 # Create symbolic link to make the CLI tool available globally
 RUN ln -s /app/src/index.ts /usr/local/bin/wt2xt
 
-# Create output and templates directories with more permissive permissions
-RUN mkdir -p /app/out /app/templates && chmod -R 777 /app/out
+# Create output, templates, and tmp directories with more permissive permissions
+RUN mkdir -p /app/out /app/templates /app/tmp && chmod -R 777 /app/out /app/tmp
 
 # Switch to non-root user
 USER bunuser

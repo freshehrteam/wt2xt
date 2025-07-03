@@ -127,7 +127,7 @@ docker build -t wt2xt .
 ### Running with Docker
 
 ```bash
-docker run -v $(pwd)/templates:/app/templates -v $(pwd)/out:/app/out -v $(pwd)/config:/app/config wt2xt --web-template=./templates/example.json --export-format=adoc
+docker run -v $(pwd)/templates:/app/templates -v $(pwd)/out:/app/out -v $(pwd)/tmp:/app/tmp -v $(pwd)/config:/app/config wt2xt --web-template=./templates/example.json --export-format=adoc
 ```
 
 ### Using Docker Compose
@@ -147,7 +147,10 @@ docker-compose up
 The Docker setup mounts the following directories as volumes:
 - `./templates`: Input templates directory
 - `./out`: Output directory
+- `./tmp`: Temporary files directory
 - `./config`: Configuration directory
+
+**Note**: When running on Linux, ensure that the `tmp` directory exists and has appropriate permissions (e.g., `chmod 777 tmp`). This is necessary for temporary file operations during PDF and DOCX generation.
 
 This allows you to work with files on your local machine while running the application in a container.
 

@@ -10,6 +10,7 @@ services:
     volumes:
       - ./templates:/app/templates
       - ./out:/app/out:rw
+      - ./tmp:/app/tmp:rw
       - ./config:/app/config
     # Example command (can be overridden with docker-compose run wt2xt [args])
     # command: --web-template=./templates/example.json --export-format=adoc
@@ -17,4 +18,3 @@ services:
 
     # Ensure host directories exist with proper permissions before starting
     # This helps with Linux permission issues
-
