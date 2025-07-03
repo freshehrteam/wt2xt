@@ -49,7 +49,6 @@ COPY --from=build --chown=bunuser:bunuser /app/node_modules ./node_modules
 COPY --from=build --chown=bunuser:bunuser /app/src/index.ts ./src/index.ts
 COPY --from=build --chown=bunuser:bunuser /app/dist ./dist
 COPY --from=build --chown=bunuser:bunuser /app/src ./src
-
 COPY --from=build --chown=bunuser:bunuser /app/config ./config
 COPY --from=build --chown=bunuser:bunuser /app/resources ./resources
 COPY --from=build --chown=bunuser:bunuser /app/sushi-config.yaml ./sushi-config.yaml
