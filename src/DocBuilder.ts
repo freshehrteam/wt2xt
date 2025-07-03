@@ -114,7 +114,7 @@ export class DocBuilder {
       fs.ensureDirSync(outDir);
 
       console.log('outdir',outDir);
-      const filePath = `"${outDir}/${pathSeg.name }.${fExt}"`;
+      const filePath = `${outDir}/${pathSeg.name }.${fExt}`;
       console.log('filePath',filePath);
       return filePath
     }
