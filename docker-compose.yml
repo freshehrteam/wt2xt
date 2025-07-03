@@ -17,9 +17,4 @@ services:
 
     # Ensure host directories exist with proper permissions before starting
     # This helps with Linux permission issues
-    entrypoint: >
-      /bin/bash -c "
-        mkdir -p /app/out /app/templates &&
-        chmod -R 777 /app/out &&
-        bun run /app/src/index.ts \$$@
-      "
+
