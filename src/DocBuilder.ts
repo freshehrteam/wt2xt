@@ -113,7 +113,7 @@ export class DocBuilder {
       // Ensure the output directory exists
       fs.ensureDirSync(outDir);
 
-      return  `"${outDir}/${pathSeg.name}.${fExt}"`;
+      return  `${outDir}/${pathSeg.name}.${fExt}`;
     }
   }
   public toString(): string {
