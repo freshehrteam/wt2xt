@@ -57,7 +57,7 @@ COPY --from=build --chown=bunuser:bunuser /app/sushi-config.yaml ./sushi-config.
 RUN ln -s /app/src/index.ts /usr/local/bin/wt2xt
 
 # Create output and templates directories with more permissive permissions
-RUN mkdir -p /app/out /app/templates && chmod -R 777 /app/out /app/templates
+RUN mkdir -p /app/out /app/templates && chmod -R 777 /app/out
 
 # Switch to non-root user
 USER bunuser
