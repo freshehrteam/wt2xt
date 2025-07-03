@@ -20,6 +20,6 @@ services:
     entrypoint: >
       /bin/bash -c "
         mkdir -p /app/out /app/templates &&
-        chmod -R 777 /app/out /app/templates &&
+        chmod -R 777 /app/out &&
         bun run /app/src/index.ts \$$@
       "
