@@ -113,10 +113,7 @@ export class DocBuilder {
       // Ensure the output directory exists
       fs.ensureDirSync(outDir);
 
-      // Create a safe filename by replacing spaces with underscores
-      const safeName = pathSeg.name.replace(/\s+/g, '_');
-
-      return  `${outDir}/${safeName}.${fExt}`;
+      return  `"${outDir}/${pathSeg.name}.${fExt}"`;
     }
   }
   public toString(): string {

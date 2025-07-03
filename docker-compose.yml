@@ -14,3 +14,12 @@ services:
     # Example command (can be overridden with docker-compose run wt2xt [args])
     # command: --web-template=./templates/example.json --export-format=adoc
     user: "1001:1001"  # Use the non-root user created in the Dockerfile
+
+    # Ensure host directories exist with proper permissions before starting
+    # This helps with Linux permission issues
+    entrypoint: >
+      /bin/bash -c "
+        mkdir -p /app/out /app/templates &&
+        chmod -R 777 /app/out /app/templates &&
+        bun run /app/src/index.ts \$$@
+      "
