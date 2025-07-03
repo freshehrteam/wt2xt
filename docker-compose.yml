@@ -9,7 +9,7 @@ services:
       - "3000:3000"
     volumes:
       - ./templates:/app/templates
-      - ./out:/app/out
+      - ./out:/app/out:rw
       - ./config:/app/config
     # Example command (can be overridden with docker-compose run wt2xt [args])
     # command: --web-template=./templates/example.json --export-format=adoc

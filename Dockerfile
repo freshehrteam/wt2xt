@@ -7,7 +7,7 @@ WORKDIR /app
 # Create a stage for installing dependencies
 FROM base AS deps
 # Copy only package.json and lockfile to leverage Docker caching
-COPY package.json bun.lockb* ./
+COPY package.json bun.lockb* /app/
 
 # Install dependencies including dev dependencies
 RUN bun install
@@ -16,11 +16,11 @@ RUN bun install
 FROM base AS build
 WORKDIR /app
 # Copy dependencies from deps stage
-COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/node_modules /app/node_modules
 # Copy application code
-COPY . .
+COPY . /app/
 # Make the CLI tool executable
-RUN chmod +x ./src/index.ts
+RUN chmod +x /app/src/index.ts
 # Build the application
 RUN bun run bun-build
 
@@ -43,15 +43,15 @@ RUN addgroup --system --gid 1001 bunuser && \
     chown -R bunuser:bunuser /app
 
 # Copy only the necessary files from the build stage
-COPY --from=build --chown=bunuser:bunuser /app/package.json ./package.json
-COPY --from=build --chown=bunuser:bunuser /app/bun.lockb ./bun.lockb
-COPY --from=build --chown=bunuser:bunuser /app/node_modules ./node_modules
-COPY --from=build --chown=bunuser:bunuser /app/src/index.ts ./src/index.ts
-COPY --from=build --chown=bunuser:bunuser /app/dist ./dist
-COPY --from=build --chown=bunuser:bunuser /app/src ./src
-COPY --from=build --chown=bunuser:bunuser /app/config ./config
-COPY --from=build --chown=bunuser:bunuser /app/resources ./resources
-COPY --from=build --chown=bunuser:bunuser /app/sushi-config.yaml ./sushi-config.yaml
+COPY --from=build --chown=bunuser:bunuser /app/package.json /app/package.json
+COPY --from=build --chown=bunuser:bunuser /app/bun.lockb /app/bun.lockb
+COPY --from=build --chown=bunuser:bunuser /app/node_modules /app/node_modules
+COPY --from=build --chown=bunuser:bunuser /app/src/index.ts /app/src/index.ts
+COPY --from=build --chown=bunuser:bunuser /app/dist /app/dist
+COPY --from=build --chown=bunuser:bunuser /app/src /app/src
+COPY --from=build --chown=bunuser:bunuser /app/config /app/config
+COPY --from=build --chown=bunuser:bunuser /app/resources /app/resources
+COPY --from=build --chown=bunuser:bunuser /app/sushi-config.yaml /app/sushi-config.yaml
 # Create symbolic link to make the CLI tool available globally
 RUN ln -s /app/src/index.ts /usr/local/bin/wt2xt
 
