@@ -46,18 +46,24 @@ RUN addgroup --system --gid 1001 bunuser && \
 COPY --from=build --chown=bunuser:bunuser /app/package.json ./package.json
 COPY --from=build --chown=bunuser:bunuser /app/bun.lockb ./bun.lockb
 COPY --from=build --chown=bunuser:bunuser /app/node_modules ./node_modules
+COPY --from=build --chown=bunuser:bunuser /app/src/index.ts ./src/index.ts
 COPY --from=build --chown=bunuser:bunuser /app/dist ./dist
+COPY --from=build --chown=bunuser:bunuser /app/src ./src
+
 COPY --from=build --chown=bunuser:bunuser /app/config ./config
 COPY --from=build --chown=bunuser:bunuser /app/resources ./resources
 COPY --from=build --chown=bunuser:bunuser /app/sushi-config.yaml ./sushi-config.yaml
 # Create symbolic link to make the CLI tool available globally
-RUN ln -s /app/dist/index.js /usr/local/bin/wt2xt
+RUN ln -s /app/src/index.ts /usr/local/bin/wt2xt
+
+# Create output and templates directories
+RUN mkdir -p /app/out /app/templates && chown -R bunuser:bunuser /app/out /app/templates
 
 # Switch to non-root user
 USER bunuser
 
 # Set the entrypoint to the CLI tool
-ENTRYPOINT ["bun", "run", "/app/dist/index.js"]
+ENTRYPOINT ["bun", "run", "/app/src/index.ts"]
 
 EXPOSE 3000
 # Default command (can be overridden)
