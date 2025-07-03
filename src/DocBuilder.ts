@@ -38,6 +38,7 @@ import {
 } from './provenance/openEProvenance';
 import { Config } from './BuilderConfig';
 import path from 'path';
+import * as fs from 'fs-extra';
 import { augmentWebTemplate, ResolvedTemplateFiles, resolveTemplateFiles, saveWtxFile } from './provenance/wtxBuilder';
 import axios from 'axios';
 import {FHIRInstance} from "./types/JSONBuilder.ts";
@@ -108,7 +109,14 @@ export class DocBuilder {
 
       const fExt:string = ext === 'wtx'?'wtx.json': ext;
       const pathSeg = path.parse(infile);
-      return  `${outDir}/${pathSeg.name}.${fExt}`;
+
+      // Ensure the output directory exists
+      fs.ensureDirSync(outDir);
+
+      // Create a safe filename by replacing spaces with underscores
+      const safeName = pathSeg.name.replace(/\s+/g, '_');
+
+      return  `${outDir}/${safeName}.${fExt}`;
     }
   }
   public toString(): string {

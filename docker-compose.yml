@@ -1,9 +1,10 @@
 services:
   wt2xt:
-    container_name: wt2xt
+
+    image: wt2xt
     build:
       context: .
-      dockerfile: Dockerfile
+
     ports:
       - "3000:3000"
     volumes:
