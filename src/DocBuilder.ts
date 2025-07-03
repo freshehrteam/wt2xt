@@ -113,7 +113,10 @@ export class DocBuilder {
       // Ensure the output directory exists
       fs.ensureDirSync(outDir);
 
-      return  `${outDir}/${pathSeg.name}.${fExt}`;
+      console.log('outdir',outDir);
+      const filePath = `"${outDir}/${pathSeg.name }.${fExt}"`;
+      console.log('filePath',filePath);
+      return filePath
     }
   }
   public toString(): string {
