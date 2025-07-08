@@ -12,9 +12,12 @@ services:
       - ./out:/app/out:rw
       - ./tmp:/app/tmp:rw
       - ./config:/app/config
-    # Example command (can be overridden with docker-compose run wt2xt [args])
-    # command: --web-template=./templates/example.json --export-format=adoc
+    # Run the API server by default
+    command: api
     user: "1001:1001"  # Use the non-root user created in the Dockerfile
+
+    # To run the CLI tool instead, use:
+    # docker-compose run --rm wt2xt --web-template=./templates/example.json --export-format=adoc
 
     # Ensure host directories exist with proper permissions before starting
     # This helps with Linux permission issues

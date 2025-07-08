@@ -61,9 +61,15 @@ RUN mkdir -p /app/out /app/templates /app/tmp && chmod -R 777 /app/out /app/tmp
 # Switch to non-root user
 USER bunuser
 
-# Set the entrypoint to the CLI tool
-ENTRYPOINT ["bun", "run", "/app/src/index.ts"]
-
+# Expose port for API server
 EXPOSE 3000
+
+# Create an entrypoint script to handle both CLI and API modes
+COPY --from=build --chown=bunuser:bunuser /app/cli /app/cli
+RUN echo '#!/bin/sh\nif [ "$1" = "api" ]; then\n  shift\n  exec bun run /app/src/api.ts "$@"\nelse\n  exec bun run /app/src/index.ts "$@"\nfi' > /app/cli/entrypoint.sh && \
+    chmod +x /app/cli/entrypoint.sh
+
+ENTRYPOINT ["/app/cli/entrypoint.sh"]
+
 # Default command (can be overridden)
 CMD ["--help"]

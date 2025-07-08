@@ -21,12 +21,14 @@
   "dependencies": {
     "@asciidoctor/core": "^3.0.2",
     "@asciidoctor/docbook-converter": "^3.0.0-beta.1",
+    "@fastify/cors": "^8.5.0",
     "@smile-cdr/fhirts": "^2.2.8",
     "@types/node": "^20.14.10",
     "@types/node-fetch": "^2.6.10",
     "@types/ora": "^3.2.0",
     "asciidoctor": "^3.0.0",
     "axios": "^1.7.2",
+    "fastify": "^4.26.2",
     "fsh-sushi": "^3.11.0",
     "hl7.fhir.r4.core": "^0.0.1-security",
     "node-fetch": "^3.3.2",
@@ -41,9 +43,17 @@
     "@types/yargs": "^15.0.9",
     "@types/bun": "^1.0.0"
   },
+  "optionalDependencies": {
+    "@jest/globals": "^29.7.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.2"
+  },
   "scripts": {
     "dev": "bun --watch src/index.ts",
     "build": "tsc",
-    "bun-build": "bun build ./src/index.ts --outdir ./dist --target bun"
+    "bun-build": "bun build ./src/index.ts --outdir ./dist --target bun",
+    "api": "bun src/api.ts",
+    "api:dev": "bun --watch src/api.ts",
+    "test": "bun test"
   }
 }

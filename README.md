@@ -114,6 +114,64 @@ The default configuration is
 
 
 
+## API Usage
+
+The application now provides an API endpoint that allows you to convert templates programmatically.
+
+### Starting the API Server
+
+```bash
+# Using Bun
+bun run api
+
+# Using Bun with auto-reload for development
+bun run api:dev
+```
+
+### API Endpoints
+
+#### POST /convert
+
+Converts a JSON template to the specified format.
+
+**Query Parameters:**
+- `format` (optional): The output format (adoc, docx, pdf, fshl, fsht, fshq, xmind). Default: adoc
+
+**Request Body:**
+- `template`: The JSON template to convert
+
+**Response:**
+- The converted file in the requested format
+
+**Example using curl:**
+
+```bash
+curl -X POST \
+  "http://localhost:3000/convert?format=adoc" \
+  -H "Content-Type: application/json" \
+  -d '{"template": {...}}' \
+  --output output.adoc
+```
+
+**Example using JavaScript fetch:**
+
+```javascript
+const response = await fetch('http://localhost:3000/convert?format=pdf', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    template: {...} // Your JSON template
+  }),
+});
+
+if (response.ok) {
+  const blob = await response.blob();
+  // Save or display the file
+}
+```
+
 ## Docker Usage
 
 This application can be run using Docker, which eliminates the need to install dependencies locally. The Docker image is now based on Bun instead of Node.js for improved performance. It includes Pandoc and TeX Live (BasicTex equivalent for Linux), so you can generate DOCX and PDF formats without installing these dependencies on your local machine.
@@ -132,16 +190,22 @@ docker run -v $(pwd)/templates:/app/templates -v $(pwd)/out:/app/out -v $(pwd)/t
 
 ### Using Docker Compose
 
-1. Build and run the application:
+#### Running the API Server
 
-```bash
-docker-compose run wt2xt --web-template=./templates/example.json --export-format=adoc
-```
-
-2. Or, modify the `command` in `docker-compose.yml` and run:
+The docker-compose.yml file is configured to run the API server by default:
 
 ```bash
 docker-compose up
+```
+
+This will start the API server on port 3000, which you can access at http://localhost:3000.
+
+#### Running the CLI Tool
+
+To run the CLI tool instead:
+
+```bash
+docker-compose run --rm wt2xt --web-template=./templates/example.json --export-format=adoc
 ```
 
 The Docker setup mounts the following directories as volumes:
@@ -161,3 +225,43 @@ The Docker image now uses Bun instead of Node.js, which provides several benefit
 - Reduced memory usage
 - Improved TypeScript compilation speed
 - Smaller image size
+
+## Testing
+
+This project uses Bun's built-in test runner for testing. The test runner is compatible with Jest's API, so the tests are written in a familiar style.
+
+### Running Tests
+
+To run all tests:
+
+```bash
+bun test
+```
+
+To run a specific test file:
+
+```bash
+bun test tests/api.test.ts
+```
+
+To run tests with watch mode (automatically re-run tests when files change):
+
+```bash
+bun test --watch
+```
+
+### Writing Tests
+
+Tests are written using Bun's testing API, which is compatible with Jest's API. Here's an example:
+
+```typescript
+import { test, describe, expect } from "bun:test";
+
+describe("My test suite", () => {
+  test("should do something", () => {
+    expect(1 + 1).toBe(2);
+  });
+});
+```
+
+For more information about Bun's testing capabilities, see the [Bun documentation](https://bun.sh/docs/cli/test).
