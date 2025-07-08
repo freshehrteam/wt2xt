@@ -16,7 +16,7 @@ const app = fastify({
 // Register CORS plugin
 app.register(cors);
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env['PORT'] || 3000;
 
 // POST endpoint to convert template
 app.post<{
@@ -66,7 +66,7 @@ app.post<{
 
     // Create DocBuilder and process the template
     const docBuilder = new DocBuilder(template, config);
-    await docBuilder.run();
+    docBuilder.run();
 
     // Check if the file was created
     if (!fs.existsSync(outputPath)) {
@@ -107,7 +107,10 @@ app.post<{
     fs.unlinkSync(outputPath);
   } catch (error) {
     console.error('Error processing template:', error);
-    reply.code(500).send({ error: 'Internal server error', details: error.message });
+    reply.code(500).send({
+      error: 'Internal server error',
+      details: error instanceof Error ? error.message : 'Unknown error occurred'
+    });
   }
 });
 
@@ -124,7 +127,7 @@ const start = async () => {
 
 // Start the server if this file is run directly
 if (require.main === module) {
-  start();
+  start().then();
 }
 
 export default app;
