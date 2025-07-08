@@ -1,0 +1,5 @@
+[test]
+# Use the same test environment as Jest
+environment = "node"
+# Include all files with .test.ts extension
+include = ["**/*.test.ts"]
