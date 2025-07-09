@@ -130,5 +130,60 @@ describe("API Tests", () => {
       expect(response.headers["content-type"]).toContain("text/plain");
       expect(response.headers["content-disposition"]).toContain(".adoc");
     });
+
+    test("should include file content in JSON response when includeFileContent=true", async () => {
+      const template = {
+        "webTemplate": {
+          "templateId": "test_template",
+          "version": "1.0.0",
+          "defaultLanguage": "en",
+          "languages": ["en"],
+          "tree": {
+            "id": "test_composition",
+            "name": "Test Composition",
+            "rmType": "COMPOSITION",
+            "nodeId": "openEHR-EHR-COMPOSITION.test.v1",
+            "min": 1,
+            "max": 1,
+            "localizedNames": {
+              "en": "Test Composition"
+            },
+            "localizedDescriptions": {
+              "en": "A test composition for API testing."
+            },
+            "aqlPath": "",
+            "children": []
+          }
+        }
+      };
+
+      const response = await app.inject({
+        method: "POST",
+        url: "/convert?format=adoc&includeFileContent=true",
+        payload: {
+          template: template
+        }
+      });
+
+      // Verify the response
+      expect(response.statusCode).toBe(200);
+      expect(response.headers["content-type"]).toContain("application/json");
+
+      // Parse the response body
+      const responseBody = JSON.parse(response.body);
+
+      // Verify the response structure
+      expect(responseBody).toHaveProperty("filename");
+      expect(responseBody).toHaveProperty("content");
+      expect(responseBody).toHaveProperty("format", "adoc");
+
+      // Verify the content is a non-empty base64 string
+      expect(responseBody.content).toBeTruthy();
+      expect(responseBody.content.length).toBeGreaterThan(0);
+
+      // Verify the filename
+      expect(responseBody.filename).toContain("template_");
+      expect(responseBody.filename).toContain(".adoc");
+    });
   });
 });

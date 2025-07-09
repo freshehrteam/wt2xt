@@ -136,26 +136,36 @@ Converts a JSON template to the specified format.
 
 **Query Parameters:**
 - `format` (optional): The output format (adoc, docx, pdf, fshl, fsht, fshq, xmind). Default: adoc
+- `includeFileContent` (optional): Set to 'true' to include the file content in the JSON response instead of downloading the file directly. Default: false
 
 **Request Body:**
 - `template`: The JSON template to convert
 
 **Response:**
-- The converted file in the requested format
+- When `includeFileContent=true`: A JSON object containing the filename, format, and base64-encoded file content
+- When `includeFileContent` is not set or is not 'true': The converted file in the requested format as a direct download
 
 **Example using curl:**
 
 ```bash
+# Example 1: Download the file directly
 curl -X POST \
   "http://localhost:3000/convert?format=adoc" \
   -H "Content-Type: application/json" \
   -d '{"template": {...}}' \
   --output output.adoc
+
+# Example 2: Get the file content in JSON response
+curl -X POST \
+  "http://localhost:3000/convert?format=adoc&includeFileContent=true" \
+  -H "Content-Type: application/json" \
+  -d '{"template": {...}}'
 ```
 
 **Example using JavaScript fetch:**
 
 ```javascript
+// Example 1: Download the file directly
 const response = await fetch('http://localhost:3000/convert?format=pdf', {
   method: 'POST',
   headers: {
@@ -169,6 +179,45 @@ const response = await fetch('http://localhost:3000/convert?format=pdf', {
 if (response.ok) {
   const blob = await response.blob();
   // Save or display the file
+}
+
+// Example 2: Get the file content in JSON response
+const jsonResponse = await fetch('http://localhost:3000/convert?format=pdf&includeFileContent=true', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    template: {...} // Your JSON template
+  }),
+});
+
+if (jsonResponse.ok) {
+  const data = await jsonResponse.json();
+  // data contains: { filename, format, content }
+  // content is base64-encoded file content
+
+  // To convert base64 to a Blob:
+  const binaryString = atob(data.content);
+  const bytes = new Uint8Array(binaryString.length);
+  for (let i = 0; i < binaryString.length; i++) {
+    bytes[i] = binaryString.charCodeAt(i);
+  }
+  const blob = new Blob([bytes], { type: getContentType(data.format) });
+
+  // Now you can use the blob
+}
+
+// Helper function to get content type based on format
+function getContentType(format) {
+  switch (format) {
+    case 'adoc': return 'text/plain';
+    case 'docx': return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+    case 'pdf': return 'application/pdf';
+    case 'fshl': case 'fsht': case 'fshq': return 'text/plain';
+    case 'xmind': return 'application/octet-stream';
+    default: return 'text/plain';
+  }
 }
 ```
 
@@ -228,7 +277,7 @@ The Docker image now uses Bun instead of Node.js, which provides several benefit
 
 ## Testing
 
-This project uses Bun's built-in test runner for testing. The test runner is compatible with Jest's API, so the tests are written in a familiar style.
+This project uses Bun's built-in test runner for testing, with Bun configured as the test environment.
 
 ### Running Tests
 
@@ -252,7 +301,7 @@ bun test --watch
 
 ### Writing Tests
 
-Tests are written using Bun's testing API, which is compatible with Jest's API. Here's an example:
+Tests are written using Bun's testing API. Here's an example:
 
 ```typescript
 import { test, describe, expect } from "bun:test";

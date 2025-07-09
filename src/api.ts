@@ -20,15 +20,16 @@ const PORT = process.env['PORT'] || 3000;
 
 // POST endpoint to convert template
 app.post<{
-  Querystring: { format?: string },
+  Querystring: { format?: string, includeFileContent?: string },
   Body: { template: any }
 }>('/convert', async (req: FastifyRequest<{
-  Querystring: { format?: string },
+  Querystring: { format?: string, includeFileContent?: string },
   Body: { template: any }
 }>, reply: FastifyReply) => {
   try {
     // Get the template from the request body
-    const template = req.body.template;
+    const template = req.body;
+    console.log ('body', req.body)
     if (!template) {
       return reply.code(400).send({ error: 'No template provided' });
     }
@@ -62,46 +63,61 @@ app.post<{
     // Override config with our settings
     config.exportFormat = ExportFormat[exportFormatKey];
     config.outFileDir = tempDir;
-    config.outFilePath = outputFilename;
+    config.outFilePath = outputPath;
 
     // Create DocBuilder and process the template
     const docBuilder = new DocBuilder(template, config);
     docBuilder.run();
 
     // Check if the file was created
-    if (!fs.existsSync(outputPath)) {
-      return reply.code(500).send({ error: 'Failed to generate output file' });
-    }
+  //  if (!fs.existsSync(outputPath)) {
+  //    return reply.code(500).send({ error: 'Failed to generate output file' });
+  //  }
 
     // Read the generated file
     const fileContent = fs.readFileSync(outputPath);
 
-    // Set appropriate content type based on format
-    let contentType = 'text/plain';
-    switch (formatParam) {
-      case 'adoc':
-        contentType = 'text/plain';
-        break;
-      case 'docx':
-        contentType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
-        break;
-      case 'pdf':
-        contentType = 'application/pdf';
-        break;
-      case 'fshl':
-      case 'fsht':
-      case 'fshq':
-        contentType = 'text/plain';
-        break;
-      case 'xmind':
-        contentType = 'application/octet-stream';
-        break;
-    }
+    // Check if the client wants the file content in the JSON response
+    const includeFileContent = req.query.includeFileContent === 'true';
 
-    // Send the file as response
-    reply.header('Content-Type', contentType);
-    reply.header('Content-Disposition', `attachment; filename=${outputFilename}`);
-    reply.send(fileContent);
+    if (includeFileContent) {
+      // Include the file content in the JSON response
+      const response = {
+        filename: outputFilename,
+        content: fileContent.toString('base64'),
+        format: formatParam
+      };
+
+      reply.header('Content-Type', 'application/json');
+      reply.send(response);
+    } else {
+      // Set appropriate content type based on format
+      let contentType = 'text/plain';
+      switch (formatParam) {
+        case 'adoc':
+          contentType = 'text/plain';
+          break;
+        case 'docx':
+          contentType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+          break;
+        case 'pdf':
+          contentType = 'application/pdf';
+          break;
+        case 'fshl':
+        case 'fsht':
+        case 'fshq':
+          contentType = 'text/plain';
+          break;
+        case 'xmind':
+          contentType = 'application/octet-stream';
+          break;
+      }
+
+      // Send the file as response
+      reply.header('Content-Type', contentType);
+      reply.header('Content-Disposition', `attachment; filename=${outputFilename}`);
+      reply.send(fileContent);
+    }
 
     // Clean up the temporary file
     fs.unlinkSync(outputPath);
