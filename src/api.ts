@@ -6,6 +6,8 @@ import { DocBuilder } from './DocBuilder';
 import { Config, importConfig } from './BuilderConfig';
 import { ExportFormat } from './formatters/DocFormatter';
 import cors from '@fastify/cors';
+import {WebTemplate} from "./types/WebTemplate.ts";
+//import {ResolveRequestBody} from "fastify/types/type-provider";
 
 // Create Fastify app
 const app = fastify({
@@ -21,18 +23,18 @@ const PORT = process.env['PORT'] || 3000;
 // POST endpoint to convert template
 app.post<{
   Querystring: { format?: string, includeFileContent?: string },
-  Body: { template: any }
+  Body: { template: { webTemplate: WebTemplate } }
 }>('/convert', async (req: FastifyRequest<{
   Querystring: { format?: string, includeFileContent?: string },
-  Body: { template: any }
+  Body: { template: { webTemplate: WebTemplate } }
 }>, reply: FastifyReply) => {
   try {
     // Get the template from the request body
-    const template = req.body;
-    console.log ('body', req.body)
-    if (!template) {
+    if (!req.body.template || !req.body.template.webTemplate) {
       return reply.code(400).send({ error: 'No template provided' });
     }
+    const template: WebTemplate = req.body.template.webTemplate;
+    console.log ('body', req.body)
 
     // Get the output format from query parameters
     const formatParam = req.query.format || 'adoc';
