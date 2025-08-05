@@ -87,14 +87,13 @@ export class DocBuilder {
     return (this.resolvedTemplateFiles.wtxOutPath !== null)
   }
 
-  public run(): void{
-    this.generate().then( () => {
+  public async run (): Promise<void> {
+    await this.generate()
       const outFilePath = this.handleOutPath(this.config.inFilePath, this.config.outFilePath, this.config.exportFormat,this.config.outFileDir);
-       saveFile(this, outFilePath).then( () => {
+      console.log("out file path",outFilePath)
+       await saveFile(this, outFilePath)
        if (this.regenWtx() && this.isWtxAugmented())
           saveWtxFile(this).catch()
-      })
-    })
   }
 
 // If the archetypeLists are empty, then the wtx Augmentation process has failed
@@ -182,7 +181,10 @@ export class DocBuilder {
   }
 
   private async walk(f: TemplateNode, builder: DocBuilder) {
-    if (f?.builder == null)
+    // Add null check to prevent errors when f is undefined
+    if (!f) return;
+
+    if (f.builder == null)
       f.builder = builder;
 
     if (isArchetype(f.rmType,f.nodeId)) {

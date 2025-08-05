@@ -31,7 +31,7 @@ if (fs.existsSync(config.inFilePath)) {
   const inDoc:string = fs.readFileSync(config.inFilePath, { encoding: 'utf8', flag: 'r' });
   const docBuilder = new DocBuilder(JSON.parse(inDoc), config);
 
-  docBuilder.run();
+  await docBuilder.run();
 }
 else
   console.log('The input file does not exist:' + config.inFilePath);

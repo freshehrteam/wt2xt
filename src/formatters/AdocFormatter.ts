@@ -10,7 +10,7 @@ export const adoc = {
 
   formatTemplateHeader: (dBuilder: DocBuilder): void => {
     const { sb, wt, config } = dBuilder;
-    sb.append(`== Template: ${config.title ? config.title : wt.tree.name}`)
+    sb.append(`== Template: ${config.title ? config.title : wt?.tree?.name}`)
 
     if (dBuilder.config.displayToC)
       dBuilder.sb.append(":toc: left");

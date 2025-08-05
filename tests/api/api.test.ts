@@ -1,5 +1,5 @@
 import { test, describe, expect, beforeAll, afterAll } from "bun:test";
-import app from "../src/api";
+import app from "../../src/api/api.ts";
 import fs from "fs";
 import path from "path";
 
@@ -51,9 +51,7 @@ describe("API Tests", () => {
       const response = await app.inject({
         method: "POST",
         url: "/convert?format=adoc",
-        payload: {
-          template: template
-        }
+        payload: template
       });
 
       // Verify the response
