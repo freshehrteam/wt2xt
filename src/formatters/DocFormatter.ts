@@ -278,7 +278,7 @@ export const formatCluster = (docBuilder: DocBuilder, f: TemplateNode): void => 
     fn(docBuilder, f);
 }
 
-export const saveFile  = async (docBuilder: DocBuilder, outFile: string,apiMode :boolean): Promise<number|void> => {
+export const saveFile  = async (docBuilder: DocBuilder, outFile: string, useStdOut :boolean): Promise<number|void> => {
   let fn: SaveFileFn;
 
   switch (docBuilder.config.exportFormat) {
@@ -304,7 +304,7 @@ export const saveFile  = async (docBuilder: DocBuilder, outFile: string,apiMode 
       break
   }
   if (fn)
-    await fn(docBuilder, outFile,apiMode)
+    await fn(docBuilder, outFile, useStdOut)
 }
 
 export const formatNodeContent= (dBuilder: DocBuilder, f: TemplateNode, isChoice: boolean) => {

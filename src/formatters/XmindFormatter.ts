@@ -32,11 +32,11 @@ export const xmind = {
     sb.append(`${headerIndent} context`);
   },
 
-  saveFile: async (dBuilder: DocBuilder, outFile: any,apiMode: boolean): Promise <number>  => {
+  saveFile: async (dBuilder: DocBuilder, outFile: any, useStdOut: boolean): Promise <number>  => {
     const xmindArrayBuffer = await parseXMindMarkToXMindFile(dBuilder.toString())
     // Ensure tmp directory exists
-    await fs.ensureDir('./tmp');
-    await fs.writeFile('./tmp/tmp.md', dBuilder.toString());
+ //   await fs.ensureDir('./tmp');
+ //   await fs.writeFile('./tmp/tmp.md', dBuilder.toString());
     await fs.writeFile(outFile, Buffer.from(xmindArrayBuffer));
     console.log(`\n Exported : ${outFile}`);
     // Return the length of the written data as an approximation of bytes written
