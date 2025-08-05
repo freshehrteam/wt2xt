@@ -87,7 +87,7 @@ async function handleRequest(req: Request): Promise<Response> {
 
     // Create DocBuilder and process the template
     const docBuilder = new DocBuilder(template, config);
-    await docBuilder.run();
+    await docBuilder.run(true);
 
     // Get the string output directly from DocBuilder
     const output = docBuilder.toString();

@@ -32,7 +32,7 @@ export const adoc = {
   saveFile: async (docBuilder: DocBuilder, outFile: string) => {
     // Ensure the directory exists
     await fs.ensureDir(path.dirname(outFile));
-    await fs.writeFile(outFile, docBuilder.toString());
+    await Bun.write(Bun.stdout, docBuilder.toString());
     console.log(`\n Exported : ${outFile}`);
     // Return the length of the written data as an approximation of bytes written
     return Buffer.from(docBuilder.toString()).length;
@@ -95,7 +95,7 @@ export const adoc = {
     if (config.displayAQLPaths)
       descriptionText = `**AQL**: ${f.aqlPath}`
     else
-      descriptionText = dBuilder.getDescription(f)
+      descriptionText = dBuilder.getDescription(f) ?? ''
 
     if (!isChoice) {
       nameText = `**${nodeName}** + \n Type: ${rmTypeText} ${formattedOccurrencesText}`
