@@ -1,7 +1,6 @@
 import { describe, expect, it, beforeAll, afterAll } from "bun:test";
-import { start, close } from "../../src/api/new_api";
-import fs from 'fs';
-import path from 'path';
+import { start, close } from "../../src/api/api.ts";
+import testTemplate from "../resources/testTemplate.json"
 
 // Define interface for error response
 interface ErrorResponse {
@@ -14,7 +13,7 @@ describe("new_api", () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let server: Bun.Serve | null = null;
   const PORT = 3001;
-  const BASE_URL = `http://localhost:${PORT}`;
+  const BASE_URL = `http://localhost:${PORT}/api/v1`;
 
   // Start the server before all tests
   beforeAll(async () => {
@@ -37,72 +36,14 @@ describe("new_api", () => {
   });
 
   it("should handle POST requests to /convert with valid JSON", async () => {
-    // Load a sample template from the test resources
-    const sampleTemplatePath = path.join(process.cwd(), 'tests', 'resources', 'sample_template.json');
-    let sampleTemplate;
-
-    // If the sample template doesn't exist, create a minimal one for testing
-    if (!fs.existsSync(sampleTemplatePath)) {
-      sampleTemplate = {
-        "templateId": "test_template",
-        "version": "1.0.0",
-        "defaultLanguage": "en",
-        "tree": {
-          "id": "test",
-          "name": "Test Template",
-          "localizedName": "Test Template",
-          "rmType": "COMPOSITION",
-          "nodeId": "openEHR-EHR-COMPOSITION.test.v1",
-          "min": 1,
-          "max": 1,
-          "children": []
-        }
-      };
-    } else {
-      sampleTemplate = JSON.parse(fs.readFileSync(sampleTemplatePath, 'utf8'));
-    }
-
-    // Test with default output format (adoc)
+    // Load a sample template from the test resource
+    // Test with the default output format (adoc)
     const response = await fetch(`${BASE_URL}/convert`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(sampleTemplate)
-    });
-
-    expect(response.status).toBe(200);
-    expect(response.headers.get('Content-Type')).toContain('text/plain');
-
-    const text = await response.text();
-    expect(text).toBeTruthy();
-  });
-
-  it("should handle POST requests with 'out' parameter", async () => {
-    // Create a minimal template for testing
-    const sampleTemplate = {
-      "templateId": "test_template",
-      "version": "1.0.0",
-      "defaultLanguage": "en",
-      "tree": {
-        "id": "test",
-        "name": "Test Template",
-        "localizedName": "Test Template",
-        "rmType": "COMPOSITION",
-        "nodeId": "openEHR-EHR-COMPOSITION.test.v1",
-        "min": 1,
-        "max": 1,
-        "children": []
-      }
-    };
-
-    // Test with 'adoc' output format
-    const response = await fetch(`${BASE_URL}/convert?out=adoc`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(sampleTemplate)
+      body: JSON.stringify(testTemplate)
     });
 
     expect(response.status).toBe(200);
@@ -114,21 +55,6 @@ describe("new_api", () => {
 
   it("should return error for invalid format", async () => {
     // Create a minimal template for testing
-    const sampleTemplate = {
-      "templateId": "test_template",
-      "version": "1.0.0",
-      "defaultLanguage": "en",
-      "tree": {
-        "id": "test",
-        "name": "Test Template",
-        "localizedName": "Test Template",
-        "rmType": "COMPOSITION",
-        "nodeId": "openEHR-EHR-COMPOSITION.test.v1",
-        "min": 1,
-        "max": 1,
-        "children": []
-      }
-    };
 
     // Test with invalid output format
     const response = await fetch(`${BASE_URL}/convert?out=invalid_format`, {
@@ -136,7 +62,7 @@ describe("new_api", () => {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(sampleTemplate)
+      body: JSON.stringify(testTemplate)
     });
 
     expect(response.status).toBe(400);
@@ -159,4 +85,25 @@ describe("new_api", () => {
     const data = await response.json() as ErrorResponse;
     expect(data.error).toBe('Invalid request body');
   });
+
+
+it("should return matching .adoc output", async () => {
+    // Test with invalid JSON
+    const adocOutput = await Bun.file('./tests/resources/testTemplate.adoc').text();
+    const response = await fetch(`${BASE_URL}/convert`, {
+        method: 'POST',
+
+        headers: {
+            'Content-Type': 'application/json',
+            accept: 'text/plain',
+        },
+        body: JSON.stringify(testTemplate)
+    });
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get('Content-Type')).toContain('text/plain');
+    const textData = await response.text();
+    expect(textData).toBe(adocOutput);
+    console.log(textData)
+});
 });

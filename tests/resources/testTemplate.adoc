@@ -1,0 +1,694 @@
+== Template: TEST - Complete template
+
+
+Template Id: **TEST - Complete template**
+
+
+Version: **1.0.0**
+
+
+Created: **Tue Aug 05 2025**
+
+
+=== Composition: *TEST - Complete template*
+
+
+Interaction, contact or care event between a subject of care and healthcare provider(s).
+
+
+[options="header","stretch", cols="20,50,30"]
+|====
+|Data item | Description | Allowed values
+| **category** + 
+ Type: `Coded text` (_mandatory_) | Temporal category of this Composition, persistent / episodic or event. 
+a|
+
+* event +
+ `openehr:433`
+| **composer** + 
+ Type: `Party` (_mandatory_) | The person primarily responsible for the content of the Composition (but not necessarily its committal into the EHR system). This is the identifier which should appear on the screen. It may or may not be the person who entered the data. When it is the patient, the special self instance of `PARTY_SELF` will be used. 
+|
+|====
+==== context
+[options="header","stretch", cols="20,50,30"]
+|====
+|Data item | Description | Allowed values
+| **start_time** + 
+ Type: `Date/time` (_mandatory_) | COMPOSITION.context.start_time - Start time of the clinical session or other kind of event during which a provider performs a service of any kind for the patient. 
+|
+| **setting** + 
+ Type: `Coded text` (_mandatory_) | The setting in which the clinical session took place. Coded using the openEHR Terminology, setting group. 
+a|
+|====
+===  *Reason for encounter*
+
+
+The reason for initiation of any healthcare encounter or contact by the individual who is the subject of care.
+
+
+[options="header","stretch", cols="20,50,30"]
+|====
+|Data item | Description | Allowed values
+|====
+===  *Translation requirement*
+
+
+The need for language translation in order to provide delivery of health care or related services.
+
+
+[options="header","stretch", cols="20,50,30"]
+|====
+|Data item | Description | Allowed values
+|====
+===  *Observations*
+
+
+A generic section header which should be renamed in a template to suit a specific clinical context.
+
+
+===  *Blood pressure*
+
+
+The local measurement of arterial blood pressure which is a surrogate for arterial pressure in the systemic circulation.
+
+
+[options="header","stretch", cols="20,50,30"]
+|====
+|Data item | Description | Allowed values
+3+a|===== Any event  **[multiple]**
+`EVENT: _at0006_`
+| **Time** + 
+ Type: `Date/time` (_mandatory_) | `OBSERVATION.EVENT.time` - Time of this Observation event. If the width is non-zero, it is the time point of the trailing edge of the event. 
+|
+3+a|===== 24 hour average  
+`INTERVAL_EVENT: _at1042_`
+| **math_function** + 
+ Type: `Coded text` (_mandatory_) |  
+a|
+
+* mean +
+ `openehr:146`
+| **width** + 
+ Type: `Duration` (_mandatory_) |  
+|
+| **Time** + 
+ Type: `Date/time` (_mandatory_) |  
+|
+3+a|===== Medical device  
+| **Device name** + 
+ Type: `Text` (_mandatory_) | Identification of the medical device, preferably by a common name, a formal fully descriptive name or, if required, by class or category of device. 
+
+
+
+
+*comment*: This data element will capture the term, phrase or category used in clinical practice. For example: <brand name><machine> (XYZ Audiometer); <size> <brand name> <intravenous catheter> (14G Jelco IV catheter); or <brand name/type> <implant>. Coding with a terminology is desirable, where possible, although this may be local and depending on local supplies available.
+
+a|
+
+|====
+===  *Demonstration*
+
+
+Demonstration archetype with descriptions and explanations.
+
+
+[options="header","stretch", cols="20,50,30"]
+|====
+|Data item | Description | Allowed values
+3+a|===== Any Event  
+`EVENT: _at0002_`
+| **Data - Definition** + 
+ Type: `Choice`  | All archetypes of the OBSERVATION class contain a DATA model  which contains the core information e.g. the systolic and diastolic pressures when measuring a blood pressure. 
+a|
+_All data types allowed_
+3+a|===== Heading1  **[multiple]**
+| **Free Text or Coded** + 
+ Type: `Text`  | Text data type in which free text can be entered or coding can be incorporated either in the template or at run time. 
+a|
+
+| **Text That Uses Internal Codes** + 
+ Type: `Coded text` (_multiple_) | Text data type which can use an internal vocabulary.  Each of these 'internal codes' can be bound to a terminology code. 
+a|
+
+* Lying
+* Reclining
+* Sitting
+* Standing
+| **Text That is Sourced From an External Terminology** + 
+ Type: `Coded text` (_mandatory_) | Text data type utilising codes derived from an external terminology source eg a SNOMED-CT, LOINC or ICD subset. 
+a|
+| **Quantity** + 
+ Type: `Quantity`  | A quantity data type used to record a measurement associated with its' appropriate units.  These are derived from ISO standards and the Reference model enables conversion between these units. The example shown here is length. 
+a|
+
+Valid units: +
+
+* cm
+* mm
+* [in_i]
+* [ft_i]
+// Not supported rmType DV_INTERVAL<DV_QUANTITY>
+| **Count** + 
+ Type: `Count`  | Count data types are composed of an integer with no units eg for recording the number of children - in this example the minimum is set at 0 and the maximum not specified. 
+a|
+
+Range: +
+
+* >= 0 and undefined undefined
+// Not supported rmType DV_INTERVAL<DV_COUNT>
+| **Proportion** + 
+ Type: `Proportion`  | Proportion datatypes allow for ratios, percent, fractions and proportions to be modelled. 
+|
+| **Date/Time** + 
+ Type: `Date/time`  | Date/Time datatype allows recording of a date and/or time, including partial dates such as year only or month and year only.  Allow all is the default - so all forms of date/time are permitted. 
+|
+// Not supported rmType DV_INTERVAL<DV_DATE_TIME>
+| **Duration** + 
+ Type: `Duration`  | Duration datatype allows recording of the duration of clinical concepts.  'Allow all time units' is the default, although specific time units can be explicitly modelled.  Maximum and minum values can be set for each time unit. 
+|
+| **Ordinal** + 
+ Type: `Ordinal`  | Ordinal datatypes pair a number and text - in this way scores can be calculated in software, or progression can be assessed eg if used in a pain score. 
+a|
+* [0] No pain +
+ `local:at0038`
+* [1] Slight pain +
+ `local:at0039`
+* [2] Mild pain +
+ `local:at0040`
+* [5] Moderate pain +
+ `local:at0041`
+* [9] Severe pain +
+ `local:at0042`
+* [10] Most severe pain imaginable +
+ `local:at0043`
+| **Boolean** + 
+ Type: `Choice`  | Boolean datatype that allows for true or false answers. 
+a|
+_Multiple data types allowed_
+|_SubTypes_ | |
+| Type: `Boolean` |
+|
+| Type: `Coded text` |
+a|
+
+* no information +
+ `openehr:271`
+* masked +
+ `openehr:272`
+* not applicable +
+ `openehr:273`
+* unknown +
+ `openehr:253`
+| **Any** + 
+ Type: `Choice`  | The datatype for this 'any' element can be specified or constrained in a template or at run-time, but is not explicitly modelled in the archetype. 
+a|
+_All data types allowed_
+| **Choice** + 
+ Type: `Choice`  | Choice datatype allows for a number of types of element to be specified simultaneously and which can constrained or selected within a template or at run-time.  In this example, a text datatype set to Free text or Coded and another that is constrained to Terminology record data about the same data element. 
+a|
+_Multiple data types allowed_
+|_SubTypes_ | |
+| Type: `Quantity` |
+a|
+
+Valid units: +
+
+* g
+* [foz_us]
+| Type: `Coded text` |
+a|
+| **Multimedia** + 
+ Type: `Multimedia`  | Multimedia datatypes allow for the recording of many types of multimedia files to be captured.  All available types have been explicitly selected in this example. 
+|
+| **URI - resource identifier** + 
+ Type: `External URI`  | URI datatypes allow for recording of relationships from this data to data recorded elsewhere.  These links can be within the same EHR, or external eg to a  URL. 
+|
+| **Identifier** + 
+ Type: `Identifier`  | Identifier datatypes enable recording of formal data identifiers. 
+|
+| **State - Definition** + 
+ Type: `Choice`  | All archetypes of the OBSERVATION class can  contain a STATE model which contains information about the subject of data at the time the information was collected, and this information is required for safe clinical interpretation of the core information. An example is the position of the patient at the time of measuring a blood pressure.  Datatypes are identical to those explained in the Data model, above. 
+a|
+_All data types allowed_
+| **Time** + 
+ Type: `Date/time` (_mandatory_) | `OBSERVATION.EVENT.time` - Time of this Observation event. If the width is non-zero, it is the time point of the trailing edge of the event. 
+|
+3+a|===== Named Point In Time  
+`POINT_EVENT: _at0033_`
+| **Data - Definition** + 
+ Type: `Choice`  | All archetypes of the OBSERVATION class contain a DATA model  which contains the core information e.g. the systolic and diastolic pressures when measuring a blood pressure. 
+a|
+_All data types allowed_
+3+a|===== Heading1  **[multiple]**
+| **Free Text or Coded** + 
+ Type: `Text`  | Text data type in which free text can be entered or coding can be incorporated either in the template or at run time. 
+a|
+
+| **Text That Uses Internal Codes** + 
+ Type: `Coded text` (_multiple_) | Text data type which can use an internal vocabulary.  Each of these 'internal codes' can be bound to a terminology code. 
+a|
+
+* Lying
+* Reclining
+* Sitting
+* Standing
+| **Text That is Sourced From an External Terminology** + 
+ Type: `Coded text` (_mandatory_) | Text data type utilising codes derived from an external terminology source eg a SNOMED-CT, LOINC or ICD subset. 
+a|
+| **Quantity** + 
+ Type: `Quantity`  | A quantity data type used to record a measurement associated with its' appropriate units.  These are derived from ISO standards and the Reference model enables conversion between these units. The example shown here is length. 
+a|
+
+Valid units: +
+
+* cm
+* mm
+* [in_i]
+* [ft_i]
+// Not supported rmType DV_INTERVAL<DV_QUANTITY>
+| **Count** + 
+ Type: `Count`  | Count data types are composed of an integer with no units eg for recording the number of children - in this example the minimum is set at 0 and the maximum not specified. 
+a|
+
+Range: +
+
+* >= 0 and undefined undefined
+// Not supported rmType DV_INTERVAL<DV_COUNT>
+| **Proportion** + 
+ Type: `Proportion`  | Proportion datatypes allow for ratios, percent, fractions and proportions to be modelled. 
+|
+| **Date/Time** + 
+ Type: `Date/time`  | Date/Time datatype allows recording of a date and/or time, including partial dates such as year only or month and year only.  Allow all is the default - so all forms of date/time are permitted. 
+|
+// Not supported rmType DV_INTERVAL<DV_DATE_TIME>
+| **Duration** + 
+ Type: `Duration`  | Duration datatype allows recording of the duration of clinical concepts.  'Allow all time units' is the default, although specific time units can be explicitly modelled.  Maximum and minum values can be set for each time unit. 
+|
+| **Ordinal** + 
+ Type: `Ordinal`  | Ordinal datatypes pair a number and text - in this way scores can be calculated in software, or progression can be assessed eg if used in a pain score. 
+a|
+* [0] No pain +
+ `local:at0038`
+* [1] Slight pain +
+ `local:at0039`
+* [2] Mild pain +
+ `local:at0040`
+* [5] Moderate pain +
+ `local:at0041`
+* [9] Severe pain +
+ `local:at0042`
+* [10] Most severe pain imaginable +
+ `local:at0043`
+| **Boolean** + 
+ Type: `Choice`  | Boolean datatype that allows for true or false answers. 
+a|
+_Multiple data types allowed_
+|_SubTypes_ | |
+| Type: `Boolean` |
+|
+| Type: `Coded text` |
+a|
+
+* no information +
+ `openehr:271`
+* masked +
+ `openehr:272`
+* not applicable +
+ `openehr:273`
+* unknown +
+ `openehr:253`
+| **Any** + 
+ Type: `Choice`  | The datatype for this 'any' element can be specified or constrained in a template or at run-time, but is not explicitly modelled in the archetype. 
+a|
+_All data types allowed_
+| **Choice** + 
+ Type: `Choice`  | Choice datatype allows for a number of types of element to be specified simultaneously and which can constrained or selected within a template or at run-time.  In this example, a text datatype set to Free text or Coded and another that is constrained to Terminology record data about the same data element. 
+a|
+_Multiple data types allowed_
+|_SubTypes_ | |
+| Type: `Quantity` |
+a|
+
+Valid units: +
+
+* g
+* [foz_us]
+| Type: `Coded text` |
+a|
+| **Multimedia** + 
+ Type: `Multimedia`  | Multimedia datatypes allow for the recording of many types of multimedia files to be captured.  All available types have been explicitly selected in this example. 
+|
+| **URI - resource identifier** + 
+ Type: `External URI`  | URI datatypes allow for recording of relationships from this data to data recorded elsewhere.  These links can be within the same EHR, or external eg to a  URL. 
+|
+| **Identifier** + 
+ Type: `Identifier`  | Identifier datatypes enable recording of formal data identifiers. 
+|
+| **State - Definition** + 
+ Type: `Choice`  | All archetypes of the OBSERVATION class can  contain a STATE model which contains information about the subject of data at the time the information was collected, and this information is required for safe clinical interpretation of the core information. An example is the position of the patient at the time of measuring a blood pressure.  Datatypes are identical to those explained in the Data model, above. 
+a|
+_All data types allowed_
+| **Time** + 
+ Type: `Date/time` (_mandatory_) |  
+|
+3+a|===== Named Interval  
+`INTERVAL_EVENT: _at0034_`
+| **math_function** + 
+ Type: `Coded text` (_mandatory_) |  
+a|
+
+* change +
+ `openehr:147`
+| **Data - Definition** + 
+ Type: `Choice`  | All archetypes of the OBSERVATION class contain a DATA model  which contains the core information e.g. the systolic and diastolic pressures when measuring a blood pressure. 
+a|
+_All data types allowed_
+3+a|===== Heading1  **[multiple]**
+| **Free Text or Coded** + 
+ Type: `Text`  | Text data type in which free text can be entered or coding can be incorporated either in the template or at run time. 
+a|
+
+| **Text That Uses Internal Codes** + 
+ Type: `Coded text` (_multiple_) | Text data type which can use an internal vocabulary.  Each of these 'internal codes' can be bound to a terminology code. 
+a|
+
+* Lying
+* Reclining
+* Sitting
+* Standing
+| **Text That is Sourced From an External Terminology** + 
+ Type: `Coded text` (_mandatory_) | Text data type utilising codes derived from an external terminology source eg a SNOMED-CT, LOINC or ICD subset. 
+a|
+| **Quantity** + 
+ Type: `Quantity`  | A quantity data type used to record a measurement associated with its' appropriate units.  These are derived from ISO standards and the Reference model enables conversion between these units. The example shown here is length. 
+a|
+
+Valid units: +
+
+* cm
+* mm
+* [in_i]
+* [ft_i]
+// Not supported rmType DV_INTERVAL<DV_QUANTITY>
+| **Count** + 
+ Type: `Count`  | Count data types are composed of an integer with no units eg for recording the number of children - in this example the minimum is set at 0 and the maximum not specified. 
+a|
+
+Range: +
+
+* >= 0 and undefined undefined
+// Not supported rmType DV_INTERVAL<DV_COUNT>
+| **Proportion** + 
+ Type: `Proportion`  | Proportion datatypes allow for ratios, percent, fractions and proportions to be modelled. 
+|
+| **Date/Time** + 
+ Type: `Date/time`  | Date/Time datatype allows recording of a date and/or time, including partial dates such as year only or month and year only.  Allow all is the default - so all forms of date/time are permitted. 
+|
+// Not supported rmType DV_INTERVAL<DV_DATE_TIME>
+| **Duration** + 
+ Type: `Duration`  | Duration datatype allows recording of the duration of clinical concepts.  'Allow all time units' is the default, although specific time units can be explicitly modelled.  Maximum and minum values can be set for each time unit. 
+|
+| **Ordinal** + 
+ Type: `Ordinal`  | Ordinal datatypes pair a number and text - in this way scores can be calculated in software, or progression can be assessed eg if used in a pain score. 
+a|
+* [0] No pain +
+ `local:at0038`
+* [1] Slight pain +
+ `local:at0039`
+* [2] Mild pain +
+ `local:at0040`
+* [5] Moderate pain +
+ `local:at0041`
+* [9] Severe pain +
+ `local:at0042`
+* [10] Most severe pain imaginable +
+ `local:at0043`
+| **Boolean** + 
+ Type: `Choice`  | Boolean datatype that allows for true or false answers. 
+a|
+_Multiple data types allowed_
+|_SubTypes_ | |
+| Type: `Boolean` |
+|
+| Type: `Coded text` |
+a|
+
+* no information +
+ `openehr:271`
+* masked +
+ `openehr:272`
+* not applicable +
+ `openehr:273`
+* unknown +
+ `openehr:253`
+| **Any** + 
+ Type: `Choice`  | The datatype for this 'any' element can be specified or constrained in a template or at run-time, but is not explicitly modelled in the archetype. 
+a|
+_All data types allowed_
+| **Choice** + 
+ Type: `Choice`  | Choice datatype allows for a number of types of element to be specified simultaneously and which can constrained or selected within a template or at run-time.  In this example, a text datatype set to Free text or Coded and another that is constrained to Terminology record data about the same data element. 
+a|
+_Multiple data types allowed_
+|_SubTypes_ | |
+| Type: `Quantity` |
+a|
+
+Valid units: +
+
+* g
+* [foz_us]
+| Type: `Coded text` |
+a|
+| **Multimedia** + 
+ Type: `Multimedia`  | Multimedia datatypes allow for the recording of many types of multimedia files to be captured.  All available types have been explicitly selected in this example. 
+|
+| **URI - resource identifier** + 
+ Type: `External URI`  | URI datatypes allow for recording of relationships from this data to data recorded elsewhere.  These links can be within the same EHR, or external eg to a  URL. 
+|
+| **Identifier** + 
+ Type: `Identifier`  | Identifier datatypes enable recording of formal data identifiers. 
+|
+| **State - Definition** + 
+ Type: `Choice`  | All archetypes of the OBSERVATION class can  contain a STATE model which contains information about the subject of data at the time the information was collected, and this information is required for safe clinical interpretation of the core information. An example is the position of the patient at the time of measuring a blood pressure.  Datatypes are identical to those explained in the Data model, above. 
+a|
+_All data types allowed_
+| **Width** + 
+ Type: `Duration` (_mandatory_) |  
+|
+| **Time** + 
+ Type: `Date/time` (_mandatory_) |  
+|
+3+a|===== Offset Point In Time  
+`POINT_EVENT: _at0035_`
+| **Data - Definition** + 
+ Type: `Choice`  | All archetypes of the OBSERVATION class contain a DATA model  which contains the core information e.g. the systolic and diastolic pressures when measuring a blood pressure. 
+a|
+_All data types allowed_
+3+a|===== Heading1  **[multiple]**
+| **Free Text or Coded** + 
+ Type: `Text`  | Text data type in which free text can be entered or coding can be incorporated either in the template or at run time. 
+a|
+
+| **Text That Uses Internal Codes** + 
+ Type: `Coded text` (_multiple_) | Text data type which can use an internal vocabulary.  Each of these 'internal codes' can be bound to a terminology code. 
+a|
+
+* Lying
+* Reclining
+* Sitting
+* Standing
+| **Text That is Sourced From an External Terminology** + 
+ Type: `Coded text` (_mandatory_) | Text data type utilising codes derived from an external terminology source eg a SNOMED-CT, LOINC or ICD subset. 
+a|
+| **Quantity** + 
+ Type: `Quantity`  | A quantity data type used to record a measurement associated with its' appropriate units.  These are derived from ISO standards and the Reference model enables conversion between these units. The example shown here is length. 
+a|
+
+Valid units: +
+
+* cm
+* mm
+* [in_i]
+* [ft_i]
+// Not supported rmType DV_INTERVAL<DV_QUANTITY>
+| **Count** + 
+ Type: `Count`  | Count data types are composed of an integer with no units eg for recording the number of children - in this example the minimum is set at 0 and the maximum not specified. 
+a|
+
+Range: +
+
+* >= 0 and undefined undefined
+// Not supported rmType DV_INTERVAL<DV_COUNT>
+| **Proportion** + 
+ Type: `Proportion`  | Proportion datatypes allow for ratios, percent, fractions and proportions to be modelled. 
+|
+| **Date/Time** + 
+ Type: `Date/time`  | Date/Time datatype allows recording of a date and/or time, including partial dates such as year only or month and year only.  Allow all is the default - so all forms of date/time are permitted. 
+|
+// Not supported rmType DV_INTERVAL<DV_DATE_TIME>
+| **Duration** + 
+ Type: `Duration`  | Duration datatype allows recording of the duration of clinical concepts.  'Allow all time units' is the default, although specific time units can be explicitly modelled.  Maximum and minum values can be set for each time unit. 
+|
+| **Ordinal** + 
+ Type: `Ordinal`  | Ordinal datatypes pair a number and text - in this way scores can be calculated in software, or progression can be assessed eg if used in a pain score. 
+a|
+* [0] No pain +
+ `local:at0038`
+* [1] Slight pain +
+ `local:at0039`
+* [2] Mild pain +
+ `local:at0040`
+* [5] Moderate pain +
+ `local:at0041`
+* [9] Severe pain +
+ `local:at0042`
+* [10] Most severe pain imaginable +
+ `local:at0043`
+| **Boolean** + 
+ Type: `Choice`  | Boolean datatype that allows for true or false answers. 
+a|
+_Multiple data types allowed_
+|_SubTypes_ | |
+| Type: `Boolean` |
+|
+| Type: `Coded text` |
+a|
+
+* no information +
+ `openehr:271`
+* masked +
+ `openehr:272`
+* not applicable +
+ `openehr:273`
+* unknown +
+ `openehr:253`
+| **Any** + 
+ Type: `Choice`  | The datatype for this 'any' element can be specified or constrained in a template or at run-time, but is not explicitly modelled in the archetype. 
+a|
+_All data types allowed_
+| **Choice** + 
+ Type: `Choice`  | Choice datatype allows for a number of types of element to be specified simultaneously and which can constrained or selected within a template or at run-time.  In this example, a text datatype set to Free text or Coded and another that is constrained to Terminology record data about the same data element. 
+a|
+_Multiple data types allowed_
+|_SubTypes_ | |
+| Type: `Quantity` |
+a|
+
+Valid units: +
+
+* g
+* [foz_us]
+| Type: `Coded text` |
+a|
+| **Multimedia** + 
+ Type: `Multimedia`  | Multimedia datatypes allow for the recording of many types of multimedia files to be captured.  All available types have been explicitly selected in this example. 
+|
+| **URI - resource identifier** + 
+ Type: `External URI`  | URI datatypes allow for recording of relationships from this data to data recorded elsewhere.  These links can be within the same EHR, or external eg to a  URL. 
+|
+| **Identifier** + 
+ Type: `Identifier`  | Identifier datatypes enable recording of formal data identifiers. 
+|
+| **State - Definition** + 
+ Type: `Choice`  | All archetypes of the OBSERVATION class can  contain a STATE model which contains information about the subject of data at the time the information was collected, and this information is required for safe clinical interpretation of the core information. An example is the position of the patient at the time of measuring a blood pressure.  Datatypes are identical to those explained in the Data model, above. 
+a|
+_All data types allowed_
+| **Time** + 
+ Type: `Date/time` (_mandatory_) |  
+|
+| **Protocol - Definition** + 
+ Type: `Choice`  | All archetypes of the OBSERVATION class can contain a PROTOCOL model which records information on how the information was gathered or measured, and any other information that is not required for safe clinical interpretation of the core Data. Datatypes are identical to those explained in the Data model, above. 
+a|
+_All data types allowed_
+|====
+===  *Service request*
+
+
+Request for a health-related service or activity to be delivered by a clinician, organisation or agency.
+
+
+[options="header","stretch", cols="20,50,30"]
+|====
+|Data item | Description | Allowed values
+| **narrative** + 
+ Type: `Text` (_mandatory_) |  
+a|
+
+3+a|===== Current Activity  **[mandatory, multiple]**
+`ACTIVITY: _at0001_`
+| **Service name** + 
+ Type: `Text` (_mandatory_) | The name of the single service or activity requested. 
+
+
+
+
+*comment*: Coding of the 'Service name' with a coding system is desirable, if available. For example: 'referral' to an endocrinologist for diabetes management.
+a|
+
+| **Timing** + 
+ Type: `Parsable text` (_mandatory_) |  
+|
+| **Action_archetype_id** + 
+ Type: `String` (_mandatory_) |  
+|`Unsupported RM type: STRING`
+| **expiry_time** + 
+ Type: `Date/time`  |  
+|
+|====
+===  *Procedure*
+
+
+A clinical activity carried out for screening, investigative, diagnostic, curative, therapeutic, evaluative or palliative purposes.
+
+
+[options="header","stretch", cols="20,50,30"]
+|====
+|Data item | Description | Allowed values
+| **careflow_step** + 
+ Type: `Coded text`  | `ISM_TRANSITION.care_flow_step` - The step in the careflow process which occurred as part of generating this action, e.g. dispense , start_administration. This attribute represents the clinical label for the activity, as opposed to current_state which represents the state machine (ISM) computable form. Defined in archetype. 
+a|
+
+* Procedure planned
+* X - Procedure planned
+* Procedure request sent
+* X - Procedure request sent
+* Procedure postponed
+* Procedure cancelled
+* Procedure scheduled
+* Procedure commenced
+* Procedure performed
+* Procedure suspended
+* Procedure aborted
+* Procedure completed
+| **time** + 
+ Type: `Date/time` (_mandatory_) | `ACTION.time` - Point in time at which this action took place. 
+|
+| **Procedure name** + 
+ Type: `Text` (_mandatory_) | Identification of the procedure by name. 
+
+
+
+
+*comment*: Coding of the specific procedure with a terminology is preferred, where possible.
+a|
+
+|====
+
+
+== Archetype provenance
+[options="header","stretch", cols="50,50"]
+|===
+| Local archetypes | Archetypes published or managed externally
+| **Total: 9  (100%)**  | **Total: 0  (%)**
+a|
+COMPOSITION.encounter.v1
+EVALUATION.reason_for_encounter.v1
+ADMIN_ENTRY.translation_requirements.v1
+SECTION.adhoc.v1
+OBSERVATION.blood_pressure.v2
+CLUSTER.device.v1
+OBSERVATION.demo.v1
+INSTRUCTION.service_request.v1
+ACTION.procedure.v1
+a|
+|===
