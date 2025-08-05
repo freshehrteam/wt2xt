@@ -87,11 +87,11 @@ export class DocBuilder {
     return (this.resolvedTemplateFiles.wtxOutPath !== null)
   }
 
-  public async run (): Promise<void> {
+  public async run (apiMode: boolean): Promise<void> {
     await this.generate()
       const outFilePath = this.handleOutPath(this.config.inFilePath, this.config.outFilePath, this.config.exportFormat,this.config.outFileDir);
       console.log("out file path",outFilePath)
-       await saveFile(this, outFilePath)
+       await saveFile(this, outFilePath,apiMode)
        if (this.regenWtx() && this.isWtxAugmented())
           saveWtxFile(this).catch()
   }
@@ -169,8 +169,7 @@ export class DocBuilder {
 
   private calcNewNodeDepth (f: TemplateNode, useSameDepth: boolean) {
     f.depth = f.depth || 0;
-    const childDepth = useSameDepth ? f.depth : f.depth + 1;
-    return childDepth;
+    return useSameDepth ? f.depth : f.depth + 1;
   }
 
   private async walkNonRMChildren(f: TemplateNode, useSameDepth: boolean) {
@@ -430,8 +429,8 @@ export class DocBuilder {
   }
 
   private getValueOfRecord(record?: Record<string, string>): string {
-    if (record) {
-      return record[this.config.defaultLang];
+    if (record && this.config.defaultLang in record) {
+      return record[this.config.defaultLang] || '';
     } else {
       return '';
     }
@@ -458,7 +457,10 @@ export class DocBuilder {
             break;
         }
       }
-      return (rmDescriptions[rmTag as keyof typeof rmDescriptions] as Record<string, string>)?.[language] ?? ''
+      const description = rmDescriptions[rmTag as keyof typeof rmDescriptions];
+      return description && typeof description === 'object' && language in description
+        ? (description as Record<string, string>)[language]
+        : ''
 
     }
 

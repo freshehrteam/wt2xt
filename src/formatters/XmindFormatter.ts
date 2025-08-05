@@ -32,7 +32,7 @@ export const xmind = {
     sb.append(`${headerIndent} context`);
   },
 
-  saveFile: async (dBuilder: DocBuilder, outFile: any): Promise <number>  => {
+  saveFile: async (dBuilder: DocBuilder, outFile: any,apiMode: boolean): Promise <number>  => {
     const xmindArrayBuffer = await parseXMindMarkToXMindFile(dBuilder.toString())
     // Ensure tmp directory exists
     await fs.ensureDir('./tmp');

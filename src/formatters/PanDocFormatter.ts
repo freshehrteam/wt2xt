@@ -52,7 +52,7 @@ export const docx = {
 
 export const pdf = {
 
-  saveFile:  async (dBuilder: DocBuilder, outFile: string) => {
+  saveFile:  async (dBuilder: DocBuilder, outFile: string, apiMode: boolean) => {
     await adoc.saveFile(dBuilder,'./tmp/tmp.adoc')
 //    await runAsciidocPDF(dBuilder.sb.toString(), outFile)
     await runPandoc(dBuilder.sb.toString(),'pdf', outFile)
