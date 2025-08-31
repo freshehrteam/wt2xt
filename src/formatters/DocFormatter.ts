@@ -3,28 +3,41 @@ import  {adoc }from "./AdocFormatter"
 import {xmind } from "./XmindFormatter"
 import { TemplateNode } from "../types/TemplateNodes";
 import { formatOccurrences } from "../types/TemplateTypes";
-import { docx, pdf } from "./PanDocFormatter";
+import {docx, md, pdf} from "./PanDocFormatter";
 import { fshl } from './FshLogicalModelFormatter';
 import { fsh } from './FshCommon';
 import { fshq } from './QuestionnaireFormatter.ts';
-
+import * as fs from "fs-extra";
+import path from "path";
+import * as crypto from 'crypto';
 export enum ExportFormat {
   adoc = 'adoc',
   xmind = 'xmind',
   docx = 'docx',
+  md = 'md',
   pdf = 'pdf',
   fshl  = 'fshl',
   fsht = 'fsht',
   fshq = 'fshq',
 }
 
-
 type FormatHeaderFn = (db: DocBuilder) => void;
 type SaveFileFn = (db: DocBuilder, outFile: string, apiMode:boolean) =>  Promise<number|void>;
+type GetOutPutBufferFn = (db: DocBuilder) =>  Promise<ArrayBufferLike|string|void>;
 type FormatCompositionHeaderFn = (dBuilder: DocBuilder, f: TemplateNode) => void;
 export type FormatElementFn  = (docBuilder: DocBuilder, f: TemplateNode) => void;
 type FormatNodeContentFn = (dBuilder: DocBuilder, f: TemplateNode, isChoice: boolean) => void;
 
+export const generateRandomFilename = (extension: string): string => {
+    // Generate a random string (8 characters)
+    const randomStr = crypto.randomBytes(4).toString('hex');
+    // Get current timestamp
+    const timestamp = Date.now();
+    // Combine them with the extension
+    const filename = `tmp_${timestamp}_${randomStr}.${extension}`;
+    // Return the full path
+    return path.join('./tmp', filename);
+};
 
 export const formatTemplateHeader = (docBuilder: DocBuilder): void => {
 
@@ -278,33 +291,90 @@ export const formatCluster = (docBuilder: DocBuilder, f: TemplateNode): void => 
     fn(docBuilder, f);
 }
 
+export const saveOutputArray = async (outputBuffer:ArrayBufferLike|string, outFile: string,  useStdout:boolean) => {
+
+    if (useStdout)
+        await Bun.write(Bun.stdout, outputBuffer);
+    else
+    {
+        await fs.ensureDir(path.dirname(outFile));
+        await Bun.write(outFile, outputBuffer);
+        console.log(`\n Exported : ${outFile}`);
+    }
+    // Return the length of the written data as an approximation of bytes written
+    if (typeof(outputBuffer) === 'string')
+        return outputBuffer.length
+    else
+        return outputBuffer.byteLength
+}
+
+export const getOutputBuffer = async (docBuilder: DocBuilder) : Promise<ArrayBufferLike |string |void> => {
+    let fn: GetOutPutBufferFn;
+
+    const exportFormat= docBuilder.config.exportFormat
+//console.log('getOutputbuffer: ', docBuilder.config.exportFormat);
+    switch (exportFormat) {
+        case ExportFormat.xmind:
+            fn = xmind.getOutputBuffer;
+            break
+        case ExportFormat.fsht:
+        case ExportFormat.fshl:
+            fn = adoc.getOutputBuffer
+            break;
+        case ExportFormat.fshq:
+            fn = adoc.getOutputBuffer
+            break;
+
+        case ExportFormat.docx:
+            fn = docx.getOutputBuffer
+            break;
+        case ExportFormat.md:
+            fn = md.getOutputBuffer
+            break;
+
+        case ExportFormat.pdf:
+            fn = pdf.getOutputBuffer
+            break;
+        default:
+            fn = adoc.getOutputBuffer
+            break
+    }
+    if (fn)
+        return await fn(docBuilder)
+    else
+        return
+}
 export const saveFile  = async (docBuilder: DocBuilder, outFile: string, useStdOut :boolean): Promise<number|void> => {
-  let fn: SaveFileFn;
+    let fn: SaveFileFn;
 
-  switch (docBuilder.config.exportFormat) {
-    case ExportFormat.xmind:
-      fn = xmind.saveFile
-      break
-    case ExportFormat.fsht:
-    case ExportFormat.fshl:
-      fn = fsh.saveFile
-      break;
-    case ExportFormat.fshq:
-      fn = fsh.saveJson
-      break;
+    switch (docBuilder.config.exportFormat) {
+        case ExportFormat.xmind:
+            fn = xmind.saveFile;
+            break
+        case ExportFormat.fsht:
+        case ExportFormat.fshl:
+            fn = fsh.saveFile
+            break;
+        case ExportFormat.fshq:
+            fn = fsh.saveJson
+            break;
 
-    case ExportFormat.docx:
-      fn = docx.saveFile
-      break;
-    case ExportFormat.pdf:
-      fn = pdf.saveFile
-      break;
-    default:
-      fn = adoc.saveFile
-      break
-  }
-  if (fn)
-    await fn(docBuilder, outFile, useStdOut)
+        case ExportFormat.md:
+            fn = md.saveFile
+            break;
+
+        case ExportFormat.docx:
+            fn = docx.saveFile
+            break;
+        case ExportFormat.pdf:
+            fn = pdf.saveFile
+            break;
+        default:
+            fn = adoc.saveFile
+            break
+    }
+    if (fn)
+        await fn(docBuilder,outFile,useStdOut)
 }
 
 export const formatNodeContent= (dBuilder: DocBuilder, f: TemplateNode, isChoice: boolean) => {

@@ -21,6 +21,7 @@ COPY --from=deps /app/node_modules /app/node_modules
 COPY . /app/
 # Make the CLI tool executable
 RUN chmod +x /app/src/index.ts
+RUN chmod +x /app/src//api/api.ts
 # Build the application
 RUN bun run bun-build
 
@@ -47,6 +48,7 @@ COPY --from=build --chown=bunuser:bunuser /app/package.json /app/package.json
 COPY --from=build --chown=bunuser:bunuser /app/bun.lockb /app/bun.lockb
 COPY --from=build --chown=bunuser:bunuser /app/node_modules /app/node_modules
 COPY --from=build --chown=bunuser:bunuser /app/src/index.ts /app/src/index.ts
+COPY --from=build --chown=bunuser:bunuser /app/src/api/api.ts /app/src/api/api.ts
 COPY --from=build --chown=bunuser:bunuser /app/dist /app/dist
 COPY --from=build --chown=bunuser:bunuser /app/src /app/src
 COPY --from=build --chown=bunuser:bunuser /app/config /app/config
@@ -66,7 +68,7 @@ EXPOSE 3000
 
 # Create an entrypoint script to handle both CLI and API modes
 COPY --from=build --chown=bunuser:bunuser /app/cli /app/cli
-RUN echo '#!/bin/sh\nif [ "$1" = "api" ]; then\n  shift\n  exec bun run /app/src/api.ts "$@"\nelse\n  exec bun run /app/src/index.ts "$@"\nfi' > /app/cli/entrypoint.sh && \
+RUN echo '#!/bin/sh\nif [ "$1" = "api" ]; then\n  shift\n  exec bun run /app/src/api/api.ts "$@"\nelse\n  exec bun run /app/src/index.ts "$@"\nfi' > /app/cli/entrypoint.sh && \
     chmod +x /app/cli/entrypoint.sh
 
 ENTRYPOINT ["/app/cli/entrypoint.sh"]

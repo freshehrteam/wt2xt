@@ -1,7 +1,7 @@
 import { DocBuilder } from "../DocBuilder";
 import { findParentNodeId, TemplateNode,  TemplateInput } from "../types/TemplateNodes";
 import { formatOccurrences, isAnyChoice, isDisplayableNode, mapRmTypeText} from "../types/TemplateTypes";
-import { formatAnnotations, formatOccurrencesText } from './DocFormatter';
+import {formatAnnotations, formatOccurrencesText, saveOutputArray} from './DocFormatter';
 import { ArchetypeList} from '../provenance/openEProvenance';
 import * as fs from 'fs-extra';
 import * as path from 'path';
@@ -29,19 +29,15 @@ export const adoc = {
     sb.append(`${f.localizedDescriptions["en"]}`).newline()
   },
 
-  saveFile: async (docBuilder: DocBuilder, outFile: string, useStdout: boolean) => {
-    // Ensure the directory exists
 
-   if (useStdout)
-       await Bun.write(Bun.stdout, docBuilder.toString());
-   else
-   {
-       await fs.ensureDir(path.dirname(outFile));
-       await Bun.write(outFile, docBuilder.toString());
-       console.log(`\n Exported : ${outFile}`);
-   }
-    // Return the length of the written data as an approximation of bytes written
-    return Buffer.from(docBuilder.toString()).length;
+    getOutputBuffer: async (docBuilder: DocBuilder): Promise<string> => {
+        return  docBuilder.toString();  // Get the text content
+    },
+
+    saveFile: async (docBuilder: DocBuilder, outFile: string, useStdout: boolean) => {
+    // Ensure the directory exists
+       const outputBuffer: string = await adoc.getOutputBuffer(docBuilder)
+      return  saveOutputArray(outputBuffer, outFile, useStdout);
   },
 
   formatNodeHeader: (dBuilder: DocBuilder) => {

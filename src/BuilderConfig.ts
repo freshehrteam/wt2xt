@@ -62,7 +62,7 @@ const defaultConfig: Config = {
   entriesOnly: false,
 };
 
- export function importConfig(path: string): Config {
+ export async function importConfig(path: string): Promise<Config> {
 
    if (fs.existsSync(path)) {
      const localConfig = JSON.parse(fs.readFileSync(path, { encoding: 'utf8', flag: 'r' }));

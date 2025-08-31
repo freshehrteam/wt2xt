@@ -4,7 +4,7 @@ import { parseXMindMarkToXMindFile} from "xmindmark";
 import { DocBuilder } from "../DocBuilder";
 import {  TemplateNode, TemplateInput } from "../types/TemplateNodes";
 import { formatOccurrences, isAnyChoice, mapRmTypeText } from '../types/TemplateTypes';
-import { formatRawOccurrencesText } from "./DocFormatter";
+import {formatRawOccurrencesText, getOutputBuffer} from "./DocFormatter";
 import { extractTextInBrackets} from './FormatterUtils';
 
 const headerIndent: string = '  -';
@@ -32,15 +32,17 @@ export const xmind = {
     sb.append(`${headerIndent} context`);
   },
 
-  saveFile: async (dBuilder: DocBuilder, outFile: any, useStdOut: boolean): Promise <number>  => {
-    const xmindArrayBuffer = await parseXMindMarkToXMindFile(dBuilder.toString())
-    // Ensure tmp directory exists
- //   await fs.ensureDir('./tmp');
- //   await fs.writeFile('./tmp/tmp.md', dBuilder.toString());
-    await fs.writeFile(outFile, Buffer.from(xmindArrayBuffer));
+  getOutputBuffer : async (docBuilder: DocBuilder): Promise<ArrayBufferLike> => {
+      return await parseXMindMarkToXMindFile(docBuilder.toString()) as ArrayBufferLike;
+  } ,
+
+  saveFile: async (docBuilder: DocBuilder, outFile: any, useStdOut: boolean): Promise <number>  => {
+
+    const outBuffer: ArrayBufferLike = await xmind.getOutputBuffer(docBuilder)// Ensure tmp directory exists
+
     console.log(`\n Exported : ${outFile}`);
     // Return the length of the written data as an approximation of bytes written
-    return Buffer.from(xmindArrayBuffer).length;
+    return outBuffer.byteLength;
   },
 
   formatNodeContent: (dBuilder: DocBuilder, f: TemplateNode, _isChoice: boolean) => {

@@ -16,7 +16,7 @@ const args = yargs(process.argv.slice(2)).options({
   'export-format': { type: 'string', demandOption: false, describe: 'Export format: adoc|docx|xmind|pdf|fshl|fshq (default: adoc)',alias: 'ex', default: "adoc"},
 }).argv;
 
-const config:Config = importConfig(args['config-file'])
+const config:Config = await importConfig(args['config-file'])
 const exportFormatKey = args['export-format'] as keyof typeof ExportFormat;
 
 config.inFilePath = args['web-template']

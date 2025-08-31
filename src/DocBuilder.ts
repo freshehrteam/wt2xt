@@ -89,11 +89,14 @@ export class DocBuilder {
 
   public async run (apiMode: boolean): Promise<void> {
     await this.generate()
-      const outFilePath = this.handleOutPath(this.config.inFilePath, this.config.outFilePath, this.config.exportFormat,this.config.outFileDir);
-      console.log("out file path",outFilePath)
-       await saveFile(this, outFilePath,apiMode)
-       if (this.regenWtx() && this.isWtxAugmented())
-          saveWtxFile(this).catch()
+
+    if (!apiMode) {
+        const outFilePath = this.handleOutPath(this.config.inFilePath, this.config.outFilePath, this.config.exportFormat, this.config.outFileDir);
+        console.log("out file path", outFilePath)
+        await saveFile(this, outFilePath, apiMode)
+        if (this.regenWtx() && this.isWtxAugmented())
+            saveWtxFile(this).catch()
+    }
   }
 
 // If the archetypeLists are empty, then the wtx Augmentation process has failed

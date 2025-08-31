@@ -1,6 +1,6 @@
 import { DocBuilder } from '../DocBuilder';
 import { Config, importConfig } from '../BuilderConfig';
-import { ExportFormat } from '../formatters/DocFormatter';
+import {ExportFormat, getOutputBuffer} from '../formatters/DocFormatter';
 import { WebTemplate } from "../types/WebTemplate.ts";
 //import type { Serve } from "bun";
 const PORT = process.env['PORT'] || 3001;
@@ -80,35 +80,35 @@ async function handleRequest(req: Request): Promise<Response> {
     }
 
     // Load default config
-    const config: Config = importConfig('./config/wtconfig.json');
+    const config: Config = await importConfig('../config/wtconfig.json');
 
     // Override config with our settings
     config.exportFormat = ExportFormat[exportFormatKey];
-
+      console.log('1: ', config.exportFormat);
     // Create DocBuilder and process the template
-    const docBuilder = new DocBuilder(template, config);
-    await docBuilder.run(true);
-
+    const docBuilder =  new DocBuilder(template, config);
+    await docBuilder.run(true)
+      console.log('2: ', docBuilder.config.exportFormat);
     // Get the string output directly from DocBuilder
-    const output = docBuilder.toString();
+    const output: ArrayBufferLike|string|void = await getOutputBuffer(docBuilder);
 
     // Set the appropriate content type based on the format
     let contentType = 'text/plain';
     switch (exportFormat) {
-      case 'adoc':
-        contentType = 'text/plain';
-        break;
+        case 'adoc':
+        case 'fshl':
+        case 'fsht':
+        case 'fshq':
+        case 'md':
+            contentType = 'text/plain';
+            break;
       case 'docx':
         contentType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
         break;
       case 'pdf':
         contentType = 'application/pdf';
         break;
-      case 'fshl':
-      case 'fsht':
-      case 'fshq':
-        contentType = 'text/plain';
-        break;
+
       case 'xmind':
         contentType = 'application/octet-stream';
         break;
@@ -117,7 +117,10 @@ async function handleRequest(req: Request): Promise<Response> {
     // Create a ReadableStream to stream the output
     const stream = new ReadableStream({
       start(controller) {
-        controller.enqueue(new TextEncoder().encode(output));
+        if (contentType === 'text/plain')
+            controller.enqueue(new TextEncoder().encode(output as string));
+        else
+            controller.enqueue(output);
         controller.close();
       }
     });
@@ -165,7 +168,6 @@ const start = async () => {
 // Close the server
 const close = async () => {
   if (server) {
-
     // @ts-ignore
       await server.stop(true)
     server = null;
