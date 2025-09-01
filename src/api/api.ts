@@ -22,9 +22,81 @@ async function handleRequest(req: Request): Promise<Response> {
     });
   }
 
-  // Only handle POST requests to /convert
+  // Route handling
   const url = new URL(req.url);
-    if (req.method !== 'POST' || url.pathname !== '/api/v1/convert') {
+console.debug(url.pathname)
+  // Heartbeat endpoint
+  if (req.method === 'GET' && url.pathname === '/api/v1/heartbeat') {
+    return new Response(null, {
+      status: 204,
+      headers: {
+        'Access-Control-Allow-Origin': '*'
+      }
+    });
+  }
+
+  // Config endpoints
+  const configDir = '/app/config';
+  const customConfigPath = `${configDir}/custom_config.json`;
+
+  // POST /config -> save JSON body to config/custom_config.json
+  if (req.method === 'POST' && url.pathname === '/api/v1/config') {
+    try {
+      const contentType = req.headers.get('content-type') || '';
+      if (!contentType.includes('application/json')) {
+        return new Response(JSON.stringify({ error: 'Invalid content type: Must be application/json' }), {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' }
+        });
+      }
+      const body = await req.text();
+      // validate JSON
+      try {
+        JSON.parse(body);
+      } catch {
+        return new Response(JSON.stringify({ error: 'Invalid JSON' }), {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' }
+        });
+      }
+
+      await Bun.write(customConfigPath, body);
+      return new Response(null, { status: 204, headers: { 'Access-Control-Allow-Origin': '*' } });
+    } catch (e) {
+      return new Response(JSON.stringify({ error: 'Failed to save config', details: e instanceof Error ? e.message : String(e) }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+  }
+
+  // GET /config -> return config/custom_config.json
+  if (req.method === 'GET' && url.pathname === '/api/v1/config') {
+    try {
+      const file = Bun.file(customConfigPath);
+      if (!(await file.exists())) {
+        return new Response(JSON.stringify({ error: 'custom_config.json not found' }), {
+          status: 404,
+          headers: { 'Content-Type': 'application/json' }
+        });
+      }
+      return new Response(file, {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        }
+      });
+    } catch (e) {
+      return new Response(JSON.stringify({ error: 'Failed to read config', details: e instanceof Error ? e.message : String(e) }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+  }
+
+  // Only handle POST requests to /api/v1/convert
+  if (req.method !== 'POST' || url.pathname !== '/api/v1/convert') {
     return new Response('Not Found', { status: 404 });
   }
 
