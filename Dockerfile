@@ -21,7 +21,7 @@ COPY --from=deps /app/node_modules /app/node_modules
 COPY . /app/
 # Make the CLI tool executable
 RUN chmod +x /app/src/index.ts
-RUN chmod +x /app/src//api/api.ts
+RUN chmod +x /app/src/api/api.ts
 # Build the application
 RUN bun run bun-build
 
