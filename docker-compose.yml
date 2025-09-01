@@ -12,6 +12,8 @@ services:
       - ./out:/app/out:rw
       - ./tmp:/app/tmp:rw
       - ./config:/app/config
+    networks:
+      - frontend
     # Run the API server by default
     command: api
     user: "1001:1001"  # Use the non-root user created in the Dockerfile
@@ -21,3 +23,6 @@ services:
 
     # Ensure host directories exist with proper permissions before starting
     # This helps with Linux permission issues
+networks:
+  frontend:
+    external: true

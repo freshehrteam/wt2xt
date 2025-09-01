@@ -153,6 +153,7 @@ const start = async () => {
     server = Bun.serve({
       port: Number(PORT),
       hostname: '0.0.0.0',
+      idleTimeout: 0, // Disable timeout
       fetch: handleRequest,
       development: process.env.NODE_ENV !== 'production',
     });
