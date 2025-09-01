@@ -10,15 +10,42 @@ let server: Bun.Serve | null = null;
 // Handler function for the server
 async function handleRequest(req: Request): Promise<Response> {
 
-    console.log('url', req.url)
+  // Basic Auth config
+  const AUTH_USER = process.env['API_USER'] || '';
+  const AUTH_PASS = process.env['API_PASS'] || '';
+  const AUTH_ENABLED = AUTH_USER !== '' && AUTH_PASS !== '';
+
+  const unauthorized = () => new Response('Unauthorized', {
+    status: 401,
+    headers: {
+      'WWW-Authenticate': 'Basic realm="wt2xt"',
+      'Access-Control-Allow-Origin': '*'
+    }
+  });
+
+  const requireAuth = (req: Request) => {
+    if (!AUTH_ENABLED) return true; // auth disabled when no creds configured
+    const auth = req.headers.get('authorization') || '';
+    if (!auth.startsWith('Basic ')) return false;
+    const b64 = auth.slice(6).trim();
+    try {
+      const decoded = Buffer.from(b64, 'base64').toString('utf8');
+      const [user, pass] = decoded.split(':');
+      return user === AUTH_USER && pass === AUTH_PASS;
+    } catch {
+      return false;
+    }
+  };
+
+
     // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, {
       status: 204,
       headers: {
         'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
         'Access-Control-Max-Age': '86400',
       },
     });
@@ -26,7 +53,7 @@ async function handleRequest(req: Request): Promise<Response> {
 
   // Route handling
   const url = new URL(req.url);
-console.log('url', url.pathname)
+
   // Heartbeat endpoint
   if (req.method === 'GET' && url.pathname === '/api/v1/heartbeat') {
     return new Response(null, {
@@ -43,6 +70,7 @@ console.log('url', url.pathname)
 
   // POST /config -> save JSON body to config/custom_config.json
   if (req.method === 'POST' && url.pathname === '/api/v1/config') {
+    if (!requireAuth(req)) return unauthorized();
     try {
       const contentType = req.headers.get('content-type') || '';
       if (!contentType.includes('application/json')) {
@@ -74,6 +102,7 @@ console.log('url', url.pathname)
 
   // GET /config -> return config/custom_config.json
   if (req.method === 'GET' && url.pathname === '/api/v1/config') {
+    if (!requireAuth(req)) return unauthorized();
     try {
       const file = Bun.file(customConfigPath);
       if (!(await file.exists())) {
@@ -101,6 +130,8 @@ console.log('url', url.pathname)
   if (req.method !== 'POST' || url.pathname !== '/api/v1/convert') {
     return new Response('Not Found', { status: 404 });
   }
+  // Require auth for convert
+  if (!requireAuth(req)) return unauthorized();
 
   try {
     // Parse query parameters

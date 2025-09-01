@@ -314,3 +314,48 @@ describe("My test suite", () => {
 ```
 
 For more information about Bun's testing capabilities, see the [Bun documentation](https://bun.sh/docs/cli/test).
+
+
+
+## Authentication
+
+Basic authentication can be enabled for the API using environment variables. When not set, authentication is disabled (useful for local development and existing tests).
+
+- API_USER: Username required for Basic Auth
+- API_PASS: Password required for Basic Auth
+- PORT (optional): Port to run the API server on (default 3000)
+
+You can provide these via a .env file in the project root (copy .env.example to .env):
+
+```
+# .env
+API_USER=youruser
+API_PASS=yourpass
+# PORT=3000
+```
+
+- Bun automatically loads .env files when running locally with `bun run`.
+- Docker Compose now includes `env_file: .env`, so variables in your local .env are passed to the container.
+
+When both API_USER and API_PASS are set, the following endpoints require authentication:
+- POST /api/v1/convert
+- GET /api/v1/config
+- POST /api/v1/config
+
+The health endpoint remains public:
+- GET /api/v1/heartbeat → 204
+
+Example usage with curl when auth is enabled:
+
+```bash
+curl -u "$API_USER:$API_PASS" \
+  -X POST "http://localhost:3000/api/v1/convert?exportAs=adoc" \
+  -H "Content-Type: application/json" \
+  -d @./templates/example.json
+```
+
+Docker Compose: create a `.env` file in the project root and run:
+
+```bash
+docker-compose up
+```

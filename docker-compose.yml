@@ -12,6 +12,8 @@ services:
       - ./out:/app/out:rw
       - ./tmp:/app/tmp:rw
       - ./config:/app/config
+    env_file:
+      - .env
     networks:
       - frontend
     # Run the API server by default
