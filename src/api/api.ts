@@ -9,7 +9,9 @@ let server: Bun.Serve | null = null;
 
 // Handler function for the server
 async function handleRequest(req: Request): Promise<Response> {
-  // Handle CORS preflight requests
+
+    console.log('url', req.url)
+    // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, {
       status: 204,
@@ -24,7 +26,7 @@ async function handleRequest(req: Request): Promise<Response> {
 
   // Route handling
   const url = new URL(req.url);
-console.debug(url.pathname)
+console.log('url', url.pathname)
   // Heartbeat endpoint
   if (req.method === 'GET' && url.pathname === '/api/v1/heartbeat') {
     return new Response(null, {
@@ -160,7 +162,7 @@ console.debug(url.pathname)
     // Create DocBuilder and process the template
     const docBuilder =  new DocBuilder(template, config);
     await docBuilder.run(true)
-      console.log('2: ', docBuilder.config.exportFormat);
+  //    console.log('2: ', docBuilder.config.exportFormat);
     // Get the string output directly from DocBuilder
     const output: ArrayBufferLike|string|void = await getOutputBuffer(docBuilder);
 
