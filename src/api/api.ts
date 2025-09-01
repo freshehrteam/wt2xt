@@ -3,7 +3,7 @@ import { Config, importConfig } from '../BuilderConfig';
 import {ExportFormat, getOutputBuffer} from '../formatters/DocFormatter';
 import { WebTemplate } from "../types/WebTemplate.ts";
 //import type { Serve } from "bun";
-const PORT = process.env['PORT'] || 3001;
+const PORT = process.env['PORT'] || 3000;
 // Create a server instance that we can export for testing
 let server: Bun.Serve | null = null;
 

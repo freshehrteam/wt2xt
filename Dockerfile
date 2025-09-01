@@ -73,5 +73,5 @@ RUN echo '#!/bin/sh\nif [ "$1" = "api" ]; then\n  shift\n  exec bun run /app/src
 
 ENTRYPOINT ["/app/cli/entrypoint.sh"]
 
-# Default command (can be overridden)
-CMD ["--help"]
+# Default command runs the API server
+CMD ["api"]
