@@ -1,25 +1,15 @@
 import { sushiClient } from 'fsh-sushi';
 import { DocBuilder } from '../DocBuilder';
 import * as fs from 'fs-extra';
+import {appendCodeSystemFSH} from "./FshTerminologyFormatter.ts";
+import {OutputBufferType} from "./DocFormatter.ts";
 
-const appendCodeSystemFSH = ( docBuilder :DocBuilder) => {
-   return
-    const {cb, codeSystems} = docBuilder;
-    for (const cs of codeSystems) {
-        cb.newline('')
-        cb.append(`CodeSystem: ${cs.id}`);
-        cb.append(`Id: ${cs.id}`);
-        cb.append( `Title: "${cs.title}"`);
-        cb.newline(`* ^url = "${cs.url}"`)
-    }
-}
 export const fsh = {
 
-    saveJson: async (dBuilder: DocBuilder, outFile: any): Promise<void> => {
-
-        const exportFileName = `${outFile}.json`
-        await fs.writeFile(exportFileName, JSON.stringify(dBuilder.jb,null,2));
-        console.log(`\n Exported : ${exportFileName}`)
+    getOutputBuffer: async (docBuilder: DocBuilder): Promise<OutputBufferType> => {
+        appendCodeSystemFSH(docBuilder)
+        docBuilder.cb.newline('')
+        return docBuilder.toString()
     },
 
     saveFile: async (dBuilder: DocBuilder, outFile: any): Promise<number> => {
@@ -35,27 +25,31 @@ export const fsh = {
       return Buffer.from(exportFSH).length;
   },
 
-  convertFSH: (exportFSH: string, outFile: any) => {
-    let exportFileName: string = '';
-
-    sushiClient.fshToFhir(exportFSH, {
+  convertFSH: async (exportFSH: string, outFile: any) => {
+    try {
+      const results = await sushiClient.fshToFhir(exportFSH, {
         fhirVersion: "4.0.1",
         logLevel: "error",
       })
-        .then((results) => {
-           results.fhir.forEach((fhirObject) => {
-             const fhirType: string = fhirObject.resourceType;
-             const fhirId: string = fhirObject.id;
-             exportFileName = `${outFile}-${fhirType}-${fhirId}.json`
-             fs.writeFile(exportFileName, JSON.stringify(fhirObject))
-               .then(() => {
-                 console.log(`Converted from FSH : ${outFile}-${fhirType}-${fhirId}.json`)
-               })
-           })// handle results
-        })
-        .catch((err) => {
-          console.log(`Sushi error: ${err}`)// handle thrown errors
-        });
+
+      // Create a single ZIP containing all FHIR JSON files
+      const { default: JSZip } = await import('jszip')
+      const zip = new JSZip()
+
+      results.fhir.forEach((fhirObject: any) => {
+        const fhirType: string = fhirObject.resourceType || 'Resource'
+        const fhirId: string = fhirObject.id || Math.random().toString(36).slice(2)
+        const filename = `${fhirType}-${fhirId}.json`
+        zip.file(filename, JSON.stringify(fhirObject, null, 2))
+      })
+
+      const zipBuffer: Uint8Array = await zip.generateAsync({ type: 'uint8array' })
+      const zipFileName = `${outFile}.zip`
+      await fs.writeFile(zipFileName, zipBuffer)
+      console.log(`Converted from FSH (zipped): ${zipFileName}`)
+    } catch (err) {
+      console.log(`Sushi error: ${err}`)
+    }
   },
 
 }

@@ -28,3 +28,5 @@ yarn-error.log*
 /wt2xt
 /wtxt
 /templates/GENOC - Familial risk Tumour genomics report.json
+!/.env.example
+/.env.example

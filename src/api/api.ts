@@ -217,6 +217,9 @@ async function handleRequest(req: Request): Promise<Response> {
       case 'xmind':
         contentType = 'application/octet-stream';
         break;
+      case 'fhirlj':
+        contentType = 'application/zip';
+        break;
     }
 
     // Create a ReadableStream to stream the output

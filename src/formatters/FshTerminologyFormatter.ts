@@ -7,6 +7,7 @@ import {ValueSet} from "@smile-cdr/fhirts/dist/FHIR-R4/classes/valueSet";
 import {ValueSetInclude} from "@smile-cdr/fhirts/dist/FHIR-R4/classes/valueSetInclude";
 import {ValueSetConcept} from "@smile-cdr/fhirts/dist/FHIR-R4/classes/valueSetConcept";
 import {ValueSetDesignation} from "@smile-cdr/fhirts/dist/FHIR-R4/classes/valueSetDesignation";
+import {DocBuilder} from "../DocBuilder.ts";
 
 const formatCodeSystemUrl = (node : TemplateNode) : string => `http://openehr.org/archetypes/${node.archetype_id}/CS`
 const formatCodeSystemId = (node : TemplateNode) : string =>`CodeSystem-${snakeToCamel(node.localizedName,true)}`
@@ -15,6 +16,18 @@ const formatCodeSystemId = (node : TemplateNode) : string =>`CodeSystem-${snakeT
 const formatValueSetId = (node : TemplateNode) : string =>`Valueset-${snakeToCamel(node.archetype_id,false)}-${snakeToCamel(node.localizedName, true)}`
 const formatValueSetUrl = (node : TemplateNode) : string => `http://openehr.org/archetypes/${node.archetype_id}`
 // ``
+
+export const appendCodeSystemFSH = ( docBuilder :DocBuilder) => {
+    return
+    const {cb, codeSystems} = docBuilder;
+    for (const cs of codeSystems) {
+        cb.newline('')
+        cb.append(`CodeSystem: ${cs.id}`);
+        cb.append(`Id: ${cs.id}`);
+        cb.append( `Title: "${cs.title}"`);
+        cb.newline(`* ^url = "${cs.url}"`)
+    }
+}
 
 //const formatValuesetName = (node : TemplateNode) : string => `http://openehr.org/ckm/archetypes/${node.archetype_id}`
 

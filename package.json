@@ -29,8 +29,10 @@
     "asciidoctor": "^3.0.0",
     "axios": "^1.7.2",
     "fastify": "^4.26.2",
+    "fs-extra": "^11.3.1",
     "fsh-sushi": "^3.11.0",
     "hl7.fhir.r4.core": "^0.0.1-security",
+    "jszip": "^3.10.1",
     "node-fetch": "^3.3.2",
     "node-pandoc": "^0.3.0",
     "ora": "^5.1.0",
@@ -40,8 +42,10 @@
     "yargs": "^16.1.0"
   },
   "devDependencies": {
-    "@types/yargs": "^15.0.9",
-    "@types/bun": "^1.0.0"
+    "@types/bun": "^1.0.0",
+    "@types/fs-extra": "^11.0.4",
+    "@types/jszip": "^3.4.1",
+    "@types/yargs": "^15.0.9"
   },
   "scripts": {
     "dev": "bun --watch src/index.ts",

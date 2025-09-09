@@ -13,7 +13,7 @@ const args = yargs(process.argv.slice(2)).options({
   'out-dir': { type: 'string', demandOption: false, describe: 'Output folder', alias: 'od', default: './out'},
   'in-dir': { type: 'string', demandOption: false, describe: 'Input folder', alias: 'id', default: './templates'},
   'config-file': { type: 'string', demandOption: false, describe: 'Config file',alias: 'cfg', default: "./config/wtconfig.json"},
-  'export-format': { type: 'string', demandOption: false, describe: 'Export format: adoc|docx|xmind|pdf|fshl|fshq (default: adoc)',alias: 'ex', default: "adoc"},
+  'export-format': { type: 'string', demandOption: false, describe: 'Export format: adoc|docx|xmind|pdf|fshl|fshq|fhirlj (default: adoc)',alias: 'ex', default: "adoc"},
 }).argv;
 
 const config:Config = await importConfig(args['config-file'])
@@ -26,6 +26,7 @@ config.outFileDir = args['out-dir']
 config.outFilePath = args['out-file']
 
 console.log(`Processing ${config.inFilePath}`);
+console.log(`Export format ${config.exportFormat}`);
 
 if (fs.existsSync(config.inFilePath)) {
   const inDoc:string = fs.readFileSync(config.inFilePath, { encoding: 'utf8', flag: 'r' });
