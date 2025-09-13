@@ -7,7 +7,7 @@ WORKDIR /app
 # Create a stage for installing dependencies
 FROM base AS deps
 # Copy only package.json and lockfile to leverage Docker caching
-COPY package.json bun.lockb* /app/
+COPY bun.lock bun.lockb* /app/
 
 # Install dependencies including dev dependencies
 RUN bun install
