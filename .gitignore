@@ -30,3 +30,5 @@ yarn-error.log*
 /templates/GENOC - Familial risk Tumour genomics report.json
 !/.env.example
 /.env.example
+/templates/ROSI - Advance Intervention information.json
+/tests/server.run.xml
