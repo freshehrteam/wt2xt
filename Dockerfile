@@ -45,7 +45,7 @@ RUN addgroup --system --gid 1001 bunuser && \
 
 # Copy only the necessary files from the build stage
 COPY --from=build --chown=bunuser:bunuser /app/package.json /app/package.json
-COPY --from=build --chown=bunuser:bunuser /app/bun.lockb /app/bun.lockb
+COPY --from=build --chown=bunuser:bunuser /app/bun.lock /app/bun.lock
 COPY --from=build --chown=bunuser:bunuser /app/node_modules /app/node_modules
 COPY --from=build --chown=bunuser:bunuser /app/src/index.ts /app/src/index.ts
 COPY --from=build --chown=bunuser:bunuser /app/src/api/api.ts /app/src/api/api.ts
