@@ -27,7 +27,7 @@ const CreateDocbook = async (src: string): Promise<string> => {
 
 const runPandoc = async (src: string, format: string, outFile: string ): Promise<string> => {
   const { exec } = require('child_process');
-  const args = `-f docbook -t ${format}  -o './${outFile}'`
+  const args = `-f docbook -t ${format}  -o ./${outFile}`
 
   // Get the path to the DocBook file
   const docbookFile = await CreateDocbook(src);

@@ -32,3 +32,4 @@ yarn-error.log*
 /.env.example
 /templates/ROSI - Advance Intervention information.json
 /tests/server.run.xml
+/.env
