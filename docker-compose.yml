@@ -1,10 +1,8 @@
 services:
   wt2xt:
-
     image: wt2xt
     build:
       context: .
-
     ports:
       - "3000:3000"
     volumes:
@@ -12,6 +10,15 @@ services:
       - ./out:/app/out:rw
       - ./tmp:/app/tmp:rw
       - ./config:/app/config
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      # Docker Engine over Unix socket
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      # Capture the host user’s UID/GID for correct file ownership in one‑shot containers
+      - HOST_UID=${HOST_UID}
+      - HOST_GID=${HOST_GID}
+      # The host directory you want to mount as /data in the pandoc container
+      - HOST_WORKDIR=
     env_file:
       - .env
     networks:
@@ -25,6 +32,12 @@ services:
 
     # Ensure host directories exist with proper permissions before starting
     # This helps with Linux permission issues
+
+  dockercli:
+    image: docker:26-cli
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
 networks:
   frontend:
     external: true

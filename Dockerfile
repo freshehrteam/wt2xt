@@ -29,15 +29,7 @@ RUN bun run bun-build
 FROM base AS runtime
 WORKDIR /app
 
-# Install Pandoc and TeX Live (BasicTex equivalent for Linux)
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-    pandoc \
-    fonts-lmodern \
-    lmodern && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
+# Install Pandoc and TeX Live components needed for DOCX and PDF (XeLaTeX)
 # Create a non-root user and set permissions
 RUN addgroup --system --gid 1001 bunuser && \
     adduser --system --uid 1001 --ingroup bunuser bunuser && \

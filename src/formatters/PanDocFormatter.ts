@@ -3,6 +3,7 @@ import { adoc } from "./AdocFormatter";
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import { ExportFormat, generateRandomFilename, getOutputBuffer, saveOutputArray } from "./DocFormatter.ts";
+import {runOneShot} from "./DockerRun.ts";
 
 const CreateDocbook = async (src: string): Promise<string> => {
   const asciidoctor = require('@asciidoctor/core')()
@@ -27,31 +28,20 @@ const CreateDocbook = async (src: string): Promise<string> => {
 
 const runPandoc = async (src: string, format: string, outFile: string ): Promise<string> => {
   const { exec } = require('child_process');
-  const args = `-f docbook -t ${format}  -o ./${outFile}`
+  const args = `-f docbook -t ${format} -o ./${outFile}`
 
   // Get the path to the DocBook file
   const docbookFile = await CreateDocbook(src);
 
-  const command = `pandoc ${args} ${docbookFile}`
+  const HOST_WORKDIR = process.env['HOST_WORKDIR'] || '';
+  const HOST_UID = process.env['HOST_UID'] || '';
+  const HOST_GID = process.env['HOST_GID'] || '';
 
-  return new Promise<string>((resolve, reject) => {
-    exec(command, (error: { message: any; }, stdout: any, stderr: any) => {
-      if (error) {
-        console.log(`error: ${error.message}`);
-        reject(error);
-        return;
-      }
-      if (stderr) {
-        console.log(`stderr: ${stderr}`);
-        // Don't reject on stderr as it might just be warnings
-      }
-      if (stdout) {
-        console.log(`Export file: ${outFile}`);
-      }
-      resolve(docbookFile);
-    });
-  });
-};
+ // const command = `docker run --rm  --volume "${HOST_WORKDIR}:/data" --user ${HOST_UID}:${HOST_GID} pandoc/latex:3.4 ${args} ${docbookFile}`
+
+  const pandoc = await runOneShot('pandoc/latex:3.4',[`${args}`, `${docbookFile}`])
+    return pandoc.logs
+ };
 
 /**
  * Unified function to convert content to various formats and return as appropriate type
