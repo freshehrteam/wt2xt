@@ -1,8 +1,7 @@
 import { DocBuilder } from "../DocBuilder";
 import { adoc } from "./AdocFormatter";
 import * as fs from 'fs-extra';
-import * as path from 'path';
-import { ExportFormat, generateRandomFilename, getOutputBuffer, saveOutputArray } from "./DocFormatter.ts";
+import { generateRandomFilename, getOutputBuffer, saveOutputArray } from "./DocFormatter.ts";
 import {runOneShot} from "./DockerRun.ts";
 
 const CreateDocbook = async (src: string): Promise<string> => {
@@ -13,35 +12,27 @@ const CreateDocbook = async (src: string): Promise<string> => {
 
   const docbookContent = asciidoctor.convert(src, { backend: "docbook" });
 
-  // Ensure tmp directory exists
-  await fs.ensureDir('./tmp');
-
-  // Generate a random filename for the DocBook content
-  const docbookFile = generateRandomFilename('xml');
-
-  // Write DocBook content to a temporary file
-  await fs.writeFile(docbookFile, docbookContent.toString());
-
-  // Return the filename so it can be used by runPandoc
-  return docbookFile;
+  // Return the DocBook XML as a string, avoiding any temporary file on disk
+  return docbookContent.toString();
 }
 
-const runPandoc = async (src: string, format: string, outFile: string ): Promise<string> => {
-  const { exec } = require('child_process');
-  const args = `-f docbook -t ${format} -o ./${outFile}`
+const runPandoc = async (docbookXml: string, format: string): Promise<Buffer> => {
+  const args: string[] = [];
 
-  // Get the path to the DocBook file
-  const docbookFile = await CreateDocbook(src);
+  // Read DocBook from stdin and write the converted output to stdout (binary-safe)
+  args.push('pandoc');
+  args.push('-f');
+  args.push('docbook');
+  args.push('-t');
+  args.push(`${format}`);
+  args.push('-o');
+  args.push('-'); // write output to stdout
+  args.push('-'); // read input from stdin
 
-  const HOST_WORKDIR = process.env['HOST_WORKDIR'] || '';
-  const HOST_UID = process.env['HOST_UID'] || '';
-  const HOST_GID = process.env['HOST_GID'] || '';
-
- // const command = `docker run --rm  --volume "${HOST_WORKDIR}:/data" --user ${HOST_UID}:${HOST_GID} pandoc/latex:3.4 ${args} ${docbookFile}`
-
-  const pandoc = await runOneShot('pandoc/latex:3.4',[`${args}`, `${docbookFile}`])
-    return pandoc.logs
- };
+  // Execute pandoc container and capture stdout as binary Buffer
+  const result = await runOneShot('pandoc/latex:3.4', args, docbookXml);
+  return result.stdout;
+};
 
 /**
  * Unified function to convert content to various formats and return as appropriate type
@@ -52,48 +43,54 @@ const runPandoc = async (src: string, format: string, outFile: string ): Promise
  * @param returnAsText Whether to return the result as text (string) or binary (ArrayBuffer)
  * @returns Promise with the converted content
  */
-const convertContent = async <T extends ArrayBuffer | string>(
+const convertContent = async <T extends ArrayBufferLike | string>(
   dBuilder: DocBuilder,
   format: string,
-  extension: string,
+  _extension: string,
   needsAdoc: boolean = false,
-  returnAsText: boolean = false
+  _returnAsText: boolean = false
 ): Promise<T> => {
   // Ensure tmp directory exists
   await fs.ensureDir('./tmp');
 
-  // Generate random filenames for temporary files
-  const tempOutputFile = generateRandomFilename(extension);
-  const filesToCleanup: string[] = [tempOutputFile];
-  let docbookFile: string | null = null;
+  // Files scheduled for cleanup (if any temp files are created)
+  const filesToCleanup: string[] = [];
+
+  let outputBuffer: Buffer | null = null;
 
   try {
     // If format needs intermediate adoc file (like PDF)
     if (needsAdoc) {
       const tempAdocFile = generateRandomFilename('adoc');
       filesToCleanup.push(tempAdocFile);
-
       // Save content as .adoc file
       await adoc.saveFile(dBuilder, tempAdocFile, false);
     }
 
-    // Convert to target format
-    docbookFile = await runPandoc(dBuilder.sb.toString(), format, tempOutputFile);
-    if (docbookFile) filesToCleanup.push(docbookFile);
+      const docbookXml = await CreateDocbook(dBuilder.sb.toString());
+
+      const bin = await runPandoc(docbookXml, format) ;
+      outputBuffer = bin;
+
+      if (_returnAsText) {
+        return bin.toString('utf8') as T;
+      }
+      return (outputBuffer as unknown) as T
 
     // Read the file as appropriate type
-    const result = returnAsText
-      ? await Bun.file(tempOutputFile).text() as T
-      : await Bun.file(tempOutputFile).arrayBuffer() as T;
+ //   const result = returnAsText
+ //     ? await Bun.file(tempOutputFile).text() as T
+ //     : await Bun.file(tempOutputFile).arrayBuffer() as T;
 
     // Clean up all temporary files
-    await Promise.all(filesToCleanup.map(file => fs.remove(file)));
+   // await Promise.all(filesToCleanup.map(file => fs.remove(file)));
 
-    return result;
+//    return result;
   } catch (error) {
     // Clean up files even if there's an error
     try {
-      await Promise.all(filesToCleanup.map(file => fs.remove(file)));
+        console.log('files', filesToCleanup);
+   //   await Promise.all(filesToCleanup.map(file => fs.remove(file)));
     } catch (cleanupError) {
       console.error('Error cleaning up temporary files:', cleanupError);
     }
@@ -104,17 +101,17 @@ const convertContent = async <T extends ArrayBuffer | string>(
 export const docx = {
   saveFile: async (docBuilder: DocBuilder, outFile: string, useStdout: boolean) => {
     // Ensure the directory exists
-    const outputBuffer: ArrayBufferLike = await getOutputBuffer(docBuilder) as ArrayBufferLike
+    const outputBuffer: ArrayBufferLike = await getOutputBuffer(docBuilder) as ArrayBufferLike;
     return saveOutputArray(outputBuffer, outFile, useStdout);
   },
 
   /**
-   * Converts content to DOCX and returns it as a Bun Buffer that can be streamed
+   * Converts content to DOCX and returns it as binary Buffer
    * @param dBuilder DocBuilder containing the content to convert
-   * @returns Promise<ArrayBuffer> containing the DOCX data
+   * @returns Promise<ArrayBufferLike> containing the DOCX data
    */
-  getOutputBuffer: async (dBuilder: DocBuilder): Promise<ArrayBuffer> => {
-    return convertContent<ArrayBuffer>(dBuilder, 'docx', 'docx', false, false);
+  getOutputBuffer: async (dBuilder: DocBuilder): Promise<ArrayBufferLike> => {
+    return convertContent<ArrayBufferLike>(dBuilder, 'docx', 'docx', false, false);
   },
 }
 
@@ -138,16 +135,16 @@ export const md = {
 export const pdf = {
   saveFile: async (docBuilder: DocBuilder, outFile: string, useStdout: boolean) => {
     // Ensure the directory exists
-    const outputBuffer: ArrayBufferLike = await getOutputBuffer(docBuilder) as ArrayBufferLike
+    const outputBuffer: ArrayBufferLike = await getOutputBuffer(docBuilder) as ArrayBufferLike;
     return saveOutputArray(outputBuffer, outFile, useStdout);
   },
 
   /**
-   * Converts content to PDF and returns it as a Bun Buffer that can be streamed
+   * Converts content to PDF and returns it as binary Buffer
    * @param dBuilder DocBuilder containing the content to convert
-   * @returns Promise<ArrayBuffer> containing the PDF data
+   * @returns Promise<ArrayBufferLike> containing the PDF data
    */
-  getOutputBuffer: async (dBuilder: DocBuilder): Promise<ArrayBuffer> => {
-    return convertContent<ArrayBuffer>(dBuilder, 'pdf', 'pdf', true, false);
+  getOutputBuffer: async (dBuilder: DocBuilder): Promise<ArrayBufferLike> => {
+    return convertContent<ArrayBufferLike>(dBuilder, 'pdf', 'pdf', false, false);
   },
 }

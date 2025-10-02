@@ -12,7 +12,7 @@ interface ErrorResponse {
 describe("new_api", () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let server: Bun.Serve | null = null;
-  const PORT = 3001;
+  const PORT = 3000;
   const BASE_URL = `http://localhost:${PORT}/api/v1`;
 
   // Start the server before all tests
@@ -40,9 +40,10 @@ describe("new_api", () => {
     // Test with the default output format (adoc)
     const response = await fetch(`${BASE_URL}/convert`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Basic ZnJlc2hlaHI6aGlsZGk1OQ=='
+        },
       body: JSON.stringify(testTemplate)
     });
 
@@ -60,7 +61,8 @@ describe("new_api", () => {
     const response = await fetch(`${BASE_URL}/convert?out=invalid_format`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+          'Authorization': 'Basic ZnJlc2hlaHI6aGlsZGk1OQ=='
       },
       body: JSON.stringify(testTemplate)
     });
@@ -75,9 +77,10 @@ describe("new_api", () => {
     // Test with invalid JSON
     const response = await fetch(`${BASE_URL}/convert`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Basic ZnJlc2hlaHI6aGlsZGk1OQ=='
+        },
       body: '{ invalid json }'
     });
 
@@ -95,6 +98,7 @@ it("should return matching .adoc output", async () => {
 
         headers: {
             'Content-Type': 'application/json',
+            'Authorization': 'Basic ZnJlc2hlaHI6aGlsZGk1OQ==',
             accept: 'text/plain',
         },
         body: JSON.stringify(testTemplate)

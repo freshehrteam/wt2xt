@@ -87,11 +87,16 @@ export class DocBuilder {
     return (this.resolvedTemplateFiles.wtxOutPath !== null)
   }
 
+  public calcOutFilePath(): string {
+    return  this.handleOutPath(this.config.inFilePath, this.config.outFilePath, this.config.exportFormat, this.config.outFileDir);
+  }
+
   public async run (apiMode: boolean): Promise<void> {
     await this.generate()
 
+    const outFilePath = this.calcOutFilePath();
+
     if (!apiMode) {
-        const outFilePath = this.handleOutPath(this.config.inFilePath, this.config.outFilePath, this.config.exportFormat, this.config.outFileDir);
         console.log("out file path", outFilePath)
         await saveFile(this, outFilePath, apiMode)
         if (this.regenWtx() && this.isWtxAugmented())

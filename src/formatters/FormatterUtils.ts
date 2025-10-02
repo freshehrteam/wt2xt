@@ -4,9 +4,9 @@ export function extractTextInBrackets(input: string): string[] {
   let match;
   const matches: string[] = [];
 
-  // tslint:disable-next-line:no-conditional-assignment
   while ((match = regex.exec(input)) !== null) {
-    matches.push(match[1]);
+    if (match[1])
+        matches.push(match[1]);
   }
 
   return matches;

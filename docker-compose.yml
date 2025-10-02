@@ -25,7 +25,8 @@ services:
       - frontend
     # Run the API server by default
     command: api
-    user: "1001:1001"  # Use the non-root user created in the Dockerfile
+    # Run as root to ensure access to /var/run/docker.sock mounted from host
+    user: "0:0"
 
     # To run the CLI tool instead, use:
     # docker-compose run --rm wt2xt --web-template=./templates/example.json --export-format=adoc
