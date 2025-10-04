@@ -36,9 +36,9 @@ export function isPartyProxy(rmType: string) {
   return ['PARTY_PROXY'].includes(rmType);
 }
 
-export function isDvChoice(rmType: string) {
-  return ['ELEMENT'].includes(rmType);
-}
+//export function isDvChoice(rmType: string) {
+//  return ['ELEMENT'].includes(rmType);
+//}
 
 export function isBranchNode(rmType:string) {
   return !isDataValue(rmType) || isPartyProxy(rmType) || isEntry(rmType) || isEventContext(rmType) || isActivity(rmType) || isEvent(rmType) || isISMTransition(rmType) || isSection(rmType) || isCluster(rmType)
