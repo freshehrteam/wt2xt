@@ -38,7 +38,6 @@ const runPandoc = async (docbookXml: string, format: string): Promise<Buffer> =>
  * Unified function to convert content to various formats and return as appropriate type
  * @param dBuilder DocBuilder containing the content to convert
  * @param format The target format (docx, pdf, markdown_strict)
- * @param extension The file extension for the output file
  * @param needsAdoc Whether the format requires an intermediate adoc file
  * @param returnAsText Whether to return the result as text (string) or binary (ArrayBuffer)
  * @returns Promise with the converted content
@@ -46,10 +45,10 @@ const runPandoc = async (docbookXml: string, format: string): Promise<Buffer> =>
 const convertContent = async <T extends ArrayBufferLike | string>(
   dBuilder: DocBuilder,
   format: string,
-  _extension: string,
   needsAdoc: boolean = false,
-  _returnAsText: boolean = false
+  returnAsText: boolean = false,
 ): Promise<T> => {
+
   // Ensure tmp directory exists
   await fs.ensureDir('./tmp');
 
@@ -72,7 +71,7 @@ const convertContent = async <T extends ArrayBufferLike | string>(
       const bin = await runPandoc(docbookXml, format) ;
       outputBuffer = bin;
 
-      if (_returnAsText) {
+      if (returnAsText) {
         return bin.toString('utf8') as T;
       }
       return (outputBuffer as unknown) as T
@@ -111,7 +110,7 @@ export const docx = {
    * @returns Promise<ArrayBufferLike> containing the DOCX data
    */
   getOutputBuffer: async (dBuilder: DocBuilder): Promise<ArrayBufferLike> => {
-    return convertContent<ArrayBufferLike>(dBuilder, 'docx', 'docx', false, false);
+    return convertContent<ArrayBufferLike>(dBuilder, 'docx',false, false);
   },
 }
 
@@ -128,7 +127,7 @@ export const md = {
    * @returns Promise<string> containing the Markdown text
    */
   getOutputBuffer: async (dBuilder: DocBuilder): Promise<string> => {
-    return convertContent<string>(dBuilder, 'markdown_strict', 'md', false, true);
+    return convertContent<string>(dBuilder, 'markdown_strict', false, true);
   },
 }
 
@@ -145,6 +144,6 @@ export const pdf = {
    * @returns Promise<ArrayBufferLike> containing the PDF data
    */
   getOutputBuffer: async (dBuilder: DocBuilder): Promise<ArrayBufferLike> => {
-    return convertContent<ArrayBufferLike>(dBuilder, 'pdf', 'pdf', false, false);
+    return convertContent<ArrayBufferLike>(dBuilder, 'pdf', false, false);
   },
 }

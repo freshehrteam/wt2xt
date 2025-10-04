@@ -5,12 +5,11 @@ import { TemplateNode } from "../types/TemplateNodes";
 import { formatOccurrences } from "../types/TemplateTypes";
 import {docx, md, pdf} from "./PanDocFormatter";
 import { fshl, fhirlj } from './FshLogicalModelFormatter';
-import { fsh } from './FshCommon';
 import { fshq } from './QuestionnaireFormatter.ts';
 import * as fs from "fs-extra";
 import path from "path";
 import * as crypto from 'crypto';
-import * as Console from "node:console";
+
 
 export enum ExportFormat {
   adoc = 'adoc',
