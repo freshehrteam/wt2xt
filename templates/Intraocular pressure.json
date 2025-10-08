@@ -1,0 +1,1025 @@
+{
+  "templateId" : "Intraocular pressure",
+  "semVer" : "0.1.0",
+  "version" : "2.3",
+  "defaultLanguage" : "en",
+  "languages" : [ "en" ],
+  "tree" : {
+    "id" : "intraocular_pressure",
+    "name" : "Intraocular pressure",
+    "localizedName" : "Intraocular pressure",
+    "rmType" : "COMPOSITION",
+    "nodeId" : "openEHR-EHR-COMPOSITION.encounter.v1",
+    "min" : 1,
+    "max" : 1,
+    "localizedNames" : {
+      "en" : "Intraocular pressure"
+    },
+    "localizedDescriptions" : {
+      "en" : "Interaction, contact or care event between a subject of care and healthcare provider(s)."
+    },
+    "aqlPath" : "",
+    "children" : [ {
+      "id" : "context",
+      "rmType" : "EVENT_CONTEXT",
+      "nodeId" : "",
+      "min" : 1,
+      "max" : 1,
+      "aqlPath" : "/context",
+      "children" : [ {
+        "id" : "start_time",
+        "name" : "Start_time",
+        "rmType" : "DV_DATE_TIME",
+        "min" : 1,
+        "max" : 1,
+        "aqlPath" : "/context/start_time",
+        "inputs" : [ {
+          "type" : "DATETIME"
+        } ],
+        "inContext" : true
+      }, {
+        "id" : "setting",
+        "name" : "Setting",
+        "rmType" : "DV_CODED_TEXT",
+        "min" : 1,
+        "max" : 1,
+        "aqlPath" : "/context/setting",
+        "inputs" : [ {
+          "suffix" : "code",
+          "type" : "TEXT"
+        }, {
+          "suffix" : "value",
+          "type" : "TEXT"
+        } ],
+        "inContext" : true
+      } ]
+    }, {
+      "id" : "intraocular_pressure_test_result",
+      "name" : "Intraocular pressure test result",
+      "localizedName" : "Intraocular pressure test result",
+      "rmType" : "OBSERVATION",
+      "nodeId" : "openEHR-EHR-OBSERVATION.intraocular_pressure.v0",
+      "min" : 0,
+      "max" : 1,
+      "localizedNames" : {
+        "en" : "Intraocular pressure test result"
+      },
+      "localizedDescriptions" : {
+        "en" : "The local measurement of intraocular pressure, most commonly using a tonometry device."
+      },
+      "aqlPath" : "/content[openEHR-EHR-OBSERVATION.intraocular_pressure.v0,'Intraocular pressure test result']",
+      "children" : [ {
+        "id" : "eye_examined",
+        "name" : "Eye examined",
+        "localizedName" : "Eye examined",
+        "rmType" : "DV_CODED_TEXT",
+        "nodeId" : "at0057",
+        "min" : 0,
+        "max" : 1,
+        "localizedNames" : {
+          "en" : "Eye examined"
+        },
+        "localizedDescriptions" : {
+          "en" : "Identification of the eye under examination."
+        },
+        "aqlPath" : "/content[openEHR-EHR-OBSERVATION.intraocular_pressure.v0,'Intraocular pressure test result']/data[at0001]/events[at0002]/data[at0003]/items[at0057]/value",
+        "inputs" : [ {
+          "suffix" : "code",
+          "type" : "CODED_TEXT",
+          "list" : [ {
+            "value" : "at0058",
+            "label" : "Left eye",
+            "localizedLabels" : {
+              "en" : "Left eye"
+            },
+            "localizedDescriptions" : {
+              "en" : "The left eye was examined."
+            },
+            "termBindings" : {
+              "SNOMED-CT" : {
+                "value" : "[SNOMED-CT::1290031003]",
+                "terminologyId" : "SNOMED-CT"
+              }
+            }
+          }, {
+            "value" : "at0059",
+            "label" : "Right eye",
+            "localizedLabels" : {
+              "en" : "Right eye"
+            },
+            "localizedDescriptions" : {
+              "en" : "The right eye was examined."
+            },
+            "termBindings" : {
+              "SNOMED-CT" : {
+                "value" : "[SNOMED-CT::1290032005]",
+                "terminologyId" : "SNOMED-CT"
+              }
+            }
+          } ]
+        } ]
+      }, {
+        "id" : "pressure",
+        "name" : "Pressure",
+        "localizedName" : "Pressure",
+        "rmType" : "DV_QUANTITY",
+        "nodeId" : "at0042",
+        "min" : 0,
+        "max" : 1,
+        "localizedNames" : {
+          "en" : "Pressure"
+        },
+        "localizedDescriptions" : {
+          "en" : "Measured intraocular pressure, using the method described in the 'Method' element. "
+        },
+        "annotations" : {
+          "comment" : "For devices that output multiple pressure values based on one measurement, this element is used for the uncorrected output. Use the 'Corrected Pressure' and 'Correction type' elements for outputs that have taken more variable such as corneal parameters into consideration. "
+        },
+        "aqlPath" : "/content[openEHR-EHR-OBSERVATION.intraocular_pressure.v0,'Intraocular pressure test result']/data[at0001]/events[at0002]/data[at0003]/items[at0042]/value",
+        "inputs" : [ {
+          "suffix" : "magnitude",
+          "type" : "DECIMAL",
+          "validation" : {
+            "range" : {
+              "minOp" : ">=",
+              "min" : 0.0,
+              "maxOp" : "<=",
+              "max" : 30000.0
+            },
+            "precision" : {
+              "minOp" : ">=",
+              "min" : 1,
+              "maxOp" : "<=",
+              "max" : 1
+            }
+          }
+        }, {
+          "suffix" : "unit",
+          "type" : "CODED_TEXT",
+          "list" : [ {
+            "value" : "mm[Hg]",
+            "label" : "mm[Hg]",
+            "localizedLabels" : {
+              "en" : "mmHg"
+            },
+            "validation" : {
+              "range" : {
+                "minOp" : ">=",
+                "min" : 0.0,
+                "maxOp" : "<=",
+                "max" : 30000.0
+              },
+              "precision" : {
+                "minOp" : ">=",
+                "min" : 1,
+                "maxOp" : "<=",
+                "max" : 1
+              }
+            }
+          } ]
+        } ]
+      }, {
+        "id" : "corrected_pressure",
+        "name" : "Corrected pressure",
+        "localizedName" : "Corrected pressure",
+        "rmType" : "DV_QUANTITY",
+        "nodeId" : "at0081",
+        "min" : 0,
+        "max" : 1,
+        "localizedNames" : {
+          "en" : "Corrected pressure"
+        },
+        "localizedDescriptions" : {
+          "en" : "Corrected value for intraocular pressure."
+        },
+        "annotations" : {
+          "comment" : "For devices that output multiple pressure values, this element should be used for the values that take aditional parameters into account for a correction of the raw pressure value.  The method of correction used is specified in the 'correction type' element. "
+        },
+        "aqlPath" : "/content[openEHR-EHR-OBSERVATION.intraocular_pressure.v0,'Intraocular pressure test result']/data[at0001]/events[at0002]/data[at0003]/items[at0081]/value",
+        "inputs" : [ {
+          "suffix" : "magnitude",
+          "type" : "DECIMAL",
+          "validation" : {
+            "range" : {
+              "minOp" : ">=",
+              "min" : 0.0,
+              "maxOp" : "<=",
+              "max" : 30000.0
+            },
+            "precision" : {
+              "minOp" : ">=",
+              "min" : 1,
+              "maxOp" : "<=",
+              "max" : 1
+            }
+          }
+        }, {
+          "suffix" : "unit",
+          "type" : "CODED_TEXT",
+          "list" : [ {
+            "value" : "mm[Hg]",
+            "label" : "mm[Hg]",
+            "localizedLabels" : {
+              "en" : "mmHg"
+            },
+            "validation" : {
+              "range" : {
+                "minOp" : ">=",
+                "min" : 0.0,
+                "maxOp" : "<=",
+                "max" : 30000.0
+              },
+              "precision" : {
+                "minOp" : ">=",
+                "min" : 1,
+                "maxOp" : "<=",
+                "max" : 1
+              }
+            }
+          } ]
+        } ]
+      }, {
+        "id" : "waveform_score",
+        "name" : "Waveform Score",
+        "localizedName" : "Waveform Score",
+        "rmType" : "DV_QUANTITY",
+        "nodeId" : "at0094",
+        "min" : 0,
+        "max" : 1,
+        "localizedNames" : {
+          "en" : "Waveform Score"
+        },
+        "localizedDescriptions" : {
+          "en" : "Waveform Score produced by the Ocular Response Analyser device."
+        },
+        "annotations" : {
+          "comment" : "Higher values indicate higher reliability."
+        },
+        "aqlPath" : "/content[openEHR-EHR-OBSERVATION.intraocular_pressure.v0,'Intraocular pressure test result']/data[at0001]/events[at0002]/data[at0003]/items[at0094]/value",
+        "inputs" : [ {
+          "suffix" : "magnitude",
+          "type" : "DECIMAL"
+        }, {
+          "suffix" : "unit",
+          "type" : "CODED_TEXT"
+        } ]
+      }, {
+        "id" : "semiquantitative_estimation",
+        "name" : "Semiquantitative Estimation",
+        "localizedName" : "Semiquantitative Estimation",
+        "rmType" : "DV_CODED_TEXT",
+        "nodeId" : "at0083",
+        "min" : 0,
+        "max" : 1,
+        "localizedNames" : {
+          "en" : "Semiquantitative Estimation"
+        },
+        "localizedDescriptions" : {
+          "en" : "Semi-quantitative description of the hardness of the eye. Typically performed by palpation with the examiners fingers. "
+        },
+        "annotations" : {
+          "comment" : "Use of this element instead of the pressure element may be appropriate when the method used is insufficiently precise to express in mmHg. \n"
+        },
+        "aqlPath" : "/content[openEHR-EHR-OBSERVATION.intraocular_pressure.v0,'Intraocular pressure test result']/data[at0001]/events[at0002]/data[at0003]/items[at0083]/value",
+        "inputs" : [ {
+          "suffix" : "code",
+          "type" : "CODED_TEXT",
+          "list" : [ {
+            "value" : "at0085",
+            "label" : "Unpressurized",
+            "localizedLabels" : {
+              "en" : "Unpressurized"
+            },
+            "localizedDescriptions" : {
+              "en" : "The eyeball shows visible signs of an absence of internal pressure such as a loss of the spherical shape."
+            }
+          }, {
+            "value" : "at0086",
+            "label" : "Abnormally soft",
+            "localizedLabels" : {
+              "en" : "Abnormally soft"
+            },
+            "localizedDescriptions" : {
+              "en" : "The eyeball appears softer than the normal range on palpation."
+            }
+          }, {
+            "value" : "at0087",
+            "label" : "Normal",
+            "localizedLabels" : {
+              "en" : "Normal"
+            },
+            "localizedDescriptions" : {
+              "en" : "The pressure appears to be within the normal range on palpation,"
+            }
+          }, {
+            "value" : "at0088",
+            "label" : "Abnormally firm",
+            "localizedLabels" : {
+              "en" : "Abnormally firm"
+            },
+            "localizedDescriptions" : {
+              "en" : "The eyeball appears more firm than the normal range on palpation."
+            }
+          }, {
+            "value" : "at0089",
+            "label" : "Very hard",
+            "localizedLabels" : {
+              "en" : "Very hard"
+            },
+            "localizedDescriptions" : {
+              "en" : "The eyeball appears to be as hard as it is in an extreme (>50mmHg) IOP spike, sometimes referred to as a rock-hard eye."
+            }
+          } ]
+        } ]
+      }, {
+        "id" : "clinical_interpretation",
+        "name" : "Clinical interpretation",
+        "localizedName" : "Clinical interpretation",
+        "rmType" : "DV_TEXT",
+        "nodeId" : "at0061",
+        "min" : 0,
+        "max" : -1,
+        "localizedNames" : {
+          "en" : "Clinical interpretation"
+        },
+        "localizedDescriptions" : {
+          "en" : "Single word, phrase or brief description that represents the clinical meaning and significance of the physical examination findings."
+        },
+        "aqlPath" : "/content[openEHR-EHR-OBSERVATION.intraocular_pressure.v0,'Intraocular pressure test result']/data[at0001]/events[at0002]/data[at0003]/items[at0061]/value",
+        "inputs" : [ {
+          "type" : "TEXT"
+        } ]
+      }, {
+        "id" : "comment",
+        "name" : "Comment",
+        "localizedName" : "Comment",
+        "rmType" : "DV_TEXT",
+        "nodeId" : "at0063",
+        "min" : 0,
+        "max" : 1,
+        "localizedNames" : {
+          "en" : "Comment"
+        },
+        "localizedDescriptions" : {
+          "en" : "Additional narrative about the measurement, not captured in other fields."
+        },
+        "aqlPath" : "/content[openEHR-EHR-OBSERVATION.intraocular_pressure.v0,'Intraocular pressure test result']/data[at0001]/events[at0002]/data[at0003]/items[at0063]/value",
+        "inputs" : [ {
+          "type" : "TEXT"
+        } ]
+      }, {
+        "id" : "method",
+        "name" : "Method",
+        "localizedName" : "Method",
+        "rmType" : "DV_CODED_TEXT",
+        "nodeId" : "at0046",
+        "min" : 0,
+        "max" : 1,
+        "dependsOn" : [ "eye_examined", "waveform_score", "clinical_interpretation", "semiquantitative_estimation", "comment", "pressure", "corrected_pressure" ],
+        "localizedNames" : {
+          "en" : "Method"
+        },
+        "localizedDescriptions" : {
+          "en" : "Type of tonometery used to measure intraocular pressure."
+        },
+        "aqlPath" : "/content[openEHR-EHR-OBSERVATION.intraocular_pressure.v0,'Intraocular pressure test result']/data[at0001]/events[at0002]/state[at0007]/items[at0046]/value",
+        "inputs" : [ {
+          "suffix" : "code",
+          "type" : "CODED_TEXT",
+          "list" : [ {
+            "value" : "at0047",
+            "label" : "Goldmann",
+            "localizedLabels" : {
+              "en" : "Goldmann"
+            },
+            "localizedDescriptions" : {
+              "en" : "Goldmann applanation tonometry was used to perform the test."
+            },
+            "termBindings" : {
+              "SNOMED-CT" : {
+                "value" : "[SNOMED-CT::389152008]",
+                "terminologyId" : "SNOMED-CT"
+              }
+            }
+          }, {
+            "value" : "at0048",
+            "label" : "Perkins",
+            "localizedLabels" : {
+              "en" : "Perkins"
+            },
+            "localizedDescriptions" : {
+              "en" : "Perkins tonometry was used to perform the test."
+            },
+            "termBindings" : {
+              "SNOMED-CT" : {
+                "value" : "[SNOMED-CT::389151001]",
+                "terminologyId" : "SNOMED-CT"
+              }
+            }
+          }, {
+            "value" : "at0049",
+            "label" : "Tono-Pen",
+            "localizedLabels" : {
+              "en" : "Tono-Pen"
+            },
+            "localizedDescriptions" : {
+              "en" : "Tono-Pen Tono-Pen applanation tonometry was used to perform the test.."
+            }
+          }, {
+            "value" : "at0050",
+            "label" : "Rebound",
+            "localizedLabels" : {
+              "en" : "Rebound"
+            },
+            "localizedDescriptions" : {
+              "en" : "Rebound tonometry, including iCare® devices, was used to perform the test."
+            },
+            "termBindings" : {
+              "SNOMED-CT" : {
+                "value" : "[SNOMED-CT::1286870002]",
+                "terminologyId" : "SNOMED-CT"
+              }
+            }
+          }, {
+            "value" : "at0051",
+            "label" : "Dynamic Contour",
+            "localizedLabels" : {
+              "en" : "Dynamic Contour"
+            },
+            "localizedDescriptions" : {
+              "en" : "Dynamic contour tonometry including PASCAL® devices was used to perform the test."
+            },
+            "termBindings" : {
+              "SNOMED-CT" : {
+                "value" : "[SNOMED-CT::1286902005]",
+                "terminologyId" : "SNOMED-CT"
+              }
+            }
+          }, {
+            "value" : "at0053",
+            "label" : "Transpalpebral tonometer",
+            "localizedLabels" : {
+              "en" : "Transpalpebral tonometer"
+            },
+            "localizedDescriptions" : {
+              "en" : "Tonometry through an eyelid, using a device such as the TGDc-01, was used to perform the test."
+            }
+          }, {
+            "value" : "at0066",
+            "label" : "Non-contact tonometry",
+            "localizedLabels" : {
+              "en" : "Non-contact tonometry"
+            },
+            "localizedDescriptions" : {
+              "en" : "Non-contact tonometry was used to perfrom the test."
+            },
+            "termBindings" : {
+              "SNOMED-CT" : {
+                "value" : "[SNOMED-CT::389150000]",
+                "terminologyId" : "SNOMED-CT"
+              }
+            }
+          }, {
+            "value" : "at0095",
+            "label" : "Implanted pressure sensor",
+            "localizedLabels" : {
+              "en" : "Implanted pressure sensor"
+            },
+            "localizedDescriptions" : {
+              "en" : "An implanted pressure sensor was used to perform the test."
+            }
+          }, {
+            "value" : "at0096",
+            "label" : "Goldmann-Correlated Ocular Response Analysis",
+            "localizedLabels" : {
+              "en" : "Goldmann-Correlated Ocular Response Analysis"
+            },
+            "localizedDescriptions" : {
+              "en" : "Ocular Response Analyzer® was used to perform the test, with the goldmann-correlated (IOPg) output."
+            },
+            "termBindings" : {
+              "SNOMED-CT" : {
+                "value" : "[SNOMED-CT::1286913008]",
+                "terminologyId" : "SNOMED-CT"
+              }
+            }
+          }, {
+            "value" : "at0097",
+            "label" : "Palpation",
+            "localizedLabels" : {
+              "en" : "Palpation"
+            },
+            "localizedDescriptions" : {
+              "en" : "The intraocular pressure was estimated by palpation using the examiners fingers."
+            },
+            "termBindings" : {
+              "SNOMED-CT" : {
+                "value" : "[SNOMED-CT::1286917009]",
+                "terminologyId" : "SNOMED-CT"
+              }
+            }
+          }, {
+            "value" : "at0098",
+            "label" : "Visual Inspection",
+            "localizedLabels" : {
+              "en" : "Visual Inspection"
+            },
+            "localizedDescriptions" : {
+              "en" : "The Intraocular pressure was estimated by visual inspection. Typically only possible in unpressurized or open globes."
+            }
+          }, {
+            "value" : "at0099",
+            "label" : "Pneumatotonometer",
+            "localizedLabels" : {
+              "en" : "Pneumatotonometer"
+            },
+            "localizedDescriptions" : {
+              "en" : "Pneumatotonometry was used to perform the test."
+            },
+            "termBindings" : {
+              "SNOMED-CT" : {
+                "value" : "[SNOMED-CT::252804008]",
+                "terminologyId" : "SNOMED-CT"
+              }
+            }
+          }, {
+            "value" : "at0100",
+            "label" : "Schiøtz",
+            "localizedLabels" : {
+              "en" : "Schiøtz"
+            },
+            "localizedDescriptions" : {
+              "en" : "Schiøtz Tonomety was used to perform the test."
+            },
+            "termBindings" : {
+              "SNOMED-CT" : {
+                "value" : "[SNOMED-CT::389149000]",
+                "terminologyId" : "SNOMED-CT"
+              }
+            }
+          } ]
+        } ]
+      }, {
+        "id" : "correction_type",
+        "name" : "Correction Type",
+        "localizedName" : "Correction Type",
+        "rmType" : "DV_CODED_TEXT",
+        "nodeId" : "at0082",
+        "min" : 0,
+        "max" : 1,
+        "dependsOn" : [ "eye_examined", "waveform_score", "clinical_interpretation", "semiquantitative_estimation", "comment", "pressure", "corrected_pressure" ],
+        "localizedNames" : {
+          "en" : "Correction Type"
+        },
+        "localizedDescriptions" : {
+          "en" : "The method used to produce the corrected pressure value. "
+        },
+        "aqlPath" : "/content[openEHR-EHR-OBSERVATION.intraocular_pressure.v0,'Intraocular pressure test result']/data[at0001]/events[at0002]/state[at0007]/items[at0082]/value",
+        "inputs" : [ {
+          "suffix" : "code",
+          "type" : "CODED_TEXT",
+          "list" : [ {
+            "value" : "at0090",
+            "label" : "IOPcc - corneal-compensated ocular response analysis",
+            "localizedLabels" : {
+              "en" : "IOPcc - corneal-compensated ocular response analysis"
+            },
+            "localizedDescriptions" : {
+              "en" : "The Ocular Response Analyser output value that is corrected for corneal parameters."
+            }
+          }, {
+            "value" : "at0091",
+            "label" : "bIOP - biomechanically corrected noncontact IOP",
+            "localizedLabels" : {
+              "en" : "bIOP - biomechanically corrected noncontact IOP"
+            },
+            "localizedDescriptions" : {
+              "en" : "The Corvis ST Scheimpflug noncontact tonometer's output value that is corrected based on biomechanical parameters."
+            }
+          }, {
+            "value" : "at0092",
+            "label" : "Corrected for CCT",
+            "localizedLabels" : {
+              "en" : "Corrected for CCT"
+            },
+            "localizedDescriptions" : {
+              "en" : "The Pressure was corrected for central corneal thickness."
+            }
+          } ]
+        } ]
+      }, {
+        "id" : "confounding_factors",
+        "name" : "Confounding factors",
+        "localizedName" : "Confounding factors",
+        "rmType" : "DV_CODED_TEXT",
+        "nodeId" : "at0074",
+        "min" : 0,
+        "max" : -1,
+        "dependsOn" : [ "eye_examined", "waveform_score", "clinical_interpretation", "semiquantitative_estimation", "comment", "pressure", "corrected_pressure" ],
+        "localizedNames" : {
+          "en" : "Confounding factors"
+        },
+        "localizedDescriptions" : {
+          "en" : "Description of any incidental factors related to the state of the subject which may affect clinical interpretation of the measurement."
+        },
+        "aqlPath" : "/content[openEHR-EHR-OBSERVATION.intraocular_pressure.v0,'Intraocular pressure test result']/data[at0001]/events[at0002]/state[at0007]/items[at0074]/value",
+        "inputs" : [ {
+          "suffix" : "code",
+          "type" : "CODED_TEXT",
+          "list" : [ {
+            "value" : "at0101",
+            "label" : "General anaesthesia",
+            "localizedLabels" : {
+              "en" : "General anaesthesia"
+            },
+            "localizedDescriptions" : {
+              "en" : "The patient was under general anaesthesia during the .easurement"
+            }
+          }, {
+            "value" : "at0102",
+            "label" : "Sedation",
+            "localizedLabels" : {
+              "en" : "Sedation"
+            },
+            "localizedDescriptions" : {
+              "en" : "The patient was under sedation during the measurement."
+            }
+          }, {
+            "value" : "at0103",
+            "label" : "Blepharospasm",
+            "localizedLabels" : {
+              "en" : "Blepharospasm"
+            },
+            "localizedDescriptions" : {
+              "en" : ""
+            }
+          }, {
+            "value" : "at0104",
+            "label" : "Reduced Cooperation",
+            "localizedLabels" : {
+              "en" : "Reduced Cooperation"
+            },
+            "localizedDescriptions" : {
+              "en" : ""
+            }
+          }, {
+            "value" : "at0105",
+            "label" : "Measurement Interrupted",
+            "localizedLabels" : {
+              "en" : "Measurement Interrupted"
+            },
+            "localizedDescriptions" : {
+              "en" : ""
+            }
+          } ],
+          "listOpen" : true
+        }, {
+          "suffix" : "other",
+          "type" : "TEXT"
+        } ]
+      }, {
+        "id" : "prism_graduation_mark_on_43_offset_mark",
+        "name" : "Prism graduation mark on 43° offset mark",
+        "localizedName" : "Prism graduation mark on 43° offset mark",
+        "rmType" : "DV_QUANTITY",
+        "nodeId" : "at0107",
+        "min" : 0,
+        "max" : 1,
+        "dependsOn" : [ "eye_examined", "waveform_score", "clinical_interpretation", "semiquantitative_estimation", "comment", "pressure", "corrected_pressure" ],
+        "localizedNames" : {
+          "en" : "Prism graduation mark on 43° offset mark"
+        },
+        "localizedDescriptions" : {
+          "en" : "The value of the degree of the graduation mark on the Goldmann prism probe that was aligned with 43° offset mark, usually a visible by a red line or the letter A."
+        },
+        "aqlPath" : "/content[openEHR-EHR-OBSERVATION.intraocular_pressure.v0,'Intraocular pressure test result']/data[at0001]/events[at0002]/state[at0007]/items[at0107]/value",
+        "inputs" : [ {
+          "suffix" : "magnitude",
+          "type" : "DECIMAL"
+        }, {
+          "suffix" : "unit",
+          "type" : "CODED_TEXT",
+          "list" : [ {
+            "value" : "deg",
+            "label" : "deg",
+            "localizedLabels" : {
+              "en" : "°"
+            }
+          } ]
+        } ]
+      }, {
+        "id" : "prism_graduation_mark_on_horizontal_meridian",
+        "name" : "Prism graduation mark on horizontal meridian",
+        "localizedName" : "Prism graduation mark on horizontal meridian",
+        "rmType" : "DV_QUANTITY",
+        "nodeId" : "at0108",
+        "min" : 0,
+        "max" : 1,
+        "dependsOn" : [ "eye_examined", "waveform_score", "clinical_interpretation", "semiquantitative_estimation", "comment", "pressure", "corrected_pressure" ],
+        "localizedNames" : {
+          "en" : "Prism graduation mark on horizontal meridian"
+        },
+        "localizedDescriptions" : {
+          "en" : "The value of the degree of the graduation mark on the Goldmann prism probe that was aligned with the horizontal meridian mark of the probe holder at the time of measurement. "
+        },
+        "annotations" : {
+          "comment" : "Important in the context of high astigmatism. See Goldmann tonometry Instruction booklet in references for details. "
+        },
+        "aqlPath" : "/content[openEHR-EHR-OBSERVATION.intraocular_pressure.v0,'Intraocular pressure test result']/data[at0001]/events[at0002]/state[at0007]/items[at0108]/value",
+        "inputs" : [ {
+          "suffix" : "magnitude",
+          "type" : "DECIMAL"
+        }, {
+          "suffix" : "unit",
+          "type" : "CODED_TEXT",
+          "list" : [ {
+            "value" : "deg",
+            "label" : "deg",
+            "localizedLabels" : {
+              "en" : "°"
+            }
+          } ]
+        } ]
+      }, {
+        "id" : "position",
+        "name" : "Position",
+        "localizedName" : "Position",
+        "rmType" : "DV_CODED_TEXT",
+        "nodeId" : "at0109",
+        "min" : 0,
+        "max" : 1,
+        "dependsOn" : [ "eye_examined", "waveform_score", "clinical_interpretation", "semiquantitative_estimation", "comment", "pressure", "corrected_pressure" ],
+        "localizedNames" : {
+          "en" : "Position"
+        },
+        "localizedDescriptions" : {
+          "en" : "The position of the individual at the time of measurement."
+        },
+        "aqlPath" : "/content[openEHR-EHR-OBSERVATION.intraocular_pressure.v0,'Intraocular pressure test result']/data[at0001]/events[at0002]/state[at0007]/items[at0109]/value",
+        "inputs" : [ {
+          "suffix" : "code",
+          "type" : "CODED_TEXT",
+          "list" : [ {
+            "value" : "at0110",
+            "label" : "Standing",
+            "localizedLabels" : {
+              "en" : "Standing"
+            },
+            "localizedDescriptions" : {
+              "en" : "Standing at the time of the intraocular pressure measurement."
+            },
+            "termBindings" : {
+              "SNOMED-CT" : {
+                "value" : "[SNOMED-CT::10904000]",
+                "terminologyId" : "SNOMED-CT"
+              }
+            }
+          }, {
+            "value" : "at0111",
+            "label" : "Sitting",
+            "localizedLabels" : {
+              "en" : "Sitting"
+            },
+            "localizedDescriptions" : {
+              "en" : "Sitting at the time of the intraocular pressure measurement."
+            },
+            "termBindings" : {
+              "SNOMED-CT" : {
+                "value" : "[SNOMED-CT::33586001]",
+                "terminologyId" : "SNOMED-CT"
+              }
+            }
+          }, {
+            "value" : "at0112",
+            "label" : "Lying in supine position",
+            "localizedLabels" : {
+              "en" : "Lying in supine position"
+            },
+            "localizedDescriptions" : {
+              "en" : "Lying in supine position (face up) at the time of the intraocular pressure measurement."
+            },
+            "termBindings" : {
+              "SNOMED-CT" : {
+                "value" : "[SNOMED-CT::40199007]",
+                "terminologyId" : "SNOMED-CT"
+              }
+            }
+          }, {
+            "value" : "at0113",
+            "label" : "Lying in prone position",
+            "localizedLabels" : {
+              "en" : "Lying in prone position"
+            },
+            "localizedDescriptions" : {
+              "en" : "Lying in prone position (face down) at the time of the intraocular pressure measurement."
+            },
+            "termBindings" : {
+              "SNOMED-CT" : {
+                "value" : "[SNOMED-CT::1240000]",
+                "terminologyId" : "SNOMED-CT"
+              }
+            }
+          }, {
+            "value" : "at0114",
+            "label" : "Lying in left lateral decubitus position",
+            "localizedLabels" : {
+              "en" : "Lying in left lateral decubitus position"
+            },
+            "localizedDescriptions" : {
+              "en" : "Lying on the left hand side of the intraocular pressure measurement."
+            },
+            "termBindings" : {
+              "SNOMED-CT" : {
+                "value" : "[SNOMED-CT::102536004]",
+                "terminologyId" : "SNOMED-CT"
+              }
+            }
+          }, {
+            "value" : "at0115",
+            "label" : "Lying in right lateral decubitus position",
+            "localizedLabels" : {
+              "en" : "Lying in right lateral decubitus position"
+            },
+            "localizedDescriptions" : {
+              "en" : "Lying on the right hand side of the intraocular pressure measurement."
+            },
+            "termBindings" : {
+              "SNOMED-CT" : {
+                "value" : "[SNOMED-CT::102535000]",
+                "terminologyId" : "SNOMED-CT"
+              }
+            }
+          } ]
+        } ]
+      }, {
+        "id" : "pupil_state",
+        "name" : "Pupil state",
+        "localizedName" : "Pupil state",
+        "rmType" : "DV_CODED_TEXT",
+        "nodeId" : "at0117",
+        "min" : 0,
+        "max" : 1,
+        "dependsOn" : [ "eye_examined", "waveform_score", "clinical_interpretation", "semiquantitative_estimation", "comment", "pressure", "corrected_pressure" ],
+        "localizedNames" : {
+          "en" : "Pupil state"
+        },
+        "localizedDescriptions" : {
+          "en" : ""
+        },
+        "aqlPath" : "/content[openEHR-EHR-OBSERVATION.intraocular_pressure.v0,'Intraocular pressure test result']/data[at0001]/events[at0002]/state[at0007]/items[at0117]/value",
+        "inputs" : [ {
+          "suffix" : "code",
+          "type" : "CODED_TEXT",
+          "list" : [ {
+            "value" : "at0118",
+            "label" : "Medically induced Miosis",
+            "localizedLabels" : {
+              "en" : "Medically induced Miosis"
+            },
+            "localizedDescriptions" : {
+              "en" : "The pupil is constricted due to administration of miotic agents."
+            }
+          }, {
+            "value" : "at0122",
+            "label" : "Medically induced Mydriasis",
+            "localizedLabels" : {
+              "en" : "Medically induced Mydriasis"
+            },
+            "localizedDescriptions" : {
+              "en" : "The pupil is dilated due to administration of mydriatic agents."
+            }
+          }, {
+            "value" : "at0120",
+            "label" : "Pathological Pupil State",
+            "localizedLabels" : {
+              "en" : "Pathological Pupil State"
+            },
+            "localizedDescriptions" : {
+              "en" : "The pupil i s due to disease, trauma, or structural abnormalities."
+            }
+          }, {
+            "value" : "at0121",
+            "label" : "Normal",
+            "localizedLabels" : {
+              "en" : "Normal"
+            },
+            "localizedDescriptions" : {
+              "en" : "The pupil is in its natural physiological state without pharmacological intervention or pathological changes."
+            }
+          } ]
+        } ]
+      }, {
+        "id" : "time",
+        "name" : "Time",
+        "rmType" : "DV_DATE_TIME",
+        "min" : 1,
+        "max" : 1,
+        "aqlPath" : "/content[openEHR-EHR-OBSERVATION.intraocular_pressure.v0,'Intraocular pressure test result']/data[at0001]/events[at0002]/time",
+        "inputs" : [ {
+          "type" : "DATETIME"
+        } ],
+        "inContext" : true
+      }, {
+        "id" : "language",
+        "name" : "Language",
+        "rmType" : "CODE_PHRASE",
+        "min" : 1,
+        "max" : 1,
+        "aqlPath" : "/content[openEHR-EHR-OBSERVATION.intraocular_pressure.v0,'Intraocular pressure test result']/language",
+        "inContext" : true
+      }, {
+        "id" : "encoding",
+        "name" : "Encoding",
+        "rmType" : "CODE_PHRASE",
+        "min" : 1,
+        "max" : 1,
+        "aqlPath" : "/content[openEHR-EHR-OBSERVATION.intraocular_pressure.v0,'Intraocular pressure test result']/encoding",
+        "inContext" : true
+      }, {
+        "id" : "subject",
+        "name" : "Subject",
+        "rmType" : "PARTY_PROXY",
+        "min" : 1,
+        "max" : 1,
+        "aqlPath" : "/content[openEHR-EHR-OBSERVATION.intraocular_pressure.v0,'Intraocular pressure test result']/subject",
+        "inputs" : [ {
+          "suffix" : "id",
+          "type" : "TEXT"
+        }, {
+          "suffix" : "id_scheme",
+          "type" : "TEXT"
+        }, {
+          "suffix" : "id_namespace",
+          "type" : "TEXT"
+        }, {
+          "suffix" : "name",
+          "type" : "TEXT"
+        } ],
+        "inContext" : true
+      } ],
+      "termBindings" : {
+        "LOINC" : {
+          "value" : "[LOINC::56844-4]",
+          "terminologyId" : "LOINC"
+        }
+      }
+    }, {
+      "id" : "category",
+      "rmType" : "DV_CODED_TEXT",
+      "nodeId" : "",
+      "min" : 1,
+      "max" : 1,
+      "aqlPath" : "/category",
+      "inputs" : [ {
+        "suffix" : "code",
+        "type" : "CODED_TEXT",
+        "list" : [ {
+          "value" : "433",
+          "label" : "event",
+          "localizedLabels" : {
+            "en" : "event"
+          }
+        } ],
+        "terminology" : "openehr"
+      } ],
+      "inContext" : true
+    }, {
+      "id" : "language",
+      "name" : "Language",
+      "rmType" : "CODE_PHRASE",
+      "min" : 1,
+      "max" : 1,
+      "aqlPath" : "/language",
+      "inContext" : true
+    }, {
+      "id" : "territory",
+      "name" : "Territory",
+      "rmType" : "CODE_PHRASE",
+      "min" : 1,
+      "max" : 1,
+      "aqlPath" : "/territory",
+      "inContext" : true
+    }, {
+      "id" : "composer",
+      "name" : "Composer",
+      "rmType" : "PARTY_PROXY",
+      "min" : 1,
+      "max" : 1,
+      "aqlPath" : "/composer",
+      "inputs" : [ {
+        "suffix" : "id",
+        "type" : "TEXT"
+      }, {
+        "suffix" : "id_scheme",
+        "type" : "TEXT"
+      }, {
+        "suffix" : "id_namespace",
+        "type" : "TEXT"
+      }, {
+        "suffix" : "name",
+        "type" : "TEXT"
+      } ],
+      "inContext" : true
+    } ]
+  }
+}

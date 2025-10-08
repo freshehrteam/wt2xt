@@ -10,5 +10,6 @@
   "hideParticipations": true,
   "displayAQLPaths": false,
   "displayToc": false,
-  "hideXmindValues" : true
+  "hideXmindValues" : true,
+ "entriesOnly" : true
 }

@@ -63,10 +63,11 @@ export class DocBuilder {
   // JSONBuilder
    jb: FHIRInstance = new Questionnaire();
 
-   codeSystems: CodeSystem[] = [];
-   valueSets: ValueSet[] = []
-
-  currentQuestionnaireItem: Array<QuestionnaireItem> | undefined = [];
+    codeSystems: CodeSystem[] = [];
+    valueSets: ValueSet[] = [];
+    valueSetNames: string[] = [];
+    fshLogicalRoot : string = '';
+    currentQuestionnaireItem: Array<QuestionnaireItem> | undefined = [];
 
   config: Config;
   localArchetypeList : ArchetypeList = [];

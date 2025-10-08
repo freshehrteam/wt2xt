@@ -95,15 +95,41 @@ export const appendValueset = ( node : TemplateNode): string => {
 
 }
 
+const getUniqueName = (base: string, existing: string[] | Set<string>): string => {
+    const has = (name: string) =>
+        Array.isArray(existing) ? existing.includes(name) : (existing as Set<string>).has(name);
 
-export const formatValueSetDefinition = ( node: TemplateNode) => {
+    if (!has(base)) return base;
 
-  const { ab } = node.builder;
-  const techName = snakeToCamel(node.localizedName, true);
+    // Start at 2: first duplicate becomes <base>2
+    let i = 2;
+    let candidate = `${base}${i}`;
+    while (has(candidate)) {
+        i += 1;
+        candidate = `${base}${i}`;
+    }
+    return candidate;
+};
 
-  ab.newline('');
-  ab.append(`ValueSet: ${techName}`);
-  ab.append(`Title: "${node.localizedName}"`);
-}
+export const formatValueSetDefinition = (node: TemplateNode):string => {
+    const { ab, valueSetNames,fshLogicalRoot } = node.builder; // valueSetNames: string[] or Set<string>
+
+    const baseTechName = `${fshLogicalRoot}${snakeToCamel(node.localizedName, true)}`;
+    const uniqueTechName = getUniqueName(baseTechName, valueSetNames);
+
+    // Track the chosen name to avoid collisions later in the same run
+    if (Array.isArray(valueSetNames)) {
+        valueSetNames.push(uniqueTechName);
+    } else {
+        (valueSetNames as Set<string>).add(uniqueTechName);
+    }
+
+    ab.newline('');
+    ab.append(`ValueSet: ${uniqueTechName}`);
+    ab.append(`Title: "${node.localizedName}"`);
+
+    return uniqueTechName
+};
+
 
 

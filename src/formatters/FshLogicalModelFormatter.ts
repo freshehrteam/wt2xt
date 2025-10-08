@@ -39,12 +39,12 @@ const appendExternalBinding = (f: TemplateNode, input: TemplateInput) => {
   sb.append(`${formatSpaces(f)}* ${snakeToCamel(f.localizedName ? f.localizedName : f.id, isEntry(f.rmType))} ${bindingFSH}`)
 };
 
-const appendLocalBinding = (f: TemplateNode, input: TemplateInput) => {
+const appendLocalBinding = (f: TemplateNode, input: TemplateInput, uniqueVSName: string|undefined) => {
   const { sb } = f.builder;
 
   const nodeName = snakeToCamel(f.localizedName ? f.localizedName : f.id, false)
-  const vsName = snakeToCamel(f.localizedName ? f.localizedName : f.id, true)
-  // Pick up an external valueset description annotation
+  const vsName = uniqueVSName?uniqueVSName:snakeToCamel(f.localizedName ? f.localizedName : f.id, true)
+    // Pick up an external valueset description annotation
   const bindingFSH: string = `from ${vsName} (${input?.listOpen?'preferred':'required'})`
   sb.append(`${formatSpaces(f)}* ${nodeName} ${bindingFSH}`)
 };
@@ -53,6 +53,7 @@ const formatFSHDefinition = (dBuilder: DocBuilder, f: TemplateNode) => {
   const { sb,wt,config } = dBuilder;
   const techName = snakeToCamel(f.localizedName, true);
 
+  dBuilder.fshLogicalRoot = techName
   sb.append(`Logical: ${techName}`);
   sb.append(`Title: "${wt.templateId}"`);
   sb.append(`Parent: Element`);
@@ -180,10 +181,9 @@ export const fshl = {
       appendFSHLM(dBuilder, f)
 
       const csUrl = appendCodesystem(f)
+        const uniqueVS = formatValueSetDefinition(f)
 
-      formatValueSetDefinition(f)
-
-      f?.inputs?.forEach((input: TemplateInput) => {
+        f?.inputs?.forEach((input: TemplateInput) => {
           if (input.suffix === 'code') {
             if (f?.annotations?.['vset_description'])
               appendExternalBinding(f, input)
@@ -195,7 +195,7 @@ export const fshl = {
               })
 
               }
-              appendLocalBinding(f, input)
+              appendLocalBinding(f, input,uniqueVS)
              }
           }
       })
@@ -206,17 +206,17 @@ formatDvText: (dBuilder: DocBuilder, f: TemplateNode) => {
 
    appendFSHLM(dBuilder,f)
   appendCodesystem(f)
+  //  const uniqueVS = formatValueSetDefinition(f)
 
       f.inputs?.forEach((input: TemplateInput) => {
         if (input.suffix && !['other'].includes(input.suffix))
             if (f?.annotations?.['vset_description'])
             appendExternalBinding(f, input)
           else {
-
             input.list?.forEach((item) => {
               ab.append(`* $local$#{item.value} "${item.label}"`);
             })
-            appendLocalBinding(f, input)
+            appendLocalBinding(f, input,undefined)
           }
     })
 },
