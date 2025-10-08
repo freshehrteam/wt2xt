@@ -12,7 +12,6 @@
         "dockerode": "^4.0.8",
         "fs-extra": "^11.3.1",
         "fsh-sushi": "^3.11.0",
-        "hl7.fhir.r4.core": "0.0.1-security",
         "jszip": "^3.10.1",
         "node-fetch": "^3.3.2",
         "node-pandoc": "^0.3.0",
@@ -326,8 +325,6 @@
     "hasown": ["hasown@2.0.2", "", { "dependencies": { "function-bind": "^1.1.2" } }, "sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ=="],
 
     "he": ["he@1.2.0", "", { "bin": { "he": "bin/he" } }, "sha512-F/1DnUGPopORZi0ni+CvrCgHQ5FyEAHRLSApuYWMmrbSwoN2Mn/7k+Gl38gJnR7yyDZk6WLXwiGod1JOWNDKGw=="],
-
-    "hl7.fhir.r4.core": ["hl7.fhir.r4.core@0.0.1-security", "", {}, "sha512-L0lkLCMEvwt6Bl7MkprN3NDc0+wqp3scqzj08c8yTY3KtxF6dsPuiVSIWONvOeXxNkEpWDhHSI9/k+BWFmprng=="],
 
     "html-minifier-terser": ["html-minifier-terser@5.1.1", "", { "dependencies": { "camel-case": "^4.1.1", "clean-css": "^4.2.3", "commander": "^4.1.1", "he": "^1.2.0", "param-case": "^3.0.3", "relateurl": "^0.2.7", "terser": "^4.6.3" }, "bin": { "html-minifier-terser": "cli.js" } }, "sha512-ZPr5MNObqnV/T9akshPKbVgyOqLmy+Bxo7juKCfTfnjNniTAMdy4hz21YQqoofMBJD2kdREaqPPdThoR78Tgxg=="],
 

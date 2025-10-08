@@ -27,7 +27,6 @@
     "dockerode": "^4.0.8",
     "fs-extra": "^11.3.1",
     "fsh-sushi": "^3.11.0",
-    "hl7.fhir.r4.core": "0.0.1-security",
     "jszip": "^3.10.1",
     "node-fetch": "^3.3.2",
     "node-pandoc": "^0.3.0",
