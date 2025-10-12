@@ -20,8 +20,7 @@ const formatNodeId = (f: TemplateNode):string => f.nodeId?f.nodeId:`RM`
 
 const formatDescription = (dBuilder:DocBuilder,f:TemplateNode,typeConstraint: string = '') =>
 
-    wrapTripleQuote(`\`[${formatNodeId(f)}${typeConstraint}]\`
-                             ${dBuilder.getDescription(f)})`)
+    wrapTripleQuote(`[${formatNodeId(f)}${typeConstraint}] ${dBuilder.getDescription(f)}`)
 
 const wrapTripleQuote = (inString: string) => `"""${inString}"""`
 
@@ -138,8 +137,8 @@ export const fshl = {
 
     if (config.entriesOnly)
       formatFSHDefinition(dBuilder, f);
-    else
-      formatLeafHeader(dBuilder,f)
+
+    formatLeafHeader(dBuilder,f)
   },
 
   formatLeafHeader: (dBuilder: DocBuilder, f: TemplateNode) => {

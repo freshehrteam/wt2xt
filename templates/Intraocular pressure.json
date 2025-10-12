@@ -679,15 +679,15 @@
         } ]
       }, {
         "id" : "prism_graduation_mark_on_43_offset_mark",
-        "name" : "Prism graduation mark on 43° offset mark",
-        "localizedName" : "Prism graduation mark on 43° offset mark",
+        "name" : "Prism graduation mark on 43 deg offset mark",
+        "localizedName" : "Prism graduation mark on 43 deg offset mark",
         "rmType" : "DV_QUANTITY",
         "nodeId" : "at0107",
         "min" : 0,
         "max" : 1,
         "dependsOn" : [ "eye_examined", "waveform_score", "clinical_interpretation", "semiquantitative_estimation", "comment", "pressure", "corrected_pressure" ],
         "localizedNames" : {
-          "en" : "Prism graduation mark on 43° offset mark"
+          "en" : "Prism graduation mark on 43 deg offset mark"
         },
         "localizedDescriptions" : {
           "en" : "The value of the degree of the graduation mark on the Goldmann prism probe that was aligned with 43° offset mark, usually a visible by a red line or the letter A."

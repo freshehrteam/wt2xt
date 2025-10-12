@@ -64,6 +64,7 @@ export interface InputItem {
   label?: string;
   localizedLabels?: Record<string, string>;
   localizedDescriptions?: Record<string, string>;
+  validation?: AmountValidation;
   ordinal?: number;
   currentStates?: string;
 }
