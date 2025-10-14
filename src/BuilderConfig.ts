@@ -32,6 +32,7 @@ export type Config = {
   regenerateWtx: WtxRegenerate
   fhirBaseUrl: string
   entriesOnly: boolean
+  returnFHIRJson: boolean
 }
 
 
@@ -60,6 +61,7 @@ const defaultConfig: Config = {
   regenerateWtx: WtxRegenerate.never,
   fhirBaseUrl: 'http://openehr.org',
   entriesOnly: false,
+    returnFHIRJson: true,
 };
 
  export async function importConfig(path: string): Promise<Config> {

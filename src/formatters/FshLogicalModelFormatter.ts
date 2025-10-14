@@ -1,10 +1,8 @@
 import { DocBuilder } from "../DocBuilder";
 import { TemplateInput, TemplateNode } from '../types/TemplateNodes';
 import { formatOccurrences, isEntry, mapRmType2FHIR, snakeToCamel } from '../types/TemplateTypes';
-import {formatLeafHeader, getOutputBuffer, OutputBufferType, saveOutputArray} from './DocFormatter';
-import {appendCodesystem, appendCodeSystemFSH, formatValueSetDefinition} from './FshTerminologyFormatter';
-import {sushiClient} from "fsh-sushi";
-import {fsh} from "./FshCommon.ts";
+import {formatLeafHeader} from './DocFormatter';
+import {appendCodesystem, formatValueSetDefinition} from './FshTerminologyFormatter';
 
 //const sanitiseFhirName  = (name: string): string  => name.replace(/[^a-zA-Z0-9_-]/g, '_')
 
@@ -63,52 +61,6 @@ const formatFSHDefinition = (dBuilder: DocBuilder, f: TemplateNode) => {
   sb.append(`* ^url = "${config.fhirBaseUrl}/StructureDefinition/${snakeToCamel(techName, true)}"`);
 }
 
-
-export const fhirlj = {
-
-
-    getOutputBuffer: async (docBuilder: DocBuilder):  Promise<ArrayBufferLike> => {
-
-        const outputBuffer: OutputBufferType = await fsh.getOutputBuffer(docBuilder) as ArrayBufferLike
-
-        return outputBuffer
-    },
-
-    // Refactored to write a single ZIP file containing all produced JSONs
-    convertFSH: async (exportFSH: string, outFile: any) => {
-
-        try {
-            const results = await sushiClient.fshToFhir(exportFSH, {
-                fhirVersion: "4.0.1",
-                logLevel: "error",
-            })
-
-    const {default: JSZip} = await import('jszip')
-
-    const zip = new JSZip()
-
-    results.fhir.forEach((fhirObject: any) => {
-        const fhirType: string = fhirObject.resourceType || 'Resource'
-        const fhirId: string = fhirObject.id || Math.random().toString(36).slice(2)
-        const filename = `${fhirType}-${fhirId}.json`
-        zip.file(filename, JSON.stringify(fhirObject, null, 2))
-    })
-
-    const zipBuffer: Uint8Array = await zip.generateAsync({ type: 'uint8array' })
-            return zipBuffer
-}   catch (err) {
-        console.log(`Sushi error: ${err}`)
-    }
-
-    },
-
-    saveFile: async (docBuilder: DocBuilder, outFile: string, useStdout: boolean) => {
-        // Ensure the directory exists
-        const outputBuffer: ArrayBufferLike = await fhirlj.getOutputBuffer(docBuilder)
-        return  saveOutputArray(outputBuffer, outFile, useStdout);
-    },
-
-}
 export const fshl = {
 
     formatCompositionHeader: (dBuilder: DocBuilder, f: TemplateNode) => {

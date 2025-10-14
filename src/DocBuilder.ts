@@ -115,8 +115,15 @@ export class DocBuilder {
     {
       if (outputFile) return outputFile;
 
-      const fExt:string = ext === 'wtx'?'wtx.json': ext;
-      const pathSeg = path.parse(infile);
+      let fExt: string;
+
+        if (ext ==='fshl' && this.config.returnFHIRJson)
+            fExt = 'zip'
+        else
+            fExt= ext === 'wtx'?'wtx.json': ext;
+
+        const pathSeg = path.parse(infile);
+
 
       // Ensure the output directory exists
       fs.ensureDirSync(outDir);

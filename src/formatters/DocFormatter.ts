@@ -4,8 +4,9 @@ import {xmind } from "./XmindFormatter"
 import { TemplateNode } from "../types/TemplateNodes";
 import { formatOccurrences } from "../types/TemplateTypes";
 import {docx, md, pdf} from "./PanDocFormatter";
-import { fshl, fhirlj } from './FshLogicalModelFormatter';
+import { fshl} from './FshLogicalModelFormatter';
 import { fshq } from './QuestionnaireFormatter.ts';
+import {fsh} from'./FshCommon.ts'
 import * as fs from "fs-extra";
 import path from "path";
 import * as crypto from 'crypto';
@@ -336,10 +337,7 @@ export const getOutputBuffer = async (docBuilder: DocBuilder) : Promise<ArrayBuf
             break
         case ExportFormat.fsht:
         case ExportFormat.fshl:
-            fn = adoc.getOutputBuffer
-            break;
-        case ExportFormat.fhirlj:
-            fn = fhirlj.getOutputBuffer
+            fn = fsh.getOutputBuffer
             break;
         case ExportFormat.fshq:
             fn = adoc.getOutputBuffer
@@ -374,10 +372,10 @@ export const saveFile  = async (docBuilder: DocBuilder, outFile: string, useStdO
         case ExportFormat.fsht:
         case ExportFormat.fshl:
         case ExportFormat.fhirlj:
-            fn = fhirlj.saveFile
+            fn = fsh.saveFile
             break;
         case ExportFormat.fshq:
-            fn = fhirlj.saveFile
+            fn = fsh.saveFile
             break;
 
         case ExportFormat.md:
