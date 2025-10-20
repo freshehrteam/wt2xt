@@ -32,9 +32,10 @@ const appendFSHQ = (dBuilder: DocBuilder, node: TemplateNode, isLeafNode: boolea
 
   const qItem: QuestionnaireItem = new (QuestionnaireItem)
 
-  qItem.linkId = (++dBuilder.idCounter).toString();
+  qItem.linkId =node.aqlPath
+  //(++dBuilder.idCounter).toString();
   qItem.code = [formatCode(node)]
-  qItem.definition = node.aqlPath
+  qItem.definition =node.aqlPath
   qItem.readOnly = false
   qItem.required = isMandatory(node)
   qItem.type = dataValueFHIRQuestionTypeMapper(node.rmType) as TypeEnum | undefined
@@ -69,28 +70,51 @@ const appendLocalBinding = (f: TemplateNode, input: TemplateInput) => {
 export const fshq = {
 
   formatTemplateHeader: (docBuilder: DocBuilder) => {
-    let { wt,jb} = docBuilder;
+    let { wt,sb,config} = docBuilder;
 
-    const techName = snakeToCamel(wt.templateId,true);
-    const dateObj: Date = new Date()
-    const currentIsoDate : string  = dateObj.toISOString()
+      const techName = snakeToCamel(wt.templateId,true);
+      const dateObj: Date = new Date()
+      const currentIsoDate : string  = dateObj.toISOString()
 
-    const questionnaire = jb;
+      sb.append(`Instance: ${wt.templateId}`)
+      sb.append(`InstanceOf: Questionnaire`)
+      sb.append(`Usage: #example`)
+      sb.append(`* language = "${wt.defaultLanguage}"`)
+      sb.append(`* version = "${wt.semVer}"`)
+      sb.append(`* title = ${wt.templateId}`)
+      sb.append(`* name = "${snakeToCamel(techName, true)}"`);
+      sb.append(`* status = #draft`)
+      sb.append(`* publisher = "${wt.tree.original_publisher}"`)
+      sb.append(`* date = "${currentIsoDate}"`)
+      sb.append(`* url = "${config.fhirBaseUrl}/Questionnaire/${snakeToCamel(techName, true)}"`);
+
+      // ab.append( `* identifier.system = "http://example.org/openEHR/templates"`)
+      // ab.append( `* identifier.value = "${wt.templateId}"`)
+   //   * identifier.value = "Intraocular pressure"
+ //     * name = "Intraocularpressure"
+ //     * title = "Intraocular pressure"
+
+
+
+ //     * publisher = "converter"
+
+
+ //   const questionnaire = jb;
 
     // questionnaire.code =
-    questionnaire.resourceType = 'Questionnaire'
-    questionnaire.meta = {};
-    questionnaire.meta.source = `${wt.templateId}`;
-    questionnaire.meta.versionId = `${wt.templateId}:${wt.semVer}`;
-    questionnaire.date = `${currentIsoDate}`
-    questionnaire.id = techName
-    questionnaire.name =  techName
-    questionnaire.title = `${wt.templateId}`
-    questionnaire.status = StatusEnum.Active
-    questionnaire.version = `${wt.semVer}`
-    questionnaire.url = "http://hl7.org/fhir/Questionnaire/bb";
-    questionnaire.item = []
-    docBuilder.currentQuestionnaireItem = questionnaire.item
+    // questionnaire.resourceType = 'Questionnaire'
+    // questionnaire.meta = {};
+    // questionnaire.meta.source = `${wt.templateId}`;
+    // questionnaire.meta.versionId = `${wt.templateId}:${wt.semVer}`;
+    // questionnaire.date = `${currentIsoDate}`
+    // questionnaire.id = techName
+    // questionnaire.name =  techName
+    // questionnaire.title = `${wt.templateId}`
+    // questionnaire.status = StatusEnum.Active
+    // questionnaire.version = `${wt.semVer}`
+    // questionnaire.url = "http://hl7.org/fhir/Questionnaire/bb";
+    // questionnaire.item = []
+    // docBuilder.currentQuestionnaireItem = questionnaire.item
   },
 
   formatCompositionHeader: (_docBuilder: DocBuilder, _f: TemplateNode) => {
@@ -101,7 +125,7 @@ export const fshq = {
   },
 
   formatNodeContent: (dBuilder: DocBuilder, f: TemplateNode, _isChoice: boolean) => {
-    // Stop Choice being called twice as alreadty handled by Choice Header
+    // Stop Choice being called twice as already handled by Choice Header
   //  if (f.rmType === 'ELEMENT' || isChoice) return
     appendFSHQ(dBuilder,f,false)
   },

@@ -24,11 +24,11 @@ const appendFSHQ = (dBuilder: DocBuilder, f: TemplateNode, _isChoice: boolean = 
   // const nodeId: string = f.nodeId?f.nodeId:`RM`
   const multiOccurrence : boolean = f.max > 0
 
-  sb.append(`* item[=].item[+].linkId = "1"`)
+  sb.append(`* item[=].item[+].linkId = "${f.aqlPath}"`)
   sb.append(`* item[=].repeats = ${multiOccurrence}`)
+  sb.append(`* item[=].item[=].type = #${dataValueFHIRQuestionTypeMapper(f.rmType)}`)
   sb.append(`* item[=].item[=].definition = "http://example.org/sdh/dtr/aslp/StructureDefinition/aslp-sleep-study-order#ServiceRequest.code"`)
   sb.append(`* item[=].item[=].text = "${dBuilder.getDescription(f)}"`)
-  sb.append(`* item[=].item[=].type = #${dataValueFHIRQuestionTypeMapper(f.rmType)}`)
   sb.append(`* item[=].item[=].answerValueSet = "http://example.org/sdh/dtr/aslp/ValueSet/aslp-a1-de1-codes-grouper"`)
 
  // sb.append(`${formatSpaces(f)}* ${snakeToCamel(f.id,true)}${choiceSuffix} ${formatOccurrences(f,true)} ${mapRmType2FHIR(f.rmType)} "${formatLocalName(f)}" "${nodeId}: "`)
