@@ -10,6 +10,7 @@ export const fsh = {
         docBuilder.cb.newline('')
 
         const fshString = docBuilder.toString()
+        console.log('fhj', docBuilder.config.returnFHIRJson)
         if (docBuilder.config.returnFHIRJson)
             return fsh.convertFSH(fshString)
         else

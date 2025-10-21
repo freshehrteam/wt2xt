@@ -137,6 +137,8 @@ async function handleRequest(req: Request): Promise<Response> {
     // Parse query parameters
     const params = new URLSearchParams(url.search);
     const exportFormat = params.get('exportAs') || 'adoc';
+    const fhirJson = params.get('fhirJson') || true;
+
     const exportFormatKey = exportFormat as keyof typeof ExportFormat;
 
     // Parse request body
@@ -201,12 +203,25 @@ async function handleRequest(req: Request): Promise<Response> {
     let contentType = 'text/plain';
     switch (exportFormat) {
         case 'adoc':
-        case 'fshl':
-        case 'fsht':
-        case 'fshq':
         case 'md':
             contentType = 'text/plain';
             break;
+
+        case 'fshl':
+        case 'fsht':
+        case 'fshq':
+
+            if (!fhirJson) {
+                contentType = 'text/plain';
+                docBuilder.config.returnFHIRJson = false;
+            }
+            else
+            {
+                contentType = 'application/zip'
+                docBuilder.config.returnFHIRJson = true;
+            }
+      break;
+
       case 'docx':
         contentType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
         break;
@@ -234,7 +249,9 @@ async function handleRequest(req: Request): Promise<Response> {
     });
 
     // Return the streamed response
-    return new Response(stream, {
+
+      console.log("content-type", contentType);
+      return new Response(stream, {
       status: 200,
       headers: {
         'Content-Type': contentType,
