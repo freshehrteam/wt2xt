@@ -40,12 +40,13 @@ npm run build
 ```
 ❯ wt2xt
 Options:
-    --help                  Show help                             [boolean]
-    --version               Show version number                   [boolean]
-    --web-template, -wt     Source web template                   [string] [required]
+    --help                  Show help                            [boolean]
+    --version               Show version number                  [boolean]
+    --web-template, -wt     Source web template                  [string] [required]
     --out-file,     -o                                            [string]
-    --export-format, -ex    Export format (default:adoc)          [string] adoc|xmind|docx|pdf|fshl
-    -- config-file,  -cfg    default: "config/wtconfig.json"       [string]
+    --export-format, -ex    Export format (default:adoc)         [string] adoc|xmind|docx|pdf|fshl
+    -- config-file,  -cfg    default: "config/wtconfig.json"         [string]
+    -- fhir-json,  -cfhj   default: "true"                       [boolean]
 
  ``` 
 
@@ -68,7 +69,9 @@ bun run dev -- --web-template=./templates/example.json
 - `docx` : Word document (see dependencies below)
 - `pdf` : PDF document (see dependencies below)
 - `fshl` : FHIR Logical model (creates FSH + )
-- 
+
+Set fhir-json to true to return a zip file of FHIR artefacts, otherwise a single FSH (FHIR Shorthand file)
+
 ## Export format dependencies 
 
 - **Adoc** (asciidoc) and **Xmind** are supported natively.
@@ -109,6 +112,8 @@ The default configuration is
 
   //Display a Table of contents
    "displayToc": false,
+  
+  // Return 
 }
 ```
 

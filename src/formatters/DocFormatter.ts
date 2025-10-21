@@ -292,7 +292,9 @@ export const formatCluster = (docBuilder: DocBuilder, f: TemplateNode): void => 
 
   switch (docBuilder.config.exportFormat) {
     case ExportFormat.xmind:
-    case ExportFormat.fshl:
+        fn = xmind.formatCluster
+        break;
+      case ExportFormat.fshl:
       case ExportFormat.fhirlj:
       fn = fshl.formatCluster
       break;
@@ -333,7 +335,7 @@ export const getOutputBuffer = async (docBuilder: DocBuilder) : Promise<ArrayBuf
 //console.log('getOutputbuffer: ', docBuilder.config.exportFormat);
     switch (exportFormat) {
         case ExportFormat.xmind:
-            fn = xmind.getOutputBuffer;
+            fn = adoc.getOutputBuffer;
             break
         case ExportFormat.fsht:
         case ExportFormat.fshl:

@@ -4,8 +4,9 @@ import { parseXMindMarkToXMindFile} from "xmindmark";
 import { DocBuilder } from "../DocBuilder";
 import {  TemplateNode, TemplateInput } from "../types/TemplateNodes";
 import { formatOccurrences, isAnyChoice, mapRmTypeText } from '../types/TemplateTypes';
-import {formatRawOccurrencesText, getOutputBuffer} from "./DocFormatter";
+import {formatOccurrencesText, formatRawOccurrencesText, getOutputBuffer, saveOutputArray} from "./DocFormatter";
 import { extractTextInBrackets} from './FormatterUtils';
+import {adoc} from "./AdocFormatter.ts";
 
 const headerIndent: string = '  -';
 const eventIndent:  string = '    -';
@@ -16,7 +17,7 @@ export const xmind = {
 
   formatHeader: (dBuilder : DocBuilder): void => {
     const { sb, wt } = dBuilder;
-    sb.append(sb.newLineCoded(`Template: ${wt.templateId} \n ${wt.semVer} \n ${new Date().toDateString()}`));
+    sb.append(sb.newLineCoded(`Template: ${wt.templateId} ${wt.semVer} ${new Date().toDateString()}`));
   },
 
   formatCompositionHeader: (dBuilder: DocBuilder, f: TemplateNode) => {
@@ -31,21 +32,39 @@ export const xmind = {
     const { sb} = dBuilder;
     sb.append(`${headerIndent} context`);
   },
+    formatCluster: (dBuilder: DocBuilder, f: TemplateNode) => {
+        const { sb, config } = dBuilder;
+
+        const formattedOccurrencesText = formatOccurrencesText(dBuilder, f);
+        const clinicalText = `${headerIndent} ${f.name}  ${formattedOccurrencesText}`
+
+        if (!config.hideNodeIds)
+            sb.append(clinicalText + '\n' + `\`${f.rmType}: _${f.nodeId}_\``);
+        else
+            sb.append(clinicalText)
+    },
 
   getOutputBuffer : async (docBuilder: DocBuilder): Promise<ArrayBufferLike> => {
-      return await parseXMindMarkToXMindFile(docBuilder.toString()) as ArrayBufferLike;
+      const xmindMark: string = docBuilder.sb.toString()
+      return await parseXMindMarkToXMindFile(xmindMark) as ArrayBufferLike;
   } ,
 
-  saveFile: async (docBuilder: DocBuilder, outFile: any, useStdOut: boolean): Promise <number>  => {
+  // saveFile: async (docBuilder: DocBuilder, outFile: any, useStdOut: boolean): Promise <number>  => {
+  //
+  //   const outBuffer: ArrayBufferLike = await xmind.getOutputBuffer(docBuilder)// Ensure tmp directory exists
+  //
+  //   console.log(`\n Exported : ${outFile}`);
+  //   // Return the length of the written data as an approximation of bytes written
+  //   return outBuffer.byteLength;
+  // },
 
-    const outBuffer: ArrayBufferLike = await xmind.getOutputBuffer(docBuilder)// Ensure tmp directory exists
+    saveFile: async (docBuilder: DocBuilder, outFile: string, useStdout: boolean) => {
+        // Ensure the directory exists
+        const outputBuffer = await xmind.getOutputBuffer(docBuilder)
+        return  saveOutputArray(outputBuffer, outFile, useStdout);
+    },
 
-    console.log(`\n Exported : ${outFile}`);
-    // Return the length of the written data as an approximation of bytes written
-    return outBuffer.byteLength;
-  },
-
-  formatNodeContent: (dBuilder: DocBuilder, f: TemplateNode, _isChoice: boolean) => {
+    formatNodeContent: (dBuilder: DocBuilder, f: TemplateNode, _isChoice: boolean) => {
     const { sb, config } = dBuilder;
     const localName = f.localizedName ? f.localizedName : f.name
     const nodeName = localName ? localName : f.id
