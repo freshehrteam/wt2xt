@@ -12,5 +12,5 @@
   "displayToc": false,
   "hideXmindValues" : true,
    "entriesOnly" : true,
-   "returnFhirJson": false
+   "returnFhirJson": true
 }

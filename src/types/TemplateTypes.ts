@@ -66,7 +66,7 @@ export const snakeToCamel = (s: string, forceInitialCap : boolean) => {
         ? letter.toLowerCase()
         : letter.toUpperCase()
     )
-    .replace(/\s+|[&_\-?]/g, '')
+    .replace(/\s+|[&_\-?()[]/g, '')
 }
 
 export const isRMAttribute= (node: TemplateNode) :boolean => node.inContext || false
