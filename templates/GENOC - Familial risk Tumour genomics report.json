@@ -1,6 +1,6 @@
 {
   "templateId" : "GENOC - Familial risk Tumour genomics report",
-  "semVer" : "1.0.0-beta.14",
+  "semVer" : "1.0.0-beta.5",
   "version" : "2.3",
   "defaultLanguage" : "en",
   "languages" : [ "en" ],
@@ -60,7 +60,7 @@
       "rmType" : "OBSERVATION",
       "nodeId" : "openEHR-EHR-OBSERVATION.laboratory_test_result.v1",
       "min" : 0,
-      "max" : -1,
+      "max" : 1,
       "localizedNames" : {
         "en" : "Laboratory test result"
       },
@@ -87,8 +87,7 @@
         },
         "aqlPath" : "/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1]/data[at0001]/events[at0002,'Point in time']/data[at0003]/items[at0005]/value",
         "inputs" : [ {
-          "type" : "TEXT",
-          "defaultValue" : "Familial Tumour Genomics Screen"
+          "type" : "TEXT"
         } ]
       }, {
         "id" : "specimen",
@@ -130,60 +129,6 @@
           "inputs" : [ {
             "type" : "TEXT"
           } ]
-        }, {
-          "id" : "laboratory_specimen_identifier",
-          "name" : "Laboratory specimen identifier",
-          "localizedName" : "Laboratory specimen identifier",
-          "rmType" : "DV_IDENTIFIER",
-          "nodeId" : "at0001",
-          "min" : 0,
-          "max" : 1,
-          "localizedNames" : {
-            "en" : "Laboratory specimen identifier"
-          },
-          "localizedDescriptions" : {
-            "en" : "A unique identifier of the specimen, normally assigned by the laboratory."
-          },
-          "annotations" : {
-            "comment" : "Sometimes called the Accession Identifier. Specimen containers, for example vacuum vials or tissue cassettes, have their own identitiers which may be recorded in the 'Container identifier' element in the 'Specimen container' archetype.",
-            "fhir_mapping" : "Specimen.accessionIdentifier"
-          },
-          "aqlPath" : "/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1]/data[at0001]/events[at0002,'Point in time']/data[at0003]/items[openEHR-EHR-CLUSTER.specimen.v1]/items[at0001]/value",
-          "inputs" : [ {
-            "suffix" : "id",
-            "type" : "TEXT"
-          }, {
-            "suffix" : "type",
-            "type" : "TEXT"
-          }, {
-            "suffix" : "issuer",
-            "type" : "TEXT"
-          }, {
-            "suffix" : "assigner",
-            "type" : "TEXT"
-          } ]
-        }, {
-          "id" : "laboratory_run_identifier",
-          "name" : "Laboratory run identifier",
-          "localizedName" : "Laboratory run identifier",
-          "rmType" : "DV_TEXT",
-          "nodeId" : "at0088",
-          "min" : 0,
-          "max" : 1,
-          "localizedNames" : {
-            "en" : "Laboratory run identifier"
-          },
-          "localizedDescriptions" : {
-            "en" : "A unique identifier of the specimen, assigned by a party external to the laboratory."
-          },
-          "annotations" : {
-            "comment" : "For example: 'Requester ID', 'Archive ID, 'Biobank ID'.",
-            "fhir_mapping" : "Specimen.identifier"
-          },
-          "aqlPath" : "/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1]/data[at0001]/events[at0002,'Point in time']/data[at0003]/items[openEHR-EHR-CLUSTER.specimen.v1]/items[at0088,'Laboratory run identifier']/value",
-          "inputs" : [ {
-            "type" : "TEXT"
-          } ]
         } ]
       }, {
         "id" : "clinical_information_provided",
@@ -213,7 +158,7 @@
         "rmType" : "CLUSTER",
         "nodeId" : "openEHR-EHR-CLUSTER.laboratory_test_analyte.v1",
         "min" : 0,
-        "max" : 1,
+        "max" : -1,
         "localizedNames" : {
           "en" : "Laboratory result"
         },
@@ -242,8 +187,7 @@
           },
           "aqlPath" : "/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1]/data[at0001]/events[at0002,'Point in time']/data[at0003]/items[openEHR-EHR-CLUSTER.laboratory_test_analyte.v1,'Laboratory result']/items[at0024]/value",
           "inputs" : [ {
-            "type" : "TEXT",
-            "defaultValue" : "Familial Tumour Genomics Screen"
+            "type" : "TEXT"
           } ]
         }, {
           "id" : "genomic_variant_result",
@@ -252,7 +196,7 @@
           "rmType" : "CLUSTER",
           "nodeId" : "openEHR-EHR-CLUSTER.genomic_variant_result.v1",
           "min" : 0,
-          "max" : -1,
+          "max" : 1,
           "localizedNames" : {
             "en" : "Genomic variant result"
           },
@@ -341,321 +285,6 @@
               } ]
             } ]
           }, {
-            "id" : "simple_variant",
-            "name" : "Simple variant",
-            "localizedName" : "Simple variant",
-            "rmType" : "CLUSTER",
-            "nodeId" : "openEHR-EHR-CLUSTER.simple_variant_genoceanic.v1",
-            "min" : 0,
-            "max" : 1,
-            "cardinalities" : [ {
-              "min" : 2,
-              "max" : -1,
-              "ids" : [ "chromosome_label", "start_position_of_variant", "variant_type" ]
-            } ],
-            "localizedNames" : {
-              "en" : "Simple variant"
-            },
-            "localizedDescriptions" : {
-              "en" : "A sequence change where, compared to a reference sequence, a one or more nucleotides are changed."
-            },
-            "aqlPath" : "/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1]/data[at0001]/events[at0002,'Point in time']/data[at0003]/items[openEHR-EHR-CLUSTER.laboratory_test_analyte.v1,'Laboratory result']/items[openEHR-EHR-CLUSTER.genomic_variant_result.v1]/items[openEHR-EHR-CLUSTER.simple_variant_genoceanic.v1]",
-            "children" : [ {
-              "id" : "chromosome_label",
-              "name" : "Chromosome label",
-              "localizedName" : "Chromosome label",
-              "rmType" : "DV_CODED_TEXT",
-              "nodeId" : "at0012",
-              "min" : 1,
-              "max" : 1,
-              "localizedNames" : {
-                "en" : "Chromosome label"
-              },
-              "localizedDescriptions" : {
-                "en" : "Chromosome identifier."
-              },
-              "aqlPath" : "/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1]/data[at0001]/events[at0002,'Point in time']/data[at0003]/items[openEHR-EHR-CLUSTER.laboratory_test_analyte.v1,'Laboratory result']/items[openEHR-EHR-CLUSTER.genomic_variant_result.v1]/items[openEHR-EHR-CLUSTER.simple_variant_genoceanic.v1]/items[at0012]/value",
-              "inputs" : [ {
-                "suffix" : "code",
-                "type" : "CODED_TEXT",
-                "list" : [ {
-                  "value" : "at0013",
-                  "label" : "Chromosome 1",
-                  "localizedLabels" : {
-                    "en" : "Chromosome 1"
-                  },
-                  "localizedDescriptions" : {
-                    "en" : "Chromosome 1."
-                  },
-                  "termBindings" : {
-                    "LOINC" : {
-                      "value" : "[LOINC(2.65)::48006-1]",
-                      "terminologyId" : "LOINC"
-                    }
-                  }
-                }, {
-                  "value" : "at0014",
-                  "label" : "Chromosome 2",
-                  "localizedLabels" : {
-                    "en" : "Chromosome 2"
-                  },
-                  "localizedDescriptions" : {
-                    "en" : "Chromosome 2."
-                  }
-                }, {
-                  "value" : "at0015",
-                  "label" : "Chromosome 3",
-                  "localizedLabels" : {
-                    "en" : "Chromosome 3"
-                  },
-                  "localizedDescriptions" : {
-                    "en" : "Chromosome 3."
-                  }
-                }, {
-                  "value" : "at0016",
-                  "label" : "Chromosome 4",
-                  "localizedLabels" : {
-                    "en" : "Chromosome 4"
-                  },
-                  "localizedDescriptions" : {
-                    "en" : "Chromosome 4."
-                  }
-                }, {
-                  "value" : "at0017",
-                  "label" : "Chromosome 5",
-                  "localizedLabels" : {
-                    "en" : "Chromosome 5"
-                  },
-                  "localizedDescriptions" : {
-                    "en" : "Chromosome 5."
-                  }
-                }, {
-                  "value" : "at0018",
-                  "label" : "Chromosome 6",
-                  "localizedLabels" : {
-                    "en" : "Chromosome 6"
-                  },
-                  "localizedDescriptions" : {
-                    "en" : "Chromosome 6."
-                  }
-                }, {
-                  "value" : "at0019",
-                  "label" : "Chromosome 7",
-                  "localizedLabels" : {
-                    "en" : "Chromosome 7"
-                  },
-                  "localizedDescriptions" : {
-                    "en" : "Chromosome 7."
-                  }
-                }, {
-                  "value" : "at0020",
-                  "label" : "Chromosome 8",
-                  "localizedLabels" : {
-                    "en" : "Chromosome 8"
-                  },
-                  "localizedDescriptions" : {
-                    "en" : "Chromosome 8."
-                  }
-                }, {
-                  "value" : "at0021",
-                  "label" : "Chromosome 9",
-                  "localizedLabels" : {
-                    "en" : "Chromosome 9"
-                  },
-                  "localizedDescriptions" : {
-                    "en" : "Chromosome 9."
-                  }
-                }, {
-                  "value" : "at0022",
-                  "label" : "Chromosome 10",
-                  "localizedLabels" : {
-                    "en" : "Chromosome 10"
-                  },
-                  "localizedDescriptions" : {
-                    "en" : "Chromosome 10."
-                  }
-                }, {
-                  "value" : "at0023",
-                  "label" : "Chromosome 11",
-                  "localizedLabels" : {
-                    "en" : "Chromosome 11"
-                  },
-                  "localizedDescriptions" : {
-                    "en" : "Chromosome 11."
-                  }
-                }, {
-                  "value" : "at0024",
-                  "label" : "Chromosome 12",
-                  "localizedLabels" : {
-                    "en" : "Chromosome 12"
-                  },
-                  "localizedDescriptions" : {
-                    "en" : "Chromosome 12."
-                  }
-                }, {
-                  "value" : "at0025",
-                  "label" : "Chromosome 13",
-                  "localizedLabels" : {
-                    "en" : "Chromosome 13"
-                  },
-                  "localizedDescriptions" : {
-                    "en" : "Chromosome 13."
-                  }
-                }, {
-                  "value" : "at0026",
-                  "label" : "Chromosome 14",
-                  "localizedLabels" : {
-                    "en" : "Chromosome 14"
-                  },
-                  "localizedDescriptions" : {
-                    "en" : "Chromosome 14."
-                  }
-                }, {
-                  "value" : "at0027",
-                  "label" : "Chromosome 15",
-                  "localizedLabels" : {
-                    "en" : "Chromosome 15"
-                  },
-                  "localizedDescriptions" : {
-                    "en" : "Chromosome 15."
-                  }
-                }, {
-                  "value" : "at0028",
-                  "label" : "Chromosome 16",
-                  "localizedLabels" : {
-                    "en" : "Chromosome 16"
-                  },
-                  "localizedDescriptions" : {
-                    "en" : "Chromosome 16."
-                  }
-                }, {
-                  "value" : "at0029",
-                  "label" : "Chromosome 17",
-                  "localizedLabels" : {
-                    "en" : "Chromosome 17"
-                  },
-                  "localizedDescriptions" : {
-                    "en" : "Chromosome 17."
-                  }
-                }, {
-                  "value" : "at0030",
-                  "label" : "Chromosome 18",
-                  "localizedLabels" : {
-                    "en" : "Chromosome 18"
-                  },
-                  "localizedDescriptions" : {
-                    "en" : "Chromosome 18."
-                  }
-                }, {
-                  "value" : "at0031",
-                  "label" : "Chromosome 19",
-                  "localizedLabels" : {
-                    "en" : "Chromosome 19"
-                  },
-                  "localizedDescriptions" : {
-                    "en" : "Chromosome 19."
-                  },
-                  "termBindings" : {
-                    "LOINC" : {
-                      "value" : "[LOINC(2.65)::81258-6]",
-                      "terminologyId" : "LOINC"
-                    }
-                  }
-                }, {
-                  "value" : "at0032",
-                  "label" : "Chromosome 20",
-                  "localizedLabels" : {
-                    "en" : "Chromosome 20"
-                  },
-                  "localizedDescriptions" : {
-                    "en" : "Chromosome 20."
-                  }
-                }, {
-                  "value" : "at0033",
-                  "label" : "Chromosome 21",
-                  "localizedLabels" : {
-                    "en" : "Chromosome 21"
-                  },
-                  "localizedDescriptions" : {
-                    "en" : "Chromosome 21."
-                  }
-                }, {
-                  "value" : "at0034",
-                  "label" : "Chromosome 22",
-                  "localizedLabels" : {
-                    "en" : "Chromosome 22"
-                  },
-                  "localizedDescriptions" : {
-                    "en" : "Chromosome 22."
-                  }
-                }, {
-                  "value" : "at0035",
-                  "label" : "Chromosome X",
-                  "localizedLabels" : {
-                    "en" : "Chromosome X"
-                  },
-                  "localizedDescriptions" : {
-                    "en" : "Chromosome X."
-                  }
-                }, {
-                  "value" : "at0036",
-                  "label" : "Chromosome Y",
-                  "localizedLabels" : {
-                    "en" : "Chromosome Y"
-                  },
-                  "localizedDescriptions" : {
-                    "en" : "Chromosome Y."
-                  }
-                } ],
-                "listOpen" : true
-              }, {
-                "suffix" : "other",
-                "type" : "TEXT"
-              } ],
-              "termBindings" : {
-                "LOINC" : {
-                  "value" : "[LOINC(2.65)::48005-3]",
-                  "terminologyId" : "LOINC"
-                }
-              }
-            }, {
-              "id" : "start_position_of_variant",
-              "name" : "Start position of variant",
-              "localizedName" : "Start position of variant",
-              "rmType" : "DV_COUNT",
-              "nodeId" : "at0003",
-              "min" : 0,
-              "max" : 1,
-              "localizedNames" : {
-                "en" : "Start position of variant"
-              },
-              "localizedDescriptions" : {
-                "en" : "The position of the first nucleotide of the changed range for a simple variant. (\"Start\" in vcf-file)."
-              },
-              "aqlPath" : "/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1]/data[at0001]/events[at0002,'Point in time']/data[at0003]/items[openEHR-EHR-CLUSTER.laboratory_test_analyte.v1,'Laboratory result']/items[openEHR-EHR-CLUSTER.genomic_variant_result.v1]/items[openEHR-EHR-CLUSTER.simple_variant_genoceanic.v1]/items[at0003]/value",
-              "inputs" : [ {
-                "type" : "INTEGER"
-              } ]
-            }, {
-              "id" : "variant_type",
-              "name" : "Variant type",
-              "localizedName" : "Variant type",
-              "rmType" : "DV_TEXT",
-              "nodeId" : "at0039",
-              "min" : 0,
-              "max" : 1,
-              "localizedNames" : {
-                "en" : "Variant type"
-              },
-              "localizedDescriptions" : {
-                "en" : "The variant type e.g Snv, indel etc."
-              },
-              "aqlPath" : "/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1]/data[at0001]/events[at0002,'Point in time']/data[at0003]/items[openEHR-EHR-CLUSTER.laboratory_test_analyte.v1,'Laboratory result']/items[openEHR-EHR-CLUSTER.genomic_variant_result.v1]/items[openEHR-EHR-CLUSTER.simple_variant_genoceanic.v1]/items[at0039]/value",
-              "inputs" : [ {
-                "type" : "TEXT"
-              } ]
-            } ]
-          }, {
             "id" : "transcript",
             "name" : "Transcript",
             "localizedName" : "Transcript",
@@ -671,64 +300,6 @@
             },
             "aqlPath" : "/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1]/data[at0001]/events[at0002,'Point in time']/data[at0003]/items[openEHR-EHR-CLUSTER.laboratory_test_analyte.v1,'Laboratory result']/items[openEHR-EHR-CLUSTER.genomic_variant_result.v1]/items[at0008]",
             "children" : [ {
-              "id" : "transcript_extension",
-              "name" : "Transcript extension",
-              "localizedName" : "Transcript extension",
-              "rmType" : "CLUSTER",
-              "nodeId" : "openEHR-EHR-CLUSTER.transcript_extension_genoceanic.v1",
-              "min" : 0,
-              "max" : 1,
-              "localizedNames" : {
-                "en" : "Transcript extension"
-              },
-              "localizedDescriptions" : {
-                "en" : "Transcript extension GenOceanic"
-              },
-              "aqlPath" : "/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1]/data[at0001]/events[at0002,'Point in time']/data[at0003]/items[openEHR-EHR-CLUSTER.laboratory_test_analyte.v1,'Laboratory result']/items[openEHR-EHR-CLUSTER.genomic_variant_result.v1]/items[at0008]/items[openEHR-EHR-CLUSTER.transcript_extension_genoceanic.v1]",
-              "children" : [ {
-                "id" : "transcript_biotype",
-                "name" : "Transcript biotype",
-                "localizedName" : "Transcript biotype",
-                "rmType" : "DV_TEXT",
-                "nodeId" : "at0001",
-                "min" : 0,
-                "max" : 1,
-                "localizedNames" : {
-                  "en" : "Transcript biotype"
-                },
-                "localizedDescriptions" : {
-                  "en" : ""
-                },
-                "aqlPath" : "/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1]/data[at0001]/events[at0002,'Point in time']/data[at0003]/items[openEHR-EHR-CLUSTER.laboratory_test_analyte.v1,'Laboratory result']/items[openEHR-EHR-CLUSTER.genomic_variant_result.v1]/items[at0008]/items[openEHR-EHR-CLUSTER.transcript_extension_genoceanic.v1]/items[at0001]/value",
-                "inputs" : [ {
-                  "type" : "TEXT"
-                } ]
-              }, {
-                "id" : "consequence",
-                "name" : "Consequence",
-                "localizedName" : "Consequence",
-                "rmType" : "DV_CODED_TEXT",
-                "nodeId" : "at0002",
-                "min" : 0,
-                "max" : -1,
-                "localizedNames" : {
-                  "en" : "Consequence"
-                },
-                "localizedDescriptions" : {
-                  "en" : ""
-                },
-                "aqlPath" : "/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1]/data[at0001]/events[at0002,'Point in time']/data[at0003]/items[openEHR-EHR-CLUSTER.laboratory_test_analyte.v1,'Laboratory result']/items[openEHR-EHR-CLUSTER.genomic_variant_result.v1]/items[at0008]/items[openEHR-EHR-CLUSTER.transcript_extension_genoceanic.v1]/items[at0002]/value",
-                "inputs" : [ {
-                  "suffix" : "code",
-                  "type" : "TEXT",
-                  "terminology" : "//fhir.hl7.org/ValueSet/$expand?url=http://genoceanic.org.uk/fhir/ValueSet/ensembl-sequence-ontology-consequence-terms"
-                }, {
-                  "suffix" : "value",
-                  "type" : "TEXT",
-                  "terminology" : "//fhir.hl7.org/ValueSet/$expand?url=http://genoceanic.org.uk/fhir/ValueSet/ensembl-sequence-ontology-consequence-terms"
-                } ]
-              } ]
-            }, {
               "id" : "dna_change_c.clinvar",
               "name" : "DNA change (c.ClinVar)",
               "localizedName" : "DNA change (c.ClinVar)",
@@ -791,13 +362,208 @@
                 }
               }
             }, {
+              "id" : "annotation",
+              "name" : "Annotation",
+              "localizedName" : "Annotation",
+              "rmType" : "DV_CODED_TEXT",
+              "nodeId" : "at0013",
+              "min" : 0,
+              "max" : 1,
+              "localizedNames" : {
+                "en" : "Annotation"
+              },
+              "localizedDescriptions" : {
+                "en" : "Codified type for associated amino acid marker."
+              },
+              "aqlPath" : "/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1]/data[at0001]/events[at0002,'Point in time']/data[at0003]/items[openEHR-EHR-CLUSTER.laboratory_test_analyte.v1,'Laboratory result']/items[openEHR-EHR-CLUSTER.genomic_variant_result.v1]/items[at0008]/items[at0013,'Annotation']/value",
+              "inputs" : [ {
+                "suffix" : "code",
+                "type" : "CODED_TEXT",
+                "list" : [ {
+                  "value" : "at0085",
+                  "label" : "Wild type",
+                  "localizedLabels" : {
+                    "en" : "Wild type"
+                  },
+                  "localizedDescriptions" : {
+                    "en" : "The sequence at a given position is identical to the reference sequence."
+                  },
+                  "termBindings" : {
+                    "LOINC" : {
+                      "value" : "[LOINC(2.65)::LA9658-1]",
+                      "terminologyId" : "LOINC"
+                    }
+                  }
+                }, {
+                  "value" : "at0086",
+                  "label" : "Deletion",
+                  "localizedLabels" : {
+                    "en" : "Deletion"
+                  },
+                  "localizedDescriptions" : {
+                    "en" : "A deletion in the amino acid sequence."
+                  },
+                  "termBindings" : {
+                    "LOINC" : {
+                      "value" : "[LOINC(2.65)::LA6692-3]",
+                      "terminologyId" : "LOINC"
+                    }
+                  }
+                }, {
+                  "value" : "at0087",
+                  "label" : "Duplication",
+                  "localizedLabels" : {
+                    "en" : "Duplication"
+                  },
+                  "localizedDescriptions" : {
+                    "en" : "A duplication in the amino acid sequence."
+                  },
+                  "termBindings" : {
+                    "LOINC" : {
+                      "value" : "[LOINC(2.65)::LA6686-5]",
+                      "terminologyId" : "LOINC"
+                    }
+                  }
+                }, {
+                  "value" : "at0088",
+                  "label" : "Frameshift",
+                  "localizedLabels" : {
+                    "en" : "Frameshift"
+                  },
+                  "localizedDescriptions" : {
+                    "en" : "A frameshift in the amino acid sequence."
+                  },
+                  "termBindings" : {
+                    "LOINC" : {
+                      "value" : "[LOINC(2.65)::LA6694-9]",
+                      "terminologyId" : "LOINC"
+                    }
+                  }
+                }, {
+                  "value" : "at0089",
+                  "label" : "Initiating methionine",
+                  "localizedLabels" : {
+                    "en" : "Initiating methionine"
+                  },
+                  "localizedDescriptions" : {
+                    "en" : "A variant in a sequence affecting the translation initiation codon."
+                  },
+                  "termBindings" : {
+                    "LOINC" : {
+                      "value" : "[LOINC(2.65)::LA6695-6]",
+                      "terminologyId" : "LOINC"
+                    }
+                  }
+                }, {
+                  "value" : "at0090",
+                  "label" : "Insertion",
+                  "localizedLabels" : {
+                    "en" : "Insertion"
+                  },
+                  "localizedDescriptions" : {
+                    "en" : "An insertion in the amino acid sequence."
+                  },
+                  "termBindings" : {
+                    "LOINC" : {
+                      "value" : "[LOINC(2.65)::LA6687-3]",
+                      "terminologyId" : "LOINC"
+                    }
+                  }
+                }, {
+                  "value" : "at0091",
+                  "label" : "Insertion and deletion",
+                  "localizedLabels" : {
+                    "en" : "Insertion and deletion"
+                  },
+                  "localizedDescriptions" : {
+                    "en" : "An insertion/deletion in the amino acid sequence."
+                  },
+                  "termBindings" : {
+                    "LOINC" : {
+                      "value" : "[LOINC(2.65)::LA9659-9]",
+                      "terminologyId" : "LOINC"
+                    }
+                  }
+                }, {
+                  "value" : "at0092",
+                  "label" : "Missense",
+                  "localizedLabels" : {
+                    "en" : "Missense"
+                  },
+                  "localizedDescriptions" : {
+                    "en" : "One amino acid is replaced by another amino acid."
+                  },
+                  "termBindings" : {
+                    "LOINC" : {
+                      "value" : "[LOINC(2.65)::LA6698-0]",
+                      "terminologyId" : "LOINC"
+                    }
+                  }
+                }, {
+                  "value" : "at0093",
+                  "label" : "Nonsense",
+                  "localizedLabels" : {
+                    "en" : "Nonsense"
+                  },
+                  "localizedDescriptions" : {
+                    "en" : "An amino acid is replaced by a translational stop codon (termination codon)."
+                  },
+                  "termBindings" : {
+                    "LOINC" : {
+                      "value" : "[LOINC(2.65)::LA6699-8]",
+                      "terminologyId" : "LOINC"
+                    }
+                  }
+                }, {
+                  "value" : "at0094",
+                  "label" : "Silent",
+                  "localizedLabels" : {
+                    "en" : "Silent"
+                  },
+                  "localizedDescriptions" : {
+                    "en" : "A variant in a DNA sequence that does not change the amino acid sequence of the encoded protein."
+                  },
+                  "termBindings" : {
+                    "LOINC" : {
+                      "value" : "[LOINC(2.65)::LA6700-4]",
+                      "terminologyId" : "LOINC"
+                    }
+                  }
+                }, {
+                  "value" : "at0095",
+                  "label" : "Stop codon mutation",
+                  "localizedLabels" : {
+                    "en" : "Stop codon mutation"
+                  },
+                  "localizedDescriptions" : {
+                    "en" : "A variant in a sequence affecting the translational stop codon."
+                  },
+                  "termBindings" : {
+                    "LOINC" : {
+                      "value" : "[LOINC(2.65)::LA6701-2]",
+                      "terminologyId" : "LOINC"
+                    }
+                  }
+                } ],
+                "listOpen" : true
+              }, {
+                "suffix" : "other",
+                "type" : "TEXT"
+              } ],
+              "termBindings" : {
+                "LOINC" : {
+                  "value" : "[LOINC(2.65)::48006-1]",
+                  "terminologyId" : "LOINC"
+                }
+              }
+            }, {
               "id" : "predicted_impact",
               "name" : "Predicted impact",
               "localizedName" : "Predicted impact",
               "rmType" : "CLUSTER",
               "nodeId" : "at0015",
               "min" : 0,
-              "max" : 1,
+              "max" : -1,
               "localizedNames" : {
                 "en" : "Predicted impact"
               },
@@ -1492,75 +1258,284 @@
                 }
               }
             } ]
+          } ]
+        }, {
+          "id" : "simple_variant",
+          "name" : "Simple variant",
+          "localizedName" : "Simple variant",
+          "rmType" : "CLUSTER",
+          "nodeId" : "openEHR-EHR-CLUSTER.simple_variant_genoceanic.v1",
+          "min" : 0,
+          "max" : 1,
+          "cardinalities" : [ {
+            "min" : 2,
+            "max" : -1,
+            "ids" : [ "chromosome_label", "start_position_of_variant" ]
+          } ],
+          "localizedNames" : {
+            "en" : "Simple variant"
+          },
+          "localizedDescriptions" : {
+            "en" : "A sequence change where, compared to a reference sequence, a one or more nucleotides are changed."
+          },
+          "aqlPath" : "/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1]/data[at0001]/events[at0002,'Point in time']/data[at0003]/items[openEHR-EHR-CLUSTER.laboratory_test_analyte.v1,'Laboratory result']/items[openEHR-EHR-CLUSTER.simple_variant_genoceanic.v1]",
+          "children" : [ {
+            "id" : "chromosome_label",
+            "name" : "Chromosome label",
+            "localizedName" : "Chromosome label",
+            "rmType" : "DV_CODED_TEXT",
+            "nodeId" : "at0012",
+            "min" : 1,
+            "max" : 1,
+            "localizedNames" : {
+              "en" : "Chromosome label"
+            },
+            "localizedDescriptions" : {
+              "en" : "Chromosome identifier."
+            },
+            "aqlPath" : "/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1]/data[at0001]/events[at0002,'Point in time']/data[at0003]/items[openEHR-EHR-CLUSTER.laboratory_test_analyte.v1,'Laboratory result']/items[openEHR-EHR-CLUSTER.simple_variant_genoceanic.v1]/items[at0012]/value",
+            "inputs" : [ {
+              "suffix" : "code",
+              "type" : "CODED_TEXT",
+              "list" : [ {
+                "value" : "at0013",
+                "label" : "Chromosome 1",
+                "localizedLabels" : {
+                  "en" : "Chromosome 1"
+                },
+                "localizedDescriptions" : {
+                  "en" : "Chromosome 1."
+                }
+              }, {
+                "value" : "at0014",
+                "label" : "Chromosome 2",
+                "localizedLabels" : {
+                  "en" : "Chromosome 2"
+                },
+                "localizedDescriptions" : {
+                  "en" : "Chromosome 2."
+                }
+              }, {
+                "value" : "at0015",
+                "label" : "Chromosome 3",
+                "localizedLabels" : {
+                  "en" : "Chromosome 3"
+                },
+                "localizedDescriptions" : {
+                  "en" : "Chromosome 3."
+                }
+              }, {
+                "value" : "at0016",
+                "label" : "Chromosome 4",
+                "localizedLabels" : {
+                  "en" : "Chromosome 4"
+                },
+                "localizedDescriptions" : {
+                  "en" : "Chromosome 4."
+                }
+              }, {
+                "value" : "at0017",
+                "label" : "Chromosome 5",
+                "localizedLabels" : {
+                  "en" : "Chromosome 5"
+                },
+                "localizedDescriptions" : {
+                  "en" : "Chromosome 5."
+                }
+              }, {
+                "value" : "at0018",
+                "label" : "Chromosome 6",
+                "localizedLabels" : {
+                  "en" : "Chromosome 6"
+                },
+                "localizedDescriptions" : {
+                  "en" : "Chromosome 6."
+                }
+              }, {
+                "value" : "at0019",
+                "label" : "Chromosome 7",
+                "localizedLabels" : {
+                  "en" : "Chromosome 7"
+                },
+                "localizedDescriptions" : {
+                  "en" : "Chromosome 7."
+                }
+              }, {
+                "value" : "at0020",
+                "label" : "Chromosome 8",
+                "localizedLabels" : {
+                  "en" : "Chromosome 8"
+                },
+                "localizedDescriptions" : {
+                  "en" : "Chromosome 8."
+                }
+              }, {
+                "value" : "at0021",
+                "label" : "Chromosome 9",
+                "localizedLabels" : {
+                  "en" : "Chromosome 9"
+                },
+                "localizedDescriptions" : {
+                  "en" : "Chromosome 9."
+                }
+              }, {
+                "value" : "at0022",
+                "label" : "Chromosome 10",
+                "localizedLabels" : {
+                  "en" : "Chromosome 10"
+                },
+                "localizedDescriptions" : {
+                  "en" : "Chromosome 10."
+                }
+              }, {
+                "value" : "at0023",
+                "label" : "Chromosome 11",
+                "localizedLabels" : {
+                  "en" : "Chromosome 11"
+                },
+                "localizedDescriptions" : {
+                  "en" : "Chromosome 11."
+                }
+              }, {
+                "value" : "at0024",
+                "label" : "Chromosome 12",
+                "localizedLabels" : {
+                  "en" : "Chromosome 12"
+                },
+                "localizedDescriptions" : {
+                  "en" : "Chromosome 12."
+                }
+              }, {
+                "value" : "at0025",
+                "label" : "Chromosome 13",
+                "localizedLabels" : {
+                  "en" : "Chromosome 13"
+                },
+                "localizedDescriptions" : {
+                  "en" : "Chromosome 13."
+                }
+              }, {
+                "value" : "at0026",
+                "label" : "Chromosome 14",
+                "localizedLabels" : {
+                  "en" : "Chromosome 14"
+                },
+                "localizedDescriptions" : {
+                  "en" : "Chromosome 14."
+                }
+              }, {
+                "value" : "at0027",
+                "label" : "Chromosome 15",
+                "localizedLabels" : {
+                  "en" : "Chromosome 15"
+                },
+                "localizedDescriptions" : {
+                  "en" : "Chromosome 15."
+                }
+              }, {
+                "value" : "at0028",
+                "label" : "Chromosome 16",
+                "localizedLabels" : {
+                  "en" : "Chromosome 16"
+                },
+                "localizedDescriptions" : {
+                  "en" : "Chromosome 16."
+                }
+              }, {
+                "value" : "at0029",
+                "label" : "Chromosome 17",
+                "localizedLabels" : {
+                  "en" : "Chromosome 17"
+                },
+                "localizedDescriptions" : {
+                  "en" : "Chromosome 17."
+                }
+              }, {
+                "value" : "at0030",
+                "label" : "Chromosome 18",
+                "localizedLabels" : {
+                  "en" : "Chromosome 18"
+                },
+                "localizedDescriptions" : {
+                  "en" : "Chromosome 18."
+                }
+              }, {
+                "value" : "at0031",
+                "label" : "Chromosome 19",
+                "localizedLabels" : {
+                  "en" : "Chromosome 19"
+                },
+                "localizedDescriptions" : {
+                  "en" : "Chromosome 19."
+                }
+              }, {
+                "value" : "at0032",
+                "label" : "Chromosome 20",
+                "localizedLabels" : {
+                  "en" : "Chromosome 20"
+                },
+                "localizedDescriptions" : {
+                  "en" : "Chromosome 20."
+                }
+              }, {
+                "value" : "at0033",
+                "label" : "Chromosome 21",
+                "localizedLabels" : {
+                  "en" : "Chromosome 21"
+                },
+                "localizedDescriptions" : {
+                  "en" : "Chromosome 21."
+                }
+              }, {
+                "value" : "at0034",
+                "label" : "Chromosome 22",
+                "localizedLabels" : {
+                  "en" : "Chromosome 22"
+                },
+                "localizedDescriptions" : {
+                  "en" : "Chromosome 22."
+                }
+              }, {
+                "value" : "at0035",
+                "label" : "Chromosome X",
+                "localizedLabels" : {
+                  "en" : "Chromosome X"
+                },
+                "localizedDescriptions" : {
+                  "en" : "Chromosome X."
+                }
+              }, {
+                "value" : "at0036",
+                "label" : "Chromosome Y",
+                "localizedLabels" : {
+                  "en" : "Chromosome Y"
+                },
+                "localizedDescriptions" : {
+                  "en" : "Chromosome Y."
+                }
+              } ],
+              "listOpen" : true
+            }, {
+              "suffix" : "other",
+              "type" : "TEXT"
+            } ]
           }, {
-            "id" : "review_details",
-            "name" : "Review details",
-            "localizedName" : "Review details",
-            "rmType" : "CLUSTER",
-            "nodeId" : "openEHR-EHR-CLUSTER.genomic_variant_review.v1",
+            "id" : "start_position_of_variant",
+            "name" : "Start position of variant",
+            "localizedName" : "Start position of variant",
+            "rmType" : "DV_COUNT",
+            "nodeId" : "at0003",
             "min" : 0,
             "max" : 1,
             "localizedNames" : {
-              "en" : "Review details"
+              "en" : "Start position of variant"
             },
             "localizedDescriptions" : {
-              "en" : "To support low-level recording of lab scientist review of specific variant clinical recommendation"
+              "en" : "The position of the first nucleotide of the changed range for a simple variant. (\"Start\" in vcf-file)."
             },
-            "aqlPath" : "/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1]/data[at0001]/events[at0002,'Point in time']/data[at0003]/items[openEHR-EHR-CLUSTER.laboratory_test_analyte.v1,'Laboratory result']/items[openEHR-EHR-CLUSTER.genomic_variant_result.v1]/items[openEHR-EHR-CLUSTER.genomic_variant_review.v1,'Review details']",
-            "children" : [ {
-              "id" : "date_reviewed",
-              "name" : "Date reviewed",
-              "localizedName" : "Date reviewed",
-              "rmType" : "DV_DATE_TIME",
-              "nodeId" : "at0001",
-              "min" : 0,
-              "max" : 1,
-              "localizedNames" : {
-                "en" : "Date reviewed"
-              },
-              "localizedDescriptions" : {
-                "en" : ""
-              },
-              "aqlPath" : "/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1]/data[at0001]/events[at0002,'Point in time']/data[at0003]/items[openEHR-EHR-CLUSTER.laboratory_test_analyte.v1,'Laboratory result']/items[openEHR-EHR-CLUSTER.genomic_variant_result.v1]/items[openEHR-EHR-CLUSTER.genomic_variant_review.v1,'Review details']/items[at0001]/value",
-              "inputs" : [ {
-                "type" : "DATETIME"
-              } ]
-            }, {
-              "id" : "reviewer_name",
-              "name" : "Reviewer name",
-              "localizedName" : "Reviewer name",
-              "rmType" : "DV_TEXT",
-              "nodeId" : "at0002",
-              "min" : 0,
-              "max" : 1,
-              "localizedNames" : {
-                "en" : "Reviewer name"
-              },
-              "localizedDescriptions" : {
-                "en" : ""
-              },
-              "aqlPath" : "/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1]/data[at0001]/events[at0002,'Point in time']/data[at0003]/items[openEHR-EHR-CLUSTER.laboratory_test_analyte.v1,'Laboratory result']/items[openEHR-EHR-CLUSTER.genomic_variant_result.v1]/items[openEHR-EHR-CLUSTER.genomic_variant_review.v1,'Review details']/items[at0002]/value",
-              "inputs" : [ {
-                "type" : "TEXT"
-              } ]
-            }, {
-              "id" : "review_status",
-              "name" : "Review status",
-              "localizedName" : "Review status",
-              "rmType" : "DV_TEXT",
-              "nodeId" : "at0004",
-              "min" : 0,
-              "max" : 1,
-              "localizedNames" : {
-                "en" : "Review status"
-              },
-              "localizedDescriptions" : {
-                "en" : ""
-              },
-              "aqlPath" : "/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1]/data[at0001]/events[at0002,'Point in time']/data[at0003]/items[openEHR-EHR-CLUSTER.laboratory_test_analyte.v1,'Laboratory result']/items[openEHR-EHR-CLUSTER.genomic_variant_result.v1]/items[openEHR-EHR-CLUSTER.genomic_variant_review.v1,'Review details']/items[at0004]/value",
-              "inputs" : [ {
-                "type" : "TEXT"
-              } ]
+            "aqlPath" : "/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1]/data[at0001]/events[at0002,'Point in time']/data[at0003]/items[openEHR-EHR-CLUSTER.laboratory_test_analyte.v1,'Laboratory result']/items[openEHR-EHR-CLUSTER.simple_variant_genoceanic.v1]/items[at0003]/value",
+            "inputs" : [ {
+              "type" : "INTEGER"
             } ]
           } ]
         } ]
@@ -1583,15 +1558,7 @@
         },
         "aqlPath" : "/content[openEHR-EHR-OBSERVATION.laboratory_test_result.v1]/data[at0001]/events[at0002,'Point in time']/data[at0003]/items[at0057,'Overall recommendation']/value",
         "inputs" : [ {
-          "type" : "TEXT",
-          "list" : [ {
-            "value" : "MTB follow-up required",
-            "label" : "MTB follow-up required"
-          }, {
-            "value" : "MTB follow-up NOT required",
-            "label" : "MTB follow-up NOT required"
-          } ],
-          "listOpen" : false
+          "type" : "TEXT"
         } ]
       }, {
         "id" : "time",
