@@ -5,3 +5,5 @@
 /tests/server.run.xml
 /cli/wt2xmacos
 /.env.example
+/tmp/tmp.adoc
+/tmp/tmpDocbook.xml
