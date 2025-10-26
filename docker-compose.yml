@@ -14,7 +14,9 @@ services:
     environment:
       # Docker Engine over Unix socket
       - DOCKER_HOST=unix:///var/run/docker.sock
-      # Capture the host user’s UID/GID for correct file ownership in one‑shot containers
+      # Platform for pandoc containers (match your host architecture)
+      - PANDOC_PLATFORM=linux/arm64
+      # Capture the host user's UID/GID for correct file ownership in one‑shot containers
       - HOST_UID=${HOST_UID}
       - HOST_GID=${HOST_GID}
       # The host directory you want to mount as /data in the pandoc container

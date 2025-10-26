@@ -1,8 +1,7 @@
 import { DocBuilder } from "../DocBuilder";
-import { adoc } from "./AdocFormatter";
 import * as fs from 'fs-extra';
-import { generateRandomFilename, saveOutputArray } from "./DocFormatter.ts";
-import {runPandocDockerStream, runPandocDockerComposeStream, runPandocLocalStream} from "../RunPandocStream.ts";
+import {saveOutputArray } from "./DocFormatter.ts";
+import {runPandocDockerComposeStream, runPandocDockerStream, runPandocLocalStream} from "../RunPandocStream.ts";
 
 const CreateDocbook = async (src: string): Promise<string> => {
   const asciidoctor = require('@asciidoctor/core')()
@@ -15,92 +14,53 @@ const CreateDocbook = async (src: string): Promise<string> => {
   // Return the DocBook XML as a string, avoiding any temporary file on disk
   return docbookContent.toString();
 }
+async function localPandocAvailable() {
+    // Fallback: Avoid DinD by using a locally installed pandoc inside the current container if present.
+    try {
+        const check = Bun.spawn(["pandoc", "-v"], {stdout: "ignore", stderr: "ignore"});
+        await check.exited;
+        return check.exitCode === 0;
+    } catch (_) {
+        return false;
+    }
+}
 
+function hostDockerAvailable(): boolean {
+    try {
+        console.log('Bun.env', Bun.env);
+        const insideContainer = fs.existsSync('/.dockerenv') || Boolean(Bun.env.DOCKER_CONTAINER || Bun.env.CONTAINER);
+        const hostDockerAvailable = Boolean(Bun.env.DOCKER_HOST) || fs.existsSync('/var/run/docker.sock');
+        return insideContainer && hostDockerAvailable;
+    } catch (e) {
+        return false// ignore
+    }
+}
 
 const runPandoc = async (docbookXml: string, format: string): Promise<Uint8Array> => {
     const inputBytes = new TextEncoder().encode(docbookXml);
 
-    const inCompose = Boolean(
-        Bun.env.COMPOSE_PROJECT_NAME ||
-        Bun.env.DOCKER_COMPOSE ||
-        Bun.env.IN_DOCKER_COMPOSE ||
-        Bun.env.WT2XT_IN_COMPOSE
-    );
-
-    // Detect if we are running inside a Docker container
-    let inContainer = false;
-    try {
-        // /.dockerenv is present in Docker containers
-        inContainer = fs.existsSync('/.dockerenv')
-            || Boolean(Bun.env.DOCKER_CONTAINER || Bun.env.CONTAINER);
-    } catch (_) {
-        // ignore
-    }
-
-    if (inContainer) {
-        // Prefer using the host Docker Engine from inside the container if available.
-        // This avoids true Docker-in-Docker and instead talks to the parent engine via the mounted socket or DOCKER_HOST.
-        const hostDockerAvailable = Boolean(Bun.env.DOCKER_HOST) || fs.existsSync('/var/run/docker.sock');
-
-        if (hostDockerAvailable) {
+    if (hostDockerAvailable()) {
             // Use the compose-networked docker runner so the pandoc container can reach sibling services.
-            return await runPandocDockerComposeStream({
-                input: inputBytes,
-                outputFormat: format,
-                network: Bun.env.DOCKER_COMPOSE_NETWORK || 'frontend'
-            });
-        }
-
-        // Fallback: Avoid DinD by using a locally installed pandoc inside the current container if present.
-        let pandocAvailable = false;
-        try {
-            const check = Bun.spawn(["pandoc", "-v"], { stdout: "ignore", stderr: "ignore" });
-            await check.exited;
-            pandocAvailable = check.exitCode === 0;
-        } catch (_) {
-            pandocAvailable = false;
-        }
-
-        if (pandocAvailable) {
-            return await runPandocLocalStream({
-                input: inputBytes,
-                outputFormat: format,
-            });
-        }
-
-        throw new Error("Inside container without access to host Docker and without local pandoc. Either mount /var/run/docker.sock or set DOCKER_HOST to the host engine, or install pandoc (and a TeX engine for PDF) in the image.");
-    }
-
-    if (inCompose) {
         return await runPandocDockerComposeStream({
             input: inputBytes,
             outputFormat: format,
-            network: Bun.env.DOCKER_COMPOSE_NETWORK || 'frontend'
+   //         network: Bun.env.DOCKER_COMPOSE_NETWORK || 'frontend'
+        });
+    }
+    if (await localPandocAvailable()) {
+        return await runPandocLocalStream({
+            input: inputBytes,
+            outputFormat: format,
         });
     }
 
     return await runPandocDockerStream({
         input: inputBytes,
-        outputFormat: format
+        outputFormat: format,
     });
+
+
 };
-//     const runPandoc = async (docbookXml: string, format: string): Promise<Buffer> => {
-//   const args: string[] = [];
-//
-//   // Read DocBook from stdin and write the converted output to stdout (binary-safe)
-//   args.push('pandoc');
-//   args.push('-f');
-//   args.push('docbook');
-//   args.push('-t');
-//   args.push(`${format}`);
-//   args.push('-o');
-//   args.push('-'); // write output to stdout
-//   args.push('-'); // read input from stdin
-//
-//   // Execute pandoc container and capture stdout as binary Buffer
-//   const result = await runOneShot('pandoc/latex:3.4', args, docbookXml);
-//   return result.stdout;
-// };
 
 /**
  * Unified function to convert content to various formats and return as appropriate type
@@ -133,28 +93,17 @@ const convertContent = async <T extends ArrayBufferLike | string>(
       const docbookXml = await CreateDocbook(dBuilder.sb.toString());
 
       const bin = await runPandoc(docbookXml, format);
+
       if (format === 'markdown_strict') {
         const text = new TextDecoder().decode(bin);
         return text as T;
       }
 
-      // Convert Uint8Array to a tightly sized ArrayBuffer
+  // Handle other formats docs, pdf etc
+  // Convert Uint8Array to a tightly sized ArrayBuffer
+
       const arrayBuffer = bin.buffer.slice(bin.byteOffset, bin.byteOffset + bin.byteLength);
       return arrayBuffer as T;
-      // Convert Uint8Array to a tightly sized ArrayBuffer
-   //   return bin as ArrayBufferLike;
-
-      // const arrayBuffer = bin.buffer.slice(bin.byteOffset, bin.byteOffset + bin.byteLength);
-      // outputBuffer = arrayBuffer;
-      // return (outputBuffer as unknown) as T
-      //
-    // Read the file as appropriate type
- //   const result = returnAsText
- //     ? await Bun.file(tempOutputFile).text() as T
- //     : await Bun.file(tempOutputFile).arrayBuffer() as T;
-
-    // Clean up all temporary files
-   // await Promise.all(filesToCleanup.map(file => fs.remove(file)));
 
 //    return result;
   } catch (error) {
