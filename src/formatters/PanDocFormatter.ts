@@ -2,7 +2,7 @@ import { DocBuilder } from "../DocBuilder";
 import { adoc } from "./AdocFormatter";
 import * as fs from 'fs-extra';
 import { generateRandomFilename, saveOutputArray } from "./DocFormatter.ts";
-import {runPandocDockerStream} from "../RunPandocStream.ts";
+import {runPandocDockerStream, runPandocDockerComposeStream, runPandocLocalStream} from "../RunPandocStream.ts";
 
 const CreateDocbook = async (src: string): Promise<string> => {
   const asciidoctor = require('@asciidoctor/core')()
@@ -19,6 +19,66 @@ const CreateDocbook = async (src: string): Promise<string> => {
 
 const runPandoc = async (docbookXml: string, format: string): Promise<Uint8Array> => {
     const inputBytes = new TextEncoder().encode(docbookXml);
+
+    const inCompose = Boolean(
+        Bun.env.COMPOSE_PROJECT_NAME ||
+        Bun.env.DOCKER_COMPOSE ||
+        Bun.env.IN_DOCKER_COMPOSE ||
+        Bun.env.WT2XT_IN_COMPOSE
+    );
+
+    // Detect if we are running inside a Docker container
+    let inContainer = false;
+    try {
+        // /.dockerenv is present in Docker containers
+        inContainer = fs.existsSync('/.dockerenv')
+            || Boolean(Bun.env.DOCKER_CONTAINER || Bun.env.CONTAINER);
+    } catch (_) {
+        // ignore
+    }
+
+    if (inContainer) {
+        // Prefer using the host Docker Engine from inside the container if available.
+        // This avoids true Docker-in-Docker and instead talks to the parent engine via the mounted socket or DOCKER_HOST.
+        const hostDockerAvailable = Boolean(Bun.env.DOCKER_HOST) || fs.existsSync('/var/run/docker.sock');
+
+        if (hostDockerAvailable) {
+            // Use the compose-networked docker runner so the pandoc container can reach sibling services.
+            return await runPandocDockerComposeStream({
+                input: inputBytes,
+                outputFormat: format,
+                network: Bun.env.DOCKER_COMPOSE_NETWORK || 'frontend'
+            });
+        }
+
+        // Fallback: Avoid DinD by using a locally installed pandoc inside the current container if present.
+        let pandocAvailable = false;
+        try {
+            const check = Bun.spawn(["pandoc", "-v"], { stdout: "ignore", stderr: "ignore" });
+            await check.exited;
+            pandocAvailable = check.exitCode === 0;
+        } catch (_) {
+            pandocAvailable = false;
+        }
+
+        if (pandocAvailable) {
+            return await runPandocLocalStream({
+                input: inputBytes,
+                outputFormat: format,
+            });
+        }
+
+        throw new Error("Inside container without access to host Docker and without local pandoc. Either mount /var/run/docker.sock or set DOCKER_HOST to the host engine, or install pandoc (and a TeX engine for PDF) in the image.");
+    }
+
+    if (inCompose) {
+        return await runPandocDockerComposeStream({
+            input: inputBytes,
+            outputFormat: format,
+            network: Bun.env.DOCKER_COMPOSE_NETWORK || 'frontend'
+        });
+    }
+
     return await runPandocDockerStream({
         input: inputBytes,
         outputFormat: format

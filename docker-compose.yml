@@ -4,7 +4,7 @@ services:
     build:
       context: .
     ports:
-      - "3000:3000"
+      - "3002:3000"
     volumes:
       - ./templates:/app/templates
       - ./out:/app/out:rw
@@ -34,10 +34,6 @@ services:
     # Ensure host directories exist with proper permissions before starting
     # This helps with Linux permission issues
 
-  dockercli:
-    image: docker:26-cli
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
 
 networks:
   frontend:

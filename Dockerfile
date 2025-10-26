@@ -2,6 +2,7 @@
 
 # Use Bun as the base image
 FROM oven/bun:1 AS base
+
 WORKDIR /app
 
 # Create a stage for installing dependencies
@@ -35,6 +36,11 @@ RUN addgroup --system --gid 1001 bunuser && \
     adduser --system --uid 1001 --ingroup bunuser bunuser && \
     chown -R bunuser:bunuser /app
 
+# Install Docker CLI
+RUN apt-get update && \
+    apt-get install -y docker.io && \
+    apt-get clean
+
 # Copy only the necessary files from the build stage
 COPY --from=build --chown=bunuser:bunuser /app/package.json /app/package.json
 COPY --from=build --chown=bunuser:bunuser /app/bun.lock /app/bun.lock
@@ -54,6 +60,7 @@ RUN mkdir -p /app/out /app/templates /app/tmp && chmod -R 777 /app/out /app/tmp
 
 # Switch to non-root user
 USER bunuser
+
 
 # Expose port for API server
 EXPOSE 3000
