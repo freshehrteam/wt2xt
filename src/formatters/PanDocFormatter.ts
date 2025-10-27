@@ -27,7 +27,7 @@ async function localPandocAvailable() {
 
 function hostDockerAvailable(): boolean {
     try {
-        console.log('Bun.env', Bun.env);
+//        console.log('Bun.env', Bun.env);
         const insideContainer = fs.existsSync('/.dockerenv') || Boolean(Bun.env.DOCKER_CONTAINER || Bun.env.CONTAINER);
         const hostDockerAvailable = Boolean(Bun.env.DOCKER_HOST) || fs.existsSync('/var/run/docker.sock');
         return insideContainer && hostDockerAvailable;
@@ -109,7 +109,7 @@ const convertContent = async <T extends ArrayBufferLike | string>(
   } catch (error) {
     // Clean up files even if there's an error
     try {
-        console.log('files', filesToCleanup);
+        //console.log('files', filesToCleanup);
    //   await Promise.all(filesToCleanup.map(file => fs.remove(file)));
     } catch (cleanupError) {
       console.error('Error cleaning up temporary files:', cleanupError);

@@ -98,7 +98,7 @@ export class DocBuilder {
     const outFilePath = this.calcOutFilePath();
 
     if (!apiMode) {
-        console.log("out file path", outFilePath)
+//        console.log("out file path", outFilePath)
         await saveFile(this, outFilePath, apiMode)
         if (this.regenWtx() && this.isWtxAugmented())
             saveWtxFile(this).catch()
@@ -128,7 +128,7 @@ export class DocBuilder {
       // Ensure the output directory exists
       fs.ensureDirSync(outDir);
 
-      console.log('outdir',outDir);
+//      console.log('outdir',outDir);
       const filePath = `${outDir}/${pathSeg.name }.${fExt}`;
       console.log('filePath',filePath);
       return filePath

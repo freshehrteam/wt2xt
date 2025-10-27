@@ -8,9 +8,8 @@ The openEHR web template is such a resource. This project generates asciidoc fil
 
 ## Installation
 
-### Using Bun (recommended)
 
-This application can be run using [Bun](https://bun.sh/), a fast JavaScript runtime and package manager.
+This application should be run using [Bun](https://bun.sh/), a fast JavaScript runtime and package manager.
 
 1. Install Bun:
 ```bash
@@ -27,26 +26,17 @@ bun install
 bun run build
 ```
 
-### Using npm (legacy)
-
-Alternatively, you can use npm:
-
-```bash
-npm install
-npm run build
-```
 
 ## Usage 
 ```
 ❯ wt2xt
 Options:
-    --help                  Show help                            [boolean]
-    --version               Show version number                  [boolean]
-    --web-template, -wt     Source web template                  [string] [required]
-    --out-file,     -o                                            [string]
-    --export-format, -ex    Export format (default:adoc)         [string] adoc|xmind|docx|pdf|fshl
-    -- config-file,  -cfg    default: "config/wtconfig.json"         [string]
-    -- fhir-json,  -cfhj   default: "true"                       [boolean]
+    --help                  Show help                              [boolean]
+    --version               Show version number                    [boolean]
+    --web-template, -wt     Source web template                    [string] [required]
+    --out-file,     -o       THe output file (default:import filename [string]
+    --export-format, -ex    Export format (default:adoc)           [string] adoc|xmind|docx|pdf|fshl|fhirl
+    -- config-file,  -cfg    default: "config/wtconfig.json"           [string]
 
  ``` 
 
@@ -68,19 +58,19 @@ bun run dev -- --web-template=./templates/example.json
 - `xmind` : Xmind mindmap
 - `docx` : Word document (see dependencies below)
 - `pdf` : PDF document (see dependencies below)
-- `fshl` : FHIR Logical model (creates FSH + )
+- `fshl` : FHIR Logical model (FSH + FHIR datatypes)
+- `fhirl` : FHIR Logical model (Zipped JSON + FHIR datatypes)
 
-Set fhir-json to true to return a zip file of FHIR artefacts, otherwise a single FSH (FHIR Shorthand file)
 
 ## Export format dependencies 
 
 - **Adoc** (asciidoc) and **Xmind** are supported natively.
 
 
-- **Docx** requires a local install of [Pandoc](https://pandoc.org/installing.html)
+- **Docx** requires a local install of Pandoc Latex or will load a Pandoc/latex Docker image if running in a Docker container.
 
 
-- **PDF** requires local install of [Pandoc](https://pandoc.org/installing.html) and [BasicTex](https://www.neelsomani.com/blog/get-mactex-faster-easily-using-basictex.php) - for macOS.
+- **PDF** requires local install of Pandoc Latex or will load a Pandoc/latex Docker image if running in a Docker container
 
 
 ## Configuration
@@ -140,31 +130,34 @@ bun run api:dev
 Converts a JSON template to the specified format.
 
 **Query Parameters:**
-- `format` (optional): The output format (adoc, docx, pdf, fshl, fsht, fshq, xmind). Default: adoc
-- `includeFileContent` (optional): Set to 'true' to include the file content in the JSON response instead of downloading the file directly. Default: false
+- `exportAs` (optional): The output format (adoc, docx, pdf, fshl, fhirl, xmind). Default: adoc
+
 
 **Request Body:**
 - `template`: The JSON template to convert
 
 **Response:**
-- When `includeFileContent=true`: A JSON object containing the filename, format, and base64-encoded file content
-- When `includeFileContent` is not set or is not 'true': The converted file in the requested format as a direct download
+- An object containing the exported file content
 
 **Example using curl:**
 
 ```bash
 # Example 1: Download the file directly
 curl -X POST \
-  "http://localhost:3000/convert?format=adoc" \
+  "http://localhost:3000/convert?exportAs=adoc" \
   -H "Content-Type: application/json" \
   -d '{"template": {...}}' \
-  --output output.adoc
 
-# Example 2: Get the file content in JSON response
+
+```
+```bash
+# Example 2
 curl -X POST \
-  "http://localhost:3000/convert?format=adoc&includeFileContent=true" \
-  -H "Content-Type: application/json" \
-  -d '{"template": {...}}'
+"http://localhost:3000/convert?exportAs=fhirl" \
+-H "Content-Type: application/json" \
+-d '{"template": {...}}' \
+
+
 ```
 
 **Example using JavaScript fetch:**

@@ -54,7 +54,7 @@ export async function runPandocDockerComposeStream(options: PandocStreamOptions 
         '-t', outputFormat,
         ...(outputFormat === 'pdf' ? [`--pdf-engine=${pdfEngine}`] : [])
     ];
-    console.log('Host Docker stream')
+//    console.log('Host Docker stream')
 
     return await processPanDocstream(cmd, input);
 }
@@ -79,7 +79,7 @@ export async function runPandocDockerStream(options: PandocStreamOptions): Promi
         '-t', outputFormat,
         ...(outputFormat === 'pdf' ? [`--pdf-engine=${pdfEngine}`] : [])
     ];
-    console.log('Host Docker stream')
+//    console.log('Host Docker stream')
 
     return await processPanDocstream(cmd, input);
 }
@@ -101,7 +101,7 @@ export async function runPandocLocalStream(options: PandocStreamOptions & { temp
         ...(outputFormat === 'pdf' ? [`--pdf-engine=${pdfEngine}`] : [])
     ];
 
-    console.log('local Docker pandoc stream', cmd)
+//    console.log('local Docker pandoc stream', cmd)
     return await processPanDocstream(cmd, input);
 
 

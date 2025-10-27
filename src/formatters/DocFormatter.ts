@@ -327,24 +327,18 @@ export const getOutputBuffer = async (docBuilder: DocBuilder) : Promise<ArrayBuf
         case ExportFormat.xmind:
             fn = adoc.getOutputBuffer;
             break
-        case ExportFormat.fsht:
         case ExportFormat.fhirl:
             fn = fhirl.getOutputBuffer
             break;
         case ExportFormat.fshq:
             fn = adoc.getOutputBuffer
             break;
-        case ExportFormat.fhirl:
-            fn = fsh.getOutputBuffer
-            break;
-
         case ExportFormat.docx:
             fn = docx.getOutputBuffer
             break;
         case ExportFormat.md:
             fn = md.getOutputBuffer
             break;
-
         case ExportFormat.pdf:
             fn = pdf.getOutputBuffer
             break;

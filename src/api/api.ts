@@ -199,7 +199,7 @@ async function handleRequest(req: Request): Promise<Response> {
         // Create DocBuilder and process the template
         const docBuilder = new DocBuilder(template, config);
         await docBuilder.run(true)
-        //    console.log('2: ', docBuilder.config.exportFormat);
+
         // Get the string output directly from DocBuilder
         const output: ArrayBufferLike | string | void = await getOutputBuffer(docBuilder);
 
@@ -242,7 +242,7 @@ async function handleRequest(req: Request): Promise<Response> {
 
         // Return the streamed response
 
-        console.log("content-type", contentType);
+ //       console.log("content-type", contentType);
         return new Response(stream, {
             status: 200,
             headers: {
@@ -275,7 +275,7 @@ const start = async () => {
       development: process.env.NODE_ENV !== 'production'
     });
 
-    console.log(`Server started on http://localhost:${PORT}`);
+    console.log(`Server started`);
     return server;
   } catch (error) {
     console.error('Failed to start server:', error);
