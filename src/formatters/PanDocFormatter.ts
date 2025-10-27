@@ -37,37 +37,35 @@ function hostDockerAvailable(): boolean {
 }
 
 const runPandoc = async (docbookXml: string, format: string): Promise<Uint8Array> => {
+
     const inputBytes = new TextEncoder().encode(docbookXml);
+    const pandocFormat = format==='md' ? 'markdown_strict' : format
 
     if (hostDockerAvailable()) {
             // Use the compose-networked docker runner so the pandoc container can reach sibling services.
         return await runPandocDockerComposeStream({
             input: inputBytes,
-            outputFormat: format,
+            outputFormat: pandocFormat,
    //         network: Bun.env.DOCKER_COMPOSE_NETWORK || 'frontend'
         });
     }
     if (await localPandocAvailable()) {
         return await runPandocLocalStream({
             input: inputBytes,
-            outputFormat: format,
+            outputFormat: pandocFormat,
         });
     }
 
     return await runPandocDockerStream({
         input: inputBytes,
-        outputFormat: format,
+        outputFormat: pandocFormat,
     });
-
-
 };
 
 /**
  * Unified function to convert content to various formats and return as appropriate type
  * @param dBuilder DocBuilder containing the content to convert
  * @param format The target format (docx, pdf, markdown_strict)
- * @param needsAdoc Whether the format requires an intermediate adoc file
- * @param returnAsText Whether to return the result as text (string) or binary (ArrayBuffer)
  * @returns Promise with the converted content
  */
 const convertContent = async <T extends ArrayBufferLike | string>(
@@ -79,22 +77,12 @@ const convertContent = async <T extends ArrayBufferLike | string>(
   await fs.ensureDir('./tmp');
 
   // Files scheduled for cleanup (if any temp files are created)
-  const filesToCleanup: string[] = [];
-
   try {
-    // If format needs intermediate adoc file (like PDF)
-    // if (needsAdoc) {
-    //   const tempAdocFile = generateRandomFilename('adoc');
-    //   filesToCleanup.push(tempAdocFile);
-    //   // Save content as .adoc file
-    //   await adoc.saveFile(dBuilder, tempAdocFile, false);
-    // }
-
       const docbookXml = await CreateDocbook(dBuilder.sb.toString());
 
       const bin = await runPandoc(docbookXml, format);
 
-      if (format === 'markdown_strict') {
+      if (format === 'md') {
         const text = new TextDecoder().decode(bin);
         return text as T;
       }

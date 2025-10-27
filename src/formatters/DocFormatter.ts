@@ -9,7 +9,6 @@ import { fshq } from './QuestionnaireFormatter.ts';
 import {fsh,fhirl} from'./FshCommon.ts'
 import * as fs from "fs-extra";
 import path from "path";
-import * as crypto from 'crypto';
 
 
 export enum ExportFormat {
