@@ -136,7 +136,7 @@ export const md = {
    * @returns Promise<string> containing the Markdown text
    */
   getOutputBuffer: async (dBuilder: DocBuilder): Promise<string> => {
-    return convertContent<string>(dBuilder, 'markdown_strict');
+    return convertContent<string>(dBuilder, 'md');
   },
 }
 
