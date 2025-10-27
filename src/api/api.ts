@@ -221,10 +221,11 @@ const handleConvert = async (req: Request, url: URL) => {
 
         const output: ArrayBufferLike | string | void = await getOutputBuffer(docBuilder);
         const contentType = getContentTypeForFormat(exportFormat);
-
+console.log('2: ', contentType);
         const stream = new ReadableStream({
             start(controller) {
                 if (contentType === 'text/plain') {
+                    console.log('MD ', output);
                     controller.enqueue(new TextEncoder().encode(output as string));
                 } else {
                     controller.enqueue(output);
