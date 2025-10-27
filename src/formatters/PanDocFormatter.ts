@@ -126,7 +126,7 @@ export const docx = {
 export const md = {
   saveFile: async (docBuilder: DocBuilder, outFile: string, useStdout: boolean) => {
     // Ensure the directory exists
-    const outputBuffer: string = await md.getOutputBuffer(docBuilder) as string
+    const outputBuffer: ArrayBufferLike = await md.getOutputBuffer(docBuilder) as ArrayBufferLike;
     return saveOutputArray(outputBuffer, outFile, useStdout);
   },
 
@@ -135,8 +135,8 @@ export const md = {
    * @param dBuilder DocBuilder containing the content to convert
    * @returns Promise<string> containing the Markdown text
    */
-  getOutputBuffer: async (dBuilder: DocBuilder): Promise<string> => {
-    return convertContent<string>(dBuilder, 'md');
+  getOutputBuffer: async (dBuilder: DocBuilder): Promise<ArrayBufferLike> => {
+    return convertContent<ArrayBufferLike>(dBuilder, 'md');
   },
 }
 
