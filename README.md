@@ -58,6 +58,7 @@ bun run dev -- --web-template=./templates/example.json
 - `xmind` : Xmind mindmap
 - `docx` : Word document (see dependencies below)
 - `pdf` : PDF document (see dependencies below)
+- `md` : Markdown document (see dependencies below)
 - `fshl` : FHIR Logical model (FSH + FHIR datatypes)
 - `fhirl` : FHIR Logical model (Zipped JSON + FHIR datatypes)
 
@@ -72,6 +73,7 @@ bun run dev -- --web-template=./templates/example.json
 
 - **PDF** requires local install of Pandoc Latex or will load a Pandoc/latex Docker image if running in a Docker container
 
+- **MD** requires local install of Pandoc Latex or will load a Pandoc/latex Docker image if running in a Docker container. This requires use of HTML to recreate the more complex ASCII table 
 
 ## Configuration
 
@@ -130,8 +132,7 @@ bun run api:dev
 Converts a JSON template to the specified format.
 
 **Query Parameters:**
-- `exportAs` (optional): The output format (adoc, docx, pdf, fshl, fhirl, xmind). Default: adoc
-
+- `exportAs` (optional): The output format (adoc, docx, pdf, fshl, fhirl, xmind, md). Default: adoc
 
 **Request Body:**
 - `template`: The JSON template to convert
@@ -246,73 +247,6 @@ docker-compose up
 ```
 
 This will start the API server on port 3000, which you can access at http://localhost:3000.
-
-#### Running the CLI Tool
-
-To run the CLI tool instead:
-
-```bash
-docker-compose run --rm wt2xt --web-template=./templates/example.json --export-format=adoc
-```
-
-The Docker setup mounts the following directories as volumes:
-- `./templates`: Input templates directory
-- `./out`: Output directory
-- `./tmp`: Temporary files directory
-- `./config`: Configuration directory
-
-**Note**: When running on Linux, ensure that the `tmp` directory exists and has appropriate permissions (e.g., `chmod 777 tmp`). This is necessary for temporary file operations during PDF and DOCX generation.
-
-This allows you to work with files on your local machine while running the application in a container.
-
-### Performance Benefits with Bun
-
-The Docker image now uses Bun instead of Node.js, which provides several benefits:
-- Faster startup times
-- Reduced memory usage
-- Improved TypeScript compilation speed
-- Smaller image size
-
-## Testing
-
-This project uses Bun's built-in test runner for testing, with Bun configured as the test environment.
-
-### Running Tests
-
-To run all tests:
-
-```bash
-bun test
-```
-
-To run a specific test file:
-
-```bash
-bun test tests/api.test.ts
-```
-
-To run tests with watch mode (automatically re-run tests when files change):
-
-```bash
-bun test --watch
-```
-
-### Writing Tests
-
-Tests are written using Bun's testing API. Here's an example:
-
-```typescript
-import { test, describe, expect } from "bun:test";
-
-describe("My test suite", () => {
-  test("should do something", () => {
-    expect(1 + 1).toBe(2);
-  });
-});
-```
-
-For more information about Bun's testing capabilities, see the [Bun documentation](https://bun.sh/docs/cli/test).
-
 
 
 ## Authentication
