@@ -40,22 +40,25 @@ const requireAuth = (req: Request) => {
     }
 };
 
+const getCORSHeaders = () => {
+    return {
+        'Access-Control-Allow-Origin': 'http://localhost:5173',
+            'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+            'Access-Control-Max-Age': '86400',
+    }
+}
 // CORS handling
 const handleCorsPreflightRequest = () => new Response(null, {
     status: 204,
-    headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-        'Access-Control-Max-Age': '86400',
+    headers: {...getCORSHeaders()
     },
 });
 
 // Route handlers
 const handleHeartbeat = () => new Response(null, {
     status: 204,
-    headers: {
-        'Access-Control-Allow-Origin': '*'
+    headers: {...getCORSHeaders()
     }
 });
 
@@ -67,7 +70,7 @@ const handleConfigPost = async (req: Request) => {
         if (!contentType.includes('application/json')) {
             return new Response(JSON.stringify({error: 'Invalid content type: Must be application/json'}), {
                 status: 400,
-                headers: {'Content-Type': 'application/json'}
+                headers: {...getCORSHeaders(), 'Content-Type': 'application/json'}
             });
         }
 
@@ -77,7 +80,7 @@ const handleConfigPost = async (req: Request) => {
         } catch {
             return new Response(JSON.stringify({error: 'Invalid JSON'}), {
                 status: 400,
-                headers: {'Content-Type': 'application/json'}
+                headers: {...getCORSHeaders(),'Content-Type': 'application/json'}
             });
         }
 
@@ -91,7 +94,7 @@ const handleConfigPost = async (req: Request) => {
             details: e instanceof Error ? e.message : String(e)
         }), {
             status: 500,
-            headers: {'Content-Type': 'application/json'}
+            headers: {...getCORSHeaders(),'Content-Type': 'application/json'}
         });
     }
 };
@@ -107,16 +110,13 @@ const handleConfigGet = async (req: Request) => {
         if (!(await file.exists())) {
             return new Response(JSON.stringify({error: 'custom_config.json not found'}), {
                 status: 404,
-                headers: {'Content-Type': 'application/json'}
+                headers: {...getCORSHeaders(),'Content-Type': 'application/json'}
             });
         }
 
         return new Response(file, {
             status: 200,
-            headers: {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-            }
+            headers: {...getCORSHeaders(),'Content-Type': 'application/json'}
         });
     } catch (e) {
         return new Response(JSON.stringify({
@@ -151,25 +151,44 @@ const getContentTypeForFormat = (exportFormat: string): string => {
     }
 };
 
-// Parse and validate the request body without using throw/catch for control flow in the caller
-const parseTemplateFromRequest = async (req: Request): Promise<WebTemplate | Response> => {
+// Parse and validate the request body. Supports both the new wrapped shape
+// { template: WebTemplate, config?: Partial<Config> } and the legacy body which
+// is just the template object. Returns a Response on client error.
+interface IncomingConvertBody { template: WebTemplate; config?: Partial<Config> }
+const parseTemplateFromRequest = async (req: Request): Promise<IncomingConvertBody | Response> => {
     const contentType = req.headers.get('content-type') || '';
 
     // Validate content type up-front and return a client error response
     if (!contentType.includes('application/json')) {
         return new Response(
             JSON.stringify({ error: 'Invalid Content-type : must be application/json' }),
-            { status: 400, headers: { 'Content-Type': 'application/json' } }
+            {
+                status: 400,
+                headers: {...getCORSHeaders(),'Content-Type': 'application/json' }
+            }
         );
     }
 
-    // Safely parse JSON; if invalid, return a 400 without throwing to the caller
     try {
-        return await req.json() as WebTemplate;
+        const body = await req.json() as any;
+
+        // New shape
+        if (body && typeof body === 'object' && 'template' in body) {
+            if (!body.template) {
+                return new Response(
+                    JSON.stringify({ error: 'No template provided' }),
+                    { status: 400, headers: { ...getCORSHeaders(), 'Content-Type': 'application/json' } }
+                );
+            }
+            return { template: body.template as WebTemplate, config: body.config as Partial<Config> | undefined };
+        }
+
+        // Legacy shape: body is the template itself
+        return { template: body as WebTemplate };
     } catch {
         return new Response(
             JSON.stringify({ error: 'Invalid request body' }),
-            { status: 400, headers: { 'Content-Type': 'application/json' } }
+            { status: 400,  headers: {...getCORSHeaders(),'Content-Type': 'application/json' } }
         );
     }
 };
@@ -179,7 +198,7 @@ const handleConvert = async (req: Request, url: URL) => {
 
     try {
         const params = new URLSearchParams(url.search);
-        const exportFormat = params.get('exportAs') || 'adoc';
+        const exportFormat = params.get('exportAs') || params.get('out') || 'adoc';
         const exportFormatKey = exportFormat as keyof typeof ExportFormat;
 
         // Parse request body (no local try/catch; delegate to helper)
@@ -187,14 +206,14 @@ const handleConvert = async (req: Request, url: URL) => {
         if (parsed instanceof Response) {
             return parsed;
         }
-        const template: WebTemplate = parsed;
+        const { template, config: incomingConfig } = parsed;
 
         if (!template) {
             return new Response(
                 JSON.stringify({error: 'No template provided'}),
                 {
                     status: 400,
-                    headers: {'Content-Type': 'application/json'}
+                    headers: {...getCORSHeaders(),'Content-Type': 'application/json' }
                 }
             );
         }
@@ -207,16 +226,18 @@ const handleConvert = async (req: Request, url: URL) => {
                 }),
                 {
                     status: 400,
-                    headers: {'Content-Type': 'application/json'}
+                    headers: {...getCORSHeaders(),'Content-Type': 'application/json' }
                 }
             );
         }
 
-        const config: Config = await importConfig('../config/wtconfig.json');
-        config.exportFormat = ExportFormat[exportFormatKey];
-        //console.log('1: ', config.exportFormat);
+        // Load base config and merge incoming overrides if provided
+        const baseConfig: Config = await importConfig('../config/wtconfig.json');
+        const mergedConfig: Config = { ...baseConfig, ...(incomingConfig || {}) } as Config;
+        // Always set exportFormat from query param
+        mergedConfig.exportFormat = ExportFormat[exportFormatKey];
 
-        const docBuilder = new DocBuilder(template, config);
+        const docBuilder = new DocBuilder(template, mergedConfig);
         await docBuilder.run(true);
 
         const output: ArrayBufferLike | string | void = await getOutputBuffer(docBuilder);
@@ -236,9 +257,8 @@ console.log('2: ', contentType);
 
         return new Response(stream, {
             status: 200,
-            headers: {
-                'Content-Type': contentType,
-            }
+                headers: {...getCORSHeaders(),'Content-Type': contentType }
+
         });
     } catch (error) {
         console.error('Error processing template:', error);
