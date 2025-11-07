@@ -1,7 +1,18 @@
 import { DocBuilder } from "../DocBuilder";
 import * as fs from 'fs-extra';
 import {saveOutputArray } from "./DocFormatter.ts";
-import {runPandocDockerComposeStream, runPandocDockerStream, runPandocLocalStream} from "../RunPandocStream.ts";
+import {runPandocDockerComposeStream, runPandocDockerStream, runPandocLocalStream} from "./RunPandocStream.ts";
+
+type PandocStreamOptions = {
+    input: Uint8Array | ReadableStream;
+    outputFormat: string;
+    inputFormat?: string;
+    pdfEngine?: string;
+    image?: string;
+    template?: string;
+    platform?: string;
+    title?: string;  // Add title option
+};
 
 const CreateDocbook = async (src: string): Promise<string> => {
   const asciidoctor = require('@asciidoctor/core')()
@@ -36,7 +47,7 @@ function hostDockerAvailable(): boolean {
     }
 }
 
-const runPandoc = async (docbookXml: string, format: string): Promise<Uint8Array> => {
+const runPandoc = async (docbookXml: string, format: string, title: string): Promise<Uint8Array> => {
 
     const inputBytes = new TextEncoder().encode(docbookXml);
     const pandocFormat = format==='md' ? 'markdown_strict' : format
@@ -46,6 +57,7 @@ const runPandoc = async (docbookXml: string, format: string): Promise<Uint8Array
         return await runPandocDockerComposeStream({
             input: inputBytes,
             outputFormat: pandocFormat,
+            title,
    //         network: Bun.env.DOCKER_COMPOSE_NETWORK || 'frontend'
         });
     }
@@ -53,12 +65,14 @@ const runPandoc = async (docbookXml: string, format: string): Promise<Uint8Array
         return await runPandocLocalStream({
             input: inputBytes,
             outputFormat: pandocFormat,
+            title,
         });
     }
 
     return await runPandocDockerStream({
         input: inputBytes,
         outputFormat: pandocFormat,
+        title,
     });
 };
 
@@ -80,9 +94,12 @@ const convertContent = async <T extends ArrayBufferLike | string>(
   try {
       const docbookXml = await CreateDocbook(dBuilder.sb.toString());
 
-      const bin = await runPandoc(docbookXml, format);
+        // Get title from config or use template name
+        const title = dBuilder.config.title || dBuilder.wt.templateId || 'Document';
 
-      if (format === 'md') {
+        const bin = await runPandoc(docbookXml, format, title);
+
+        if (format === 'md') {
         const text = new TextDecoder().decode(bin);
         return text as T;
       }

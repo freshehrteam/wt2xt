@@ -303,14 +303,14 @@ export const formatCluster = (docBuilder: DocBuilder, f: TemplateNode): void => 
 
 
 function createFileLink(absolutePath: string): string {
-    const fileUrl = `file://${absolutePath}`;
+    const fileUrl = `file://${encodeURI(absolutePath)}"`;
     // ANSI hyperlink with fallback to plain file:// URL
     return `\x1b]8;;${fileUrl}\x1b\\${absolutePath}\x1b]8;;\x1b\\ (${fileUrl})`;
 }
 
 export const saveOutputArray = async (outputBuffer:ArrayBufferLike|string, outFile: string,  useStdout:boolean) => {
 
-    console.log('outfile', outFile)
+//    console.log('outfile', outFile)
     if (useStdout)
         await Bun.write(Bun.stdout, outputBuffer);
     else

@@ -3,7 +3,8 @@ import path from "path";
  type PandocStreamOptions = {
      input: Uint8Array | ReadableStream;
      outputFormat: string;               // e.g. 'pdf', 'html', 'docx'
-     inputFormat?: string;               // e.g. 'docbook'
+     inputFormat?: string;
+     title: string// e.g. 'docbook'
      pdfEngine?: string;                 // e.g. 'xelatex'
      image?: string;
      template?: string;                   // Latex template name
@@ -40,25 +41,34 @@ import path from "path";
      outputFormat: string,
      inputFormat: string,
      pdfEngine: string,
-     cssPath: string
+     cssPath: string,
+     title: string = ''  // Add title parameter with default
  ): string[] => {
      return [
          '-f', inputFormat,
-         '-t', outputFormat,
+         '-t', 'html5',
+         '--standalone',
+         '--metadata', `title=${title}`,  // Add title metadata
          '--css', cssPath,
+         '--embed-resources',
          ...(outputFormat === 'pdf' ? [`--pdf-engine=${pdfEngine}`] : [])
      ];
  };
 
- const runWithDocker = async (image: string, args: string[], input: Uint8Array | ReadableStream): Promise<Uint8Array> => {
-     const cmd = [
-         'docker', 'run', '--rm', '-i',
-         '--volume', '/var/run/docker.sock:/var/run/docker.sock',
-         image,
-         ...args,
-     ];
-     return await processPanDocstream(cmd, input);
- };
+const runWithDocker = async (image: string, args: string[], input: Uint8Array | ReadableStream): Promise<Uint8Array> => {
+    // When running inside Docker, we need to use the host's actual path
+    // Otherwise, use the current working directory
+    const hostConfigPath = process.env.HOST_CONFIG_DIR || `${process.cwd()}/config`;
+console.log('path', hostConfigPath);
+    const cmd = [
+        'docker', 'run', '--rm', '-i',
+        '--volume', `${hostConfigPath}:/config:ro`,  // Mount from host path
+        '--volume', '/var/run/docker.sock:/var/run/docker.sock',
+        image,
+        ...args,
+    ];
+    return await processPanDocstream(cmd, input);
+};
 
  const runLocal = async (args: string[], input: Uint8Array | ReadableStream): Promise<Uint8Array> => {
      const cmd = [
@@ -88,8 +98,9 @@ import path from "path";
          outputFormat,
          inputFormat,
          pdfEngine,
-         './resources/defaultOutput.css'
+         '/config/defaultOutput.css'
      );
+
 
      return await runWithDocker(image, args, input);
  }
@@ -102,15 +113,16 @@ import path from "path";
          outputFormat,
          inputFormat = 'docbook',
          pdfEngine = 'xelatex',
+         title
      } = options;
 
      const args = buildPandocArgs(
          outputFormat,
          inputFormat,
          pdfEngine,
-         path.resolve('./resources/defaultOutput.css')
+         './config/defaultOutput.css',
+         title
      );
 
      return await runLocal(args, input);
  }
-

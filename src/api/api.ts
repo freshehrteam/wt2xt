@@ -148,6 +148,9 @@ const getContentTypeForFormat = (exportFormat: string): string => {
             return 'application/octet-stream';
         case 'fhirl':
             return 'application/zip';
+        case 'html':
+            return 'text/html';
+
         default:
             return 'text/plain';
     }
@@ -244,7 +247,6 @@ const handleConvert = async (req: Request, url: URL) => {
 
         const output: ArrayBufferLike | string | void = await getOutputBuffer(docBuilder);
         const contentType = getContentTypeForFormat(exportFormat);
-console.log('2: ', contentType);
         const stream = new ReadableStream({
             start(controller) {
                 if (contentType === 'text/plain') {

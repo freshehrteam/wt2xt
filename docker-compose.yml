@@ -19,8 +19,8 @@ services:
       # Capture the host user's UID/GID for correct file ownership in one‑shot containers
       - HOST_UID=${HOST_UID}
       - HOST_GID=${HOST_GID}
-      # The host directory you want to mount as /data in the pandoc container
-      - HOST_WORKDIR=
+      # IMPORTANT: The actual host path to your config directory
+      - HOST_CONFIG_DIR=${PWD}/config
     env_file:
       - .env
     networks:
