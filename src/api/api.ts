@@ -3,6 +3,7 @@ import { Config, importConfig } from '../BuilderConfig';
 import {ExportFormat, getOutputBuffer} from '../formatters/DocFormatter';
 import { WebTemplate } from "../types/WebTemplate.ts";
 const PORT = process.env['PORT'] || 3000;
+const CORS_ORIGIN = process.env['CORS_ORIGIN'] || '*';
 // Create a server instance that we can export for testing
 let server: Bun.Serve | null = null;
 
@@ -43,7 +44,7 @@ const requireAuth = (req: Request) => {
 const getCORSHeaders = () => {
     return {
  //       'Access-Control-Allow-Origin': 'http://localhost:5173'
-        'Access-Control-Allow-Origin': 'https://wt2xt-app-sd8pw.ondigitalocean.app',
+        'Access-Control-Allow-Origin': CORS_ORIGIN || '*',
             'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
             'Access-Control-Allow-Headers': 'Content-Type, Authorization',
             'Access-Control-Max-Age': '86400',
