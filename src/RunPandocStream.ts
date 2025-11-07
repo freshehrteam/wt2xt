@@ -1,3 +1,5 @@
+import path from "path";
+
 type PandocStreamOptions = {
     input: Uint8Array | ReadableStream;
     outputFormat: string;               // e.g. 'pdf', 'html', 'docx'
@@ -33,6 +35,9 @@ const processPanDocstream = async(cmd: string[] , input: Uint8Array<ArrayBufferL
     return output;
 }
 
+const pandocCommands = (inputFormat: string, outputFormat: string) =>{
+    return ['-f', inputFormat, '-t', outputFormat, '--css', path.resolve('./resources/defaultOutput.css')],
+}
 // New: run pandoc using docker-compose shared network
 export async function runPandocDockerComposeStream(options: PandocStreamOptions & { template?: string }): Promise<Uint8Array> {
     const {
@@ -52,6 +57,7 @@ export async function runPandocDockerComposeStream(options: PandocStreamOptions 
         image,
         '-f', inputFormat,
         '-t', outputFormat,
+        '--css', './resources/defaultOutput.css',
         ...(outputFormat === 'pdf' ? [`--pdf-engine=${pdfEngine}`] : [])
     ];
 //    console.log('Host Docker stream')
@@ -77,6 +83,7 @@ export async function runPandocDockerStream(options: PandocStreamOptions): Promi
         image,
         '-f', inputFormat,
         '-t', outputFormat,
+        '--css', './resources/defaultOutput.css',
         ...(outputFormat === 'pdf' ? [`--pdf-engine=${pdfEngine}`] : [])
     ];
 //    console.log('Host Docker stream')
@@ -98,6 +105,7 @@ export async function runPandocLocalStream(options: PandocStreamOptions & { temp
         'pandoc',
         '-f', inputFormat,
         '-t', outputFormat,
+        '--css', path.resolve('./resources/defaultOutput.css'),
         ...(outputFormat === 'pdf' ? [`--pdf-engine=${pdfEngine}`] : [])
     ];
 

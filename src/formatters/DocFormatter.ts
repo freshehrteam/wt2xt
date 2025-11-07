@@ -3,12 +3,12 @@ import  {adoc }from "./AdocFormatter"
 import {xmind } from "./XmindFormatter"
 import { TemplateNode } from "../types/TemplateNodes";
 import { formatOccurrences } from "../types/TemplateTypes";
-import {docx, md, pdf} from "./PanDocFormatter";
+import {docx, html, md, pdf} from "./PanDocFormatter";
 import { fshl} from './FshLogicalModelFormatter';
 import { fshq } from './QuestionnaireFormatter.ts';
 import {fsh,fhirl} from'./FshCommon.ts'
 import * as fs from "fs-extra";
-import path from "path";
+import path  from "path";
 
 
 export enum ExportFormat {
@@ -21,7 +21,7 @@ export enum ExportFormat {
   fhirl = 'fhirl',
   fsht = 'fsht',
   fshq = 'fshq',
-
+  html = 'html',
 }
 
 export type OutputBufferType = ArrayBufferLike|string;
@@ -88,7 +88,9 @@ export const formatProvenanceTable = (docBuilder: DocBuilder) => {
     case ExportFormat.docx:
     case ExportFormat.pdf:
     case ExportFormat.adoc:
-      fn = adoc.formatProvenanceTable
+      case ExportFormat.html:
+
+          fn = adoc.formatProvenanceTable
       break;
     case ExportFormat.xmind:
       break;
@@ -299,6 +301,13 @@ export const formatCluster = (docBuilder: DocBuilder, f: TemplateNode): void => 
     fn(docBuilder, f);
 }
 
+
+function createFileLink(absolutePath: string): string {
+    const fileUrl = `file://${absolutePath}`;
+    // ANSI hyperlink with fallback to plain file:// URL
+    return `\x1b]8;;${fileUrl}\x1b\\${absolutePath}\x1b]8;;\x1b\\ (${fileUrl})`;
+}
+
 export const saveOutputArray = async (outputBuffer:ArrayBufferLike|string, outFile: string,  useStdout:boolean) => {
 
     console.log('outfile', outFile)
@@ -308,7 +317,9 @@ export const saveOutputArray = async (outputBuffer:ArrayBufferLike|string, outFi
     {
         await fs.ensureDir(path.dirname(outFile));
         await Bun.write(outFile, outputBuffer);
-        console.log(`\n Exported : ${outFile}`);
+// Usage:
+        console.log(`\n Exported: ${createFileLink(path.resolve(outFile))}`);
+//        console.log(`\n Exported : ${outFile}`);
     }
     // Return the length of the written data as an approximation of bytes written
     if (typeof(outputBuffer) === 'string')
@@ -341,6 +352,10 @@ export const getOutputBuffer = async (docBuilder: DocBuilder) : Promise<ArrayBuf
         case ExportFormat.pdf:
             fn = pdf.getOutputBuffer
             break;
+        case ExportFormat.html:
+            fn = pdf.getOutputBuffer
+            break;
+
         default:
             fn = adoc.getOutputBuffer
             break
@@ -376,6 +391,10 @@ export const saveFile  = async (docBuilder: DocBuilder, outFile: string, useStdO
         case ExportFormat.pdf:
             fn = pdf.saveFile
             break;
+        case ExportFormat.html:
+            fn = html.saveFile
+            break;
+
         default:
             fn = adoc.saveFile
             break

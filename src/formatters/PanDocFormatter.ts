@@ -140,6 +140,23 @@ export const md = {
   },
 }
 
+export const html = {
+    saveFile: async (docBuilder: DocBuilder, outFile: string, useStdout: boolean) => {
+        // Ensure the directory exists
+        const outputBuffer: ArrayBufferLike = await html.getOutputBuffer(docBuilder) as ArrayBufferLike;
+        return saveOutputArray(outputBuffer, outFile, useStdout);
+    },
+
+    /**
+     * Converts content to Markdown and returns it as a string
+     * @param dBuilder DocBuilder containing the content to convert
+     * @returns Promise<string> containing the Markdown text
+     */
+    getOutputBuffer: async (dBuilder: DocBuilder): Promise<ArrayBufferLike> => {
+        return convertContent<ArrayBufferLike>(dBuilder, 'html');
+    },
+}
+
 export const pdf = {
   saveFile: async (docBuilder: DocBuilder, outFile: string, useStdout: boolean) => {
     // Ensure the directory exists
