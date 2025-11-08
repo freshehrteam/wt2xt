@@ -353,7 +353,7 @@ export const getOutputBuffer = async (docBuilder: DocBuilder) : Promise<ArrayBuf
             fn = pdf.getOutputBuffer
             break;
         case ExportFormat.html:
-            fn = pdf.getOutputBuffer
+            fn = html.getOutputBuffer
             break;
 
         default:

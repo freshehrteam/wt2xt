@@ -1,4 +1,3 @@
-import path from "path";
 
  type PandocStreamOptions = {
      input: Uint8Array | ReadableStream;
@@ -11,7 +10,9 @@ import path from "path";
      platform?: string;                   // e.g. 'linux/arm64', 'linux/amd64'
  };
 
- const processPanDocstream = async(cmd: string[] , input: Uint8Array<ArrayBufferLike> | ReadableStream<any>): Promise<Uint8Array> => {
+export const hostConfigPath = process.env.HOST_CONFIG_DIR || `${process.cwd()}/config`;
+
+const processPanDocstream = async(cmd: string[] , input: Uint8Array<ArrayBufferLike> | ReadableStream<any>): Promise<Uint8Array> => {
      const proc = Bun.spawn(cmd, {
          stdin: typeof input === 'object' && 'getReader' in input
              ? input
@@ -58,7 +59,7 @@ import path from "path";
 const runWithDocker = async (image: string, args: string[], input: Uint8Array | ReadableStream): Promise<Uint8Array> => {
     // When running inside Docker, we need to use the host's actual path
     // Otherwise, use the current working directory
-    const hostConfigPath = process.env.HOST_CONFIG_DIR || `${process.cwd()}/config`;
+
 console.log('path', hostConfigPath);
     const cmd = [
         'docker', 'run', '--rm', '-i',

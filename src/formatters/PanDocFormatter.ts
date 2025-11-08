@@ -1,18 +1,18 @@
 import { DocBuilder } from "../DocBuilder";
 import * as fs from 'fs-extra';
 import {saveOutputArray } from "./DocFormatter.ts";
-import {runPandocDockerComposeStream, runPandocDockerStream, runPandocLocalStream} from "./RunPandocStream.ts";
+import {runPandocDockerStream,runPandocDockerComposeStream,runPandocLocalStream, hostConfigPath} from "./RunPandocStream.ts";
 
-type PandocStreamOptions = {
-    input: Uint8Array | ReadableStream;
-    outputFormat: string;
-    inputFormat?: string;
-    pdfEngine?: string;
-    image?: string;
-    template?: string;
-    platform?: string;
-    title?: string;  // Add title option
-};
+// type PandocStreamOptions = {
+//     input: Uint8Array | ReadableStream;
+//     outputFormat: string;
+//     inputFormat?: string;
+//     pdfEngine?: string;
+//     image?: string;
+//     template?: string;
+//     platform?: string;
+//     title?: string;  // Add title option
+// };
 
 const CreateDocbook = async (src: string): Promise<string> => {
   const asciidoctor = require('@asciidoctor/core')()
@@ -170,7 +170,23 @@ export const html = {
      * @returns Promise<string> containing the Markdown text
      */
     getOutputBuffer: async (dBuilder: DocBuilder): Promise<ArrayBufferLike> => {
-        return convertContent<ArrayBufferLike>(dBuilder, 'html');
+
+        const asciidoctor = require('@asciidoctor/core')();
+
+        const htmlContent = await asciidoctor.convert(dBuilder.sb.toString(), {
+            backend: 'html5',
+            safe: 'unsafe',
+            standalone: true,
+            attributes: {
+                'stylesheet': 'defaultOutput.css',
+                'stylesdir' : 'config',
+                'linkcss': false  // Embed CSS instead of linking
+            }
+        }) as string
+
+        console.log('htmlContent',hostConfigPath)
+        const encoder = new TextEncoder();
+        return encoder.encode(htmlContent).buffer;
     },
 }
 
