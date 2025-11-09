@@ -70,16 +70,16 @@ p {
 }
 
 ul {
-  list-style-type: none;
+  list-style-type: circle;
   padding-left: 20px;
 }
 
-ul li::before {
-  content: "▸ ";
-  color: #c9c1d9;
-  font-weight: bold;
-  margin-right: 5px;
-}
+/*ul li::before {*/
+/*  content: "▸ ";*/
+/*  color: #c9c1d9;*/
+/*  font-weight: bold;*/
+/*  margin-right: 5px;*/
+/*}*/
 
 em {
   color: #7ec9c0;
