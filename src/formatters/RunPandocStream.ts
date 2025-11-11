@@ -6,6 +6,7 @@
      title: string// e.g. 'docbook'
      pdfEngine?: string;                 // e.g. 'xelatex'
      image?: string;
+     cssPath?: string,
      template?: string;                   // Latex template name
      platform?: string;                   // e.g. 'linux/arm64', 'linux/amd64'
  };
@@ -47,7 +48,7 @@ const processPanDocstream = async(cmd: string[] , input: Uint8Array<ArrayBufferL
  ): string[] => {
      return [
          '-f', inputFormat,
-         '-t', 'html5',
+         '-t', outputFormat,
          '--standalone',
          '--metadata', `title=${title}`,  // Add title metadata
          '--css', cssPath,
@@ -92,6 +93,7 @@ console.log('path', hostConfigPath);
          inputFormat = 'docbook',
          pdfEngine = 'xelatex',
          image = 'pandoc/latex:3.4',
+         cssPath = '/config/defaultOutput.css',
 
      } = options;
 
@@ -99,7 +101,7 @@ console.log('path', hostConfigPath);
          outputFormat,
          inputFormat,
          pdfEngine,
-         '/config/defaultOutput.css'
+         cssPath,
      );
 
 
@@ -114,6 +116,7 @@ console.log('path', hostConfigPath);
          outputFormat,
          inputFormat = 'docbook',
          pdfEngine = 'xelatex',
+         cssPath = './config/defaultOutput.css',
          title
      } = options;
 
@@ -121,9 +124,10 @@ console.log('path', hostConfigPath);
          outputFormat,
          inputFormat,
          pdfEngine,
-         './config/defaultOutput.css',
+         cssPath,
          title
      );
 
+    //console.log('args', args);
      return await runLocal(args, input);
  }
