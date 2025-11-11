@@ -53,7 +53,8 @@ const processPanDocstream = async(cmd: string[] , input: Uint8Array<ArrayBufferL
          '--metadata', `title=${title}`,  // Add title metadata
          '--css', cssPath,
          '--embed-resources',
-         ...(outputFormat === 'pdf' ? [`--pdf-engine=${pdfEngine}`] : [])
+         ...(outputFormat === 'pdf' ? [`--pdf-engine=${pdfEngine}`] : []),
+     //    '--template', 'eisvogel.latex',
      ];
  };
 
