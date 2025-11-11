@@ -303,7 +303,7 @@ export const formatCluster = (docBuilder: DocBuilder, f: TemplateNode): void => 
 
 
 function createFileLink(absolutePath: string): string {
-    const fileUrl = `file://${encodeURI(absolutePath)}"`;
+    const fileUrl = `file://${encodeURI(absolutePath)}`;
     // ANSI hyperlink with fallback to plain file:// URL
     return `\x1b]8;;${fileUrl}\x1b\\${absolutePath}\x1b]8;;\x1b\\ (${fileUrl})`;
 }
