@@ -2,6 +2,7 @@ import { DocBuilder } from '../DocBuilder';
 import { Config, importConfig } from '../BuilderConfig';
 import {ExportFormat, getOutputBuffer} from '../formatters/DocFormatter';
 import { WebTemplate } from "../types/WebTemplate.ts";
+import { cleanOptText } from "../tools/patchText.ts";
 const PORT = process.env['PORT'] || 3000;
 const CORS_ORIGIN = process.env['CORS_ORIGIN'] || '*';
 // Create a server instance that we can export for testing
@@ -63,6 +64,38 @@ const handleHeartbeat = () => new Response(null, {
     headers: {...getCORSHeaders()
     }
 });
+
+// Clean an OPT/XML payload by applying the same textual patches used by the CLI tool.
+const handleCleanOpt = async (req: Request) => {
+    if (!requireAuth(req)) return createUnauthorizedResponse();
+
+    try {
+        const contentType = (req.headers.get('content-type') || '').toLowerCase();
+        const isXml = contentType.includes('application/xml') || contentType.includes('text/xml');
+        if (!isXml) {
+            return new Response(
+                JSON.stringify({ error: 'Invalid content type: Must be application/xml or text/xml' }),
+                { status: 400, headers: { ...getCORSHeaders(), 'Content-Type': 'application/json' } }
+            );
+        }
+
+        const xml = await req.text();
+        const { output } = cleanOptText(xml);
+
+        return new Response(output, {
+            status: 200,
+            headers: { ...getCORSHeaders(), 'Content-Type': 'application/xml' }
+        });
+    } catch (e) {
+        return new Response(
+            JSON.stringify({
+                error: 'Failed to clean XML',
+                details: e instanceof Error ? e.message : String(e)
+            }),
+            { status: 500, headers: { ...getCORSHeaders(), 'Content-Type': 'application/json' } }
+        );
+    }
+};
 
 const handleConfigPost = async (req: Request) => {
     if (!requireAuth(req)) return createUnauthorizedResponse();
@@ -302,6 +335,10 @@ async function handleRequest(req: Request): Promise<Response> {
 
     if (req.method === 'POST' && url.pathname === '/api/v1/convert') {
         return handleConvert(req, url);
+    }
+
+    if (req.method === 'POST' && url.pathname === '/api/v1/cleanOpt') {
+        return handleCleanOpt(req);
     }
 
     return new Response('Not Found', {status: 404});
