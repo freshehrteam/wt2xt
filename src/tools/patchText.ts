@@ -22,16 +22,16 @@ import path from 'path';
  * - Remove any text '<match_negated>false</match_negated' (supports malformed closing tag lacking '>')
  */
 export function cleanOptText(input: string): { output: string; stats: { urlV1Count: number; negFalseCount: number; urlV2Count: number } } {
-  const urlV1Re = /https:\/\/schemas\.openehr\.org\/v1/g;
+  const urlV1Re = /http:\/\/schemas\.openehr\.org\/v1/g;
   const matchNegFalseRe = /<match_negated>\s*false\s*<\/match_negated>?/g; // optional final '>'
 
   const urlV1Count = (input.match(urlV1Re) || []).length;
   const negFalseCount = (input.match(matchNegFalseRe) || []).length;
 
-  let output = input.replace(urlV1Re, 'https://schemas.openehr.org/v2');
+  let output = input.replace(urlV1Re, 'http://schemas.openehr.org/v2');
   output = output.replace(matchNegFalseRe, '');
 
-  const urlV2Count = (output.match(/https:\/\/schemas\.openehr\.org\/v2/g) || []).length;
+  const urlV2Count = (output.match(/http:\/\/schemas\.openehr\.org\/v2/g) || []).length;
 
   return { output, stats: { urlV1Count, negFalseCount, urlV2Count } };
 }
