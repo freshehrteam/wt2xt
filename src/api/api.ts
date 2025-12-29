@@ -103,9 +103,9 @@ const parseTemplateFromRequest = async (req: Request): Promise<IncomingConvertBo
 
         // New shape
         if (body && typeof body === 'object' && 'template' in body) {
-            if (!body.template) {
+            if (!body.template)
                 return createErrorResponse('No template provided');
-            }
+
             return { template: body.template as WebTemplate, config: body.config as Partial<Config> | undefined };
         }
 
