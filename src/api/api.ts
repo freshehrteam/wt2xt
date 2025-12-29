@@ -3,67 +3,19 @@ import { Config, importConfig } from '../BuilderConfig';
 import {ExportFormat, getOutputBuffer} from '../formatters/DocFormatter';
 import { WebTemplate } from "../types/WebTemplate.ts";
 import { cleanOptText } from "../tools/patchText.ts";
-const PORT = process.env['PORT'] || 3000;
-const CORS_ORIGIN = process.env['CORS_ORIGIN'] || '*';
+import {
+    PORT,
+    requireAuth,
+    createUnauthorizedResponse,
+    handleCorsPreflightRequest,
+    handleHeartbeat,
+    getContentTypeForFormat,
+    createErrorResponse,
+    getCORSHeaders
+} from './serverUtils';
+
 // Create a server instance that we can export for testing
-let server: Bun.Serve | null = null;
-
-// Handler function for the server
-// Authentication configuration and utilities
-const getAuthConfig = () => {
-    const AUTH_USER = process.env['API_USER'] || '';
-    const AUTH_PASS = process.env['API_PASS'] || '';
-    const AUTH_ENABLED = AUTH_USER !== '' && AUTH_PASS !== '';
-    return {AUTH_USER, AUTH_PASS, AUTH_ENABLED};
-};
-
-const createUnauthorizedResponse = () => new Response('Unauthorized', {
-    status: 401,
-    headers: {
-        'WWW-Authenticate': 'Basic realm="wt2xt"',
-        'Access-Control-Allow-Origin': '*'
-    }
-});
-
-const requireAuth = (req: Request) => {
-    const {AUTH_USER, AUTH_PASS, AUTH_ENABLED} = getAuthConfig();
-    if (!AUTH_ENABLED) return true;
-
-    const auth = req.headers.get('authorization') || '';
-    if (!auth.startsWith('Basic ')) return false;
-
-    const b64 = auth.slice(6).trim();
-    try {
-        const decoded = Buffer.from(b64, 'base64').toString('utf8');
-        const [user, pass] = decoded.split(':');
-        return user === AUTH_USER && pass === AUTH_PASS;
-    } catch {
-        return false;
-    }
-};
-
-const getCORSHeaders = () => {
-    return {
- //       'Access-Control-Allow-Origin': 'http://localhost:5173'
-        'Access-Control-Allow-Origin': CORS_ORIGIN || '*',
-            'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-            'Access-Control-Max-Age': '86400',
-    }
-}
-// CORS handling
-const handleCorsPreflightRequest = () => new Response(null, {
-    status: 204,
-    headers: {...getCORSHeaders()
-    },
-});
-
-// Route handlers
-const handleHeartbeat = () => new Response(null, {
-    status: 204,
-    headers: {...getCORSHeaders()
-    }
-});
+let server: Bun.Server<WebSocket> | null = null;
 
 // Clean an OPT/XML payload by applying the same textual patches used by the CLI tool.
 const handleCleanOpt = async (req: Request) => {
@@ -73,10 +25,7 @@ const handleCleanOpt = async (req: Request) => {
         const contentType = (req.headers.get('content-type') || '').toLowerCase();
         const isXml = contentType.includes('application/xml') || contentType.includes('text/xml');
         if (!isXml) {
-            return new Response(
-                JSON.stringify({ error: 'Invalid content type: Must be application/xml or text/xml' }),
-                { status: 400, headers: { ...getCORSHeaders(), 'Content-Type': 'application/json' } }
-            );
+            return createErrorResponse('Invalid content type: Must be application/xml or text/xml');
         }
 
         const xml = await req.text();
@@ -87,13 +36,7 @@ const handleCleanOpt = async (req: Request) => {
             headers: { ...getCORSHeaders(), 'Content-Type': 'application/xml' }
         });
     } catch (e) {
-        return new Response(
-            JSON.stringify({
-                error: 'Failed to clean XML',
-                details: e instanceof Error ? e.message : String(e)
-            }),
-            { status: 500, headers: { ...getCORSHeaders(), 'Content-Type': 'application/json' } }
-        );
+        return createErrorResponse('Failed to clean XML', 500, e instanceof Error ? e.message : String(e));
     }
 };
 
@@ -103,20 +46,14 @@ const handleConfigPost = async (req: Request) => {
     try {
         const contentType = req.headers.get('content-type') || '';
         if (!contentType.includes('application/json')) {
-            return new Response(JSON.stringify({error: 'Invalid content type: Must be application/json'}), {
-                status: 400,
-                headers: {...getCORSHeaders(), 'Content-Type': 'application/json'}
-            });
+            return createErrorResponse('Invalid content type: Must be application/json');
         }
 
         const body = await req.text();
         try {
             JSON.parse(body);
         } catch {
-            return new Response(JSON.stringify({error: 'Invalid JSON'}), {
-                status: 400,
-                headers: {...getCORSHeaders(),'Content-Type': 'application/json'}
-            });
+            return createErrorResponse('Invalid JSON');
         }
 
         const configDir = '/app/config';
@@ -124,13 +61,7 @@ const handleConfigPost = async (req: Request) => {
         await Bun.write(customConfigPath, body);
         return new Response(null, {status: 204, headers: {'Access-Control-Allow-Origin': '*'}});
     } catch (e) {
-        return new Response(JSON.stringify({
-            error: 'Failed to save config',
-            details: e instanceof Error ? e.message : String(e)
-        }), {
-            status: 500,
-            headers: {...getCORSHeaders(),'Content-Type': 'application/json'}
-        });
+        return createErrorResponse('Failed to save config', 500, e instanceof Error ? e.message : String(e));
     }
 };
 
@@ -143,10 +74,7 @@ const handleConfigGet = async (req: Request) => {
         const file = Bun.file(customConfigPath);
 
         if (!(await file.exists())) {
-            return new Response(JSON.stringify({error: 'custom_config.json not found'}), {
-                status: 404,
-                headers: {...getCORSHeaders(),'Content-Type': 'application/json'}
-            });
+            return createErrorResponse('custom_config.json not found', 404);
         }
 
         return new Response(file, {
@@ -154,38 +82,7 @@ const handleConfigGet = async (req: Request) => {
             headers: {...getCORSHeaders(),'Content-Type': 'application/json'}
         });
     } catch (e) {
-        return new Response(JSON.stringify({
-            error: 'Failed to read config',
-            details: e instanceof Error ? e.message : String(e)
-        }), {
-            status: 500,
-            headers: {'Content-Type': 'application/json'}
-        });
-    }
-};
-
-// Content type utilities
-const getContentTypeForFormat = (exportFormat: string): string => {
-    switch (exportFormat) {
-        case 'adoc':
-        case 'md':
-        case 'fshl':
-        case 'fsht':
-        case 'fshq':
-            return 'text/plain';
-        case 'docx':
-            return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
-        case 'pdf':
-            return 'application/pdf';
-        case 'xmind':
-            return 'application/octet-stream';
-        case 'fhirl':
-            return 'application/zip';
-        case 'html':
-            return 'text/html';
-
-        default:
-            return 'text/plain';
+        return createErrorResponse('Failed to read config', 500, e instanceof Error ? e.message : String(e));
     }
 };
 
@@ -198,13 +95,7 @@ const parseTemplateFromRequest = async (req: Request): Promise<IncomingConvertBo
 
     // Validate content type up-front and return a client error response
     if (!contentType.includes('application/json')) {
-        return new Response(
-            JSON.stringify({ error: 'Invalid Content-type : must be application/json' }),
-            {
-                status: 400,
-                headers: {...getCORSHeaders(),'Content-Type': 'application/json' }
-            }
-        );
+        return createErrorResponse('Invalid Content-type : must be application/json');
     }
 
     try {
@@ -213,10 +104,7 @@ const parseTemplateFromRequest = async (req: Request): Promise<IncomingConvertBo
         // New shape
         if (body && typeof body === 'object' && 'template' in body) {
             if (!body.template) {
-                return new Response(
-                    JSON.stringify({ error: 'No template provided' }),
-                    { status: 400, headers: { ...getCORSHeaders(), 'Content-Type': 'application/json' } }
-                );
+                return createErrorResponse('No template provided');
             }
             return { template: body.template as WebTemplate, config: body.config as Partial<Config> | undefined };
         }
@@ -224,10 +112,7 @@ const parseTemplateFromRequest = async (req: Request): Promise<IncomingConvertBo
         // Legacy shape: body is the template itself
         return { template: body as WebTemplate };
     } catch {
-        return new Response(
-            JSON.stringify({ error: 'Invalid request body' }),
-            { status: 400,  headers: {...getCORSHeaders(),'Content-Type': 'application/json' } }
-        );
+        return createErrorResponse('Invalid request body');
     }
 };
 
@@ -247,26 +132,11 @@ const handleConvert = async (req: Request, url: URL) => {
         const { template, config: incomingConfig } = parsed;
 
         if (!template) {
-            return new Response(
-                JSON.stringify({error: 'No template provided'}),
-                {
-                    status: 400,
-                    headers: {...getCORSHeaders(),'Content-Type': 'application/json' }
-                }
-            );
+            return createErrorResponse('No template provided');
         }
 
         if (!Object.keys(ExportFormat).includes(exportFormatKey)) {
-            return new Response(
-                JSON.stringify({
-                    error: 'Invalid format',
-                    validFormats: Object.keys(ExportFormat)
-                }),
-                {
-                    status: 400,
-                    headers: {...getCORSHeaders(),'Content-Type': 'application/json' }
-                }
-            );
+            return createErrorResponse('Invalid format', 400, { validFormats: Object.keys(ExportFormat) });
         }
 
         // Load base config and merge incoming overrides if provided
@@ -294,21 +164,12 @@ const handleConvert = async (req: Request, url: URL) => {
 
         return new Response(stream, {
             status: 200,
-                headers: {...getCORSHeaders(),'Content-Type': contentType }
+            headers: {...getCORSHeaders(),'Content-Type': contentType }
 
         });
     } catch (error) {
         console.error('Error processing template:', error);
-        return new Response(
-            JSON.stringify({
-                error: 'Internal server error',
-                details: error instanceof Error ? error.message : 'Unknown error occurred'
-            }),
-            {
-                status: 500,
-                headers: {'Content-Type': 'application/json'}
-            }
-        );
+        return createErrorResponse('Internal server error', 500, error instanceof Error ? error.message : 'Unknown error occurred');
     }
 };
 
@@ -320,27 +181,29 @@ async function handleRequest(req: Request): Promise<Response> {
 
     const url = new URL(req.url);
 
-    // Route to appropriate handlers
-    if (req.method === 'GET' && url.pathname === '/api/v1/heartbeat') {
-        return handleHeartbeat();
+    // ... existing code ...
+    async function handleRequest(req: Request): Promise<Response> {
+        // Handle CORS preflight requests
+        if (req.method === 'OPTIONS') {
+            return handleCorsPreflightRequest();
+        }
+
+        const url = new URL(req.url);
+        const {pathname} = url;
+        const method = req.method;
+        const API_V1 = '/api/v1';
+
+        // Route to appropriate handlers
+        if (method === 'GET' && pathname === `${API_V1}/heartbeat`) return handleHeartbeat();
+        if (method === 'GET' && pathname === `${API_V1}/config`) return handleConfigGet(req);
+        if (method === 'POST' && pathname === `${API_V1}/config`) return handleConfigPost(req);
+        if (method === 'POST' && pathname === `${API_V1}/convert`) return handleConvert(req, url);
+        if (method === 'POST' && pathname === `${API_V1}/cleanOpt`) return handleCleanOpt(req);
+
+        return new Response('Not Found', {status: 404});
     }
 
-    if (req.method === 'POST' && url.pathname === '/api/v1/config') {
-        return handleConfigPost(req);
-    }
-
-    if (req.method === 'GET' && url.pathname === '/api/v1/config') {
-        return handleConfigGet(req);
-    }
-
-    if (req.method === 'POST' && url.pathname === '/api/v1/convert') {
-        return handleConvert(req, url);
-    }
-
-    if (req.method === 'POST' && url.pathname === '/api/v1/cleanOpt') {
-        return handleCleanOpt(req);
-    }
-
+// ... existing code ...
     return new Response('Not Found', {status: 404});
 }
 
