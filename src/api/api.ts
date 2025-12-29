@@ -174,15 +174,6 @@ const handleConvert = async (req: Request, url: URL) => {
 };
 
 async function handleRequest(req: Request): Promise<Response> {
-    // Handle CORS preflight requests
-    if (req.method === 'OPTIONS') {
-        return handleCorsPreflightRequest();
-    }
-
-    const url = new URL(req.url);
-
-    // ... existing code ...
-    async function handleRequest(req: Request): Promise<Response> {
         // Handle CORS preflight requests
         if (req.method === 'OPTIONS') {
             return handleCorsPreflightRequest();
@@ -200,11 +191,7 @@ async function handleRequest(req: Request): Promise<Response> {
         if (method === 'POST' && pathname === `${API_V1}/convert`) return handleConvert(req, url);
         if (method === 'POST' && pathname === `${API_V1}/cleanOpt`) return handleCleanOpt(req);
 
-        return new Response('Not Found', {status: 404});
-    }
-
-// ... existing code ...
-    return new Response('Not Found', {status: 404});
+        return new Response('Request Not Found', {status: 404});
 }
 
 // Start the server
