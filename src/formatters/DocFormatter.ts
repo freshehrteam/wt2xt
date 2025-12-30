@@ -4,7 +4,9 @@ import {xmind } from "./XmindFormatter"
 import { TemplateNode } from "../types/TemplateNodes";
 import { formatOccurrences } from "../types/TemplateTypes";
 import {docx, html, md, pdf} from "./PanDocFormatter";
+import { csv} from './CsvFormatter';
 import { fshl} from './FshLogicalModelFormatter';
+
 import { fshq } from './QuestionnaireFormatter.ts';
 import {fsh,fhirl} from'./FshCommon.ts'
 import * as fs from "fs-extra";
@@ -47,7 +49,11 @@ export const formatTemplateHeader = (docBuilder: DocBuilder): void => {
      case ExportFormat.fshq:
        fn = fshq.formatTemplateHeader
        break;
-     default:
+       case ExportFormat.csv:
+           fn = csv.formatTemplateHeader
+           break;
+
+       default:
         fn= adoc.formatTemplateHeader
        break;
    }
