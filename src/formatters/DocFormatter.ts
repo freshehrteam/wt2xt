@@ -22,6 +22,7 @@ export enum ExportFormat {
   fsht = 'fsht',
   fshq = 'fshq',
   html = 'html',
+  csv = 'csv'
 }
 
 export type OutputBufferType = ArrayBufferLike|string;
@@ -88,8 +89,7 @@ export const formatProvenanceTable = (docBuilder: DocBuilder) => {
     case ExportFormat.docx:
     case ExportFormat.pdf:
     case ExportFormat.adoc:
-      case ExportFormat.html:
-
+    case ExportFormat.html:
           fn = adoc.formatProvenanceTable
       break;
     case ExportFormat.xmind:
