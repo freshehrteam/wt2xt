@@ -2,16 +2,16 @@ import { DocBuilder } from "../DocBuilder";
 import { TemplateInput, TemplateNode } from '../types/TemplateNodes';
 import { formatOccurrences, isEntry, mapRmType2FHIR, snakeToCamel } from '../types/TemplateTypes';
 import {formatLeafHeader} from './DocFormatter';
-import {appendCodesystem, formatValueSetDefinition} from './FshTerminologyFormatter';
+import {appendCodesystem, appendCodeSystemFSH, formatValueSetDefinition} from './FshTerminologyFormatter';
+
 
 const Separator: string = ',';
 const Quoter : string = '"';
-//const sanitiseFhirName  = (name: string): string  => name.replace(/[^a-zA-Z0-9_-]/g, '_')
 
-const calcSeparator = (firstCol: boolean = false) => firstCol ? '' : Separator
+const csvColumns: string[] = ['nodeId','nodeName','Description','datatype','cardinality','comments','aqlPath']//const sanitiseFhirName  = (name: string): string  => name.replace(/[^a-zA-Z0-9_-]/g, '_')
 
 const formatCsvNode = (value: string, firstCol: boolean = false) => {
-  return Quoter + value.replace(/[",]+/g, '') + Quoter + calcSeparator(firstCol)
+  return (firstCol ? "" : Separator )+ Quoter + value.replace(/[",]+/g, '') + Quoter
 }
 
 const formatLocalName = (f:TemplateNode) => f.localizedName ? f.localizedName : f.name;
@@ -25,17 +25,10 @@ const formatSpaces = (node:TemplateNode) => {
 
 const formatNodeId = (f: TemplateNode):string => f.nodeId?f.nodeId:`RM`
 
-const formatDescription = (dBuilder:DocBuilder,f:TemplateNode,typeConstraint: string = '') =>
-
-    wrapTripleQuote(`[${formatNodeId(f)}${typeConstraint}] ${dBuilder.getDescription(f)}`)
-
-const wrapTripleQuote = (inString: string) => `"""${inString}"""`
-
-const appendFSHLM = (dBuilder: DocBuilder, f: TemplateNode, typeConstraint: string = '') => {
+const appendRow = (dBuilder: DocBuilder, f: TemplateNode, typeConstraint: string = '') => {
   const { sb } = dBuilder;
-  sb.append(`${formatSpaces(f)}* ${snakeToCamel(f.localizedName?f.localizedName:f.id,isEntry(f.rmType))} ${formatOccurrences(f,true)} ${mapRmType2FHIR(f.rmType)} "${formatLocalName(f)}" ${formatDescription(dBuilder,f,typeConstraint)}`)
+  sb.append(`${formatCsvNode(f.localizedName?f.localizedName:f.id,true)} ${formatCsvNode(formatOccurrences(f,true))} ${formatCsvNode(mapRmType2FHIR(f.rmType))} ${formatCsvNode(formatLocalName(f))} ${formatCsvNode(dBuilder.getDescription(f))}`)
 }
-
 
 const appendExternalBinding = (f: TemplateNode, input: TemplateInput) => {
   const { sb } = f.builder;
@@ -55,13 +48,20 @@ const appendLocalBinding = (f: TemplateNode, input: TemplateInput, uniqueVSName:
   sb.append(`${formatSpaces(f)}* ${nodeName} ${bindingFSH}`)
 };
 
-const formatCSVHeader = (dBuilder: DocBuilder, f: TemplateNode) => {
-  const { sb,wt,config } = dBuilder;
-  const techName = snakeToCamel(f.localizedName, true);
-  dBuilder.fshLogicalRoot = techName
-}
 
 export const csv = {
+
+  formatTemplateHeader: (dBuilder: DocBuilder) => {
+
+    const { sb } = dBuilder;
+    let rowString = ''
+    csvColumns.forEach((element: string,index) => {
+      rowString = rowString.concat(formatCsvNode(element, index === 0));
+    });
+
+    sb.append(rowString);
+  },
+
 
     formatCompositionHeader: (dBuilder: DocBuilder, f: TemplateNode) => {
 
@@ -69,40 +69,37 @@ export const csv = {
 
     if (config.entriesOnly) return
 
-    formatFSHDefinition(dBuilder,f)
+   // formatFSHDefinition(dBuilder,f)
   },
 
-  formatCompositionContextHeader: (dBuilder: DocBuilder, f: TemplateNode) => {
-    appendFSHLM(dBuilder,f)
-  },
 
-  formatNodeContent: (_docBuilder: DocBuilder | null, f: TemplateNode, isChoice: boolean) => {
+  formatNodeContent: (dBuilder: DocBuilder, f: TemplateNode, isChoice: boolean) => {
     // Stop Choice being called twice as alreadty handled by Choice Header
     if (f.rmType === 'ELEMENT' || isChoice ) return
 
-//     appendFSHLM(dBuilder,f)
+  //  appendRow(dBuilder,f)
   },
 
   formatEntryHeader: (dBuilder: DocBuilder, f: TemplateNode) => {
 //    sb.append(`${spaces}* ${nodeName} ${occurrencesText} ${rmTypeText} "${localName}" "${f.nodeId}: ${localizedDescription}"`)
     const { config } = dBuilder;
 
-    if (config.entriesOnly)
-      formatFSHDefinition(dBuilder, f);
+  //  if (config.entriesOnly)
+  //    formatFSHDefinition(dBuilder, f);
 
-    formatLeafHeader(dBuilder,f)
+//    formatLeafHeader(dBuilder,f)
   },
 
   formatLeafHeader: (dBuilder: DocBuilder, f: TemplateNode) => {
-    appendFSHLM(dBuilder,f)
+//    appendFSHLM(dBuilder,f)
   },
 
   formatCluster: (dBuilder: DocBuilder, f: TemplateNode) => {
-    appendFSHLM(dBuilder,f)
+//    appendFSHLM(dBuilder,f)
   },
 
   formatObservationEvent: (dBuilder: DocBuilder, f: TemplateNode) => {
-    appendFSHLM(dBuilder,f)
+//    appendFSHLM(dBuilder,f)
   },
 
   formatChoiceHeader: (dBuilder: DocBuilder, f: TemplateNode, _isChoice = true) => {
@@ -121,7 +118,7 @@ export const csv = {
       }
     });
 
-    sb.append(`${formatSpaces(f)}* ${snakeToCamel(f.id,false)}[x] ${formatOccurrences(f,true)} ${rmTypeText} "${formatLocalName(f)}" "${f.nodeId}: ${dBuilder.getDescription(f)}"`)
+//    sb.append(`${formatSpaces(f)}* ${snakeToCamel(f.id,false)}[x] ${formatOccurrences(f,true)} ${rmTypeText} "${formatLocalName(f)}" "${f.nodeId}: ${dBuilder.getDescription(f)}"`)
 //    sb.append(`${spaces}* ${nodeName}[x] ${occurrencesText} ${rmTypeText} "${localName}" "${f.nodeId}: ${localizedDescription}"`)
   },
 
@@ -129,8 +126,8 @@ export const csv = {
     formatDvCodedText: (dBuilder: DocBuilder, f: TemplateNode) => {
       const { ab } = dBuilder;
 
-      appendFSHLM(dBuilder, f)
-
+     appendRow(dBuilder, f)
+return
       const csUrl = appendCodesystem(f)
         const uniqueVS = formatValueSetDefinition(f)
 
@@ -155,8 +152,10 @@ export const csv = {
 formatDvText: (dBuilder: DocBuilder, f: TemplateNode) => {
   const { ab} = dBuilder;
 
-   appendFSHLM(dBuilder,f)
-  appendCodesystem(f)
+  appendRow(dBuilder, f)
+  return
+
+  appendCodeSystemFSH(dBuilder)
   //  const uniqueVS = formatValueSetDefinition(f)
 
       f.inputs?.forEach((input: TemplateInput) => {
@@ -196,11 +195,12 @@ formatDvText: (dBuilder: DocBuilder, f: TemplateNode) => {
           }
         });
 
-      appendFSHLM(dBuilder, f, ' '+ unitStr)
+      appendRow(dBuilder, f)
+//      appendFSHLM(dBuilder, f, ' '+ unitStr)
     },
 
     formatDvDefault: (dBuilder: DocBuilder, f: TemplateNode) => {
-      appendFSHLM(dBuilder,f)
+      appendRow(dBuilder,f)
     },
 
 }

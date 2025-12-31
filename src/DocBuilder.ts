@@ -452,35 +452,38 @@ export class DocBuilder {
     }
   }
 
-  public getDescription = (f: TemplateNode) => {
-    const language: string = 'en'
-    if ((!f.inContext ) && (f.id !== 'context'))
-      return this.getValueOfRecord(f.localizedDescriptions)
-    else {
-      let rmTag = f.id;
-      if (f.id === 'time') {
+    // ... existing code ...
+    public getDescription = (f: TemplateNode): string => {
+        const language = 'en';
 
-        const parent: TemplateNode = findParentNodeId(f);
-        switch (parent.rmType) {
-          case 'ACTION':
-            rmTag = 'action_time'
-            break;
-          case 'EVENT':
-          case 'OBSERVATION':
-            rmTag = 'event_time'
-            break
-          default:
-            break;
+        if (!f.inContext && f.id !== 'context') {
+            return this.getValueOfRecord(f.localizedDescriptions);
         }
-      }
-      const description = rmDescriptions[rmTag as keyof typeof rmDescriptions];
-      return description && typeof description === 'object' && language in description
-        ? (description as Record<string, string>)[language]
-        : ''
 
+        const tag = f.id === 'time' ? this.getRmTimeTag(f) : f.id;
+        const descriptionEntry = rmDescriptions[tag as keyof typeof rmDescriptions];
+
+        if (descriptionEntry && typeof descriptionEntry === 'object' && language in descriptionEntry){
+            return (descriptionEntry as Record<string, string>)[language] || '';
+        }
+
+        return '';
+    };
+
+    private getRmTimeTag(f: TemplateNode): string {
+        const parent = findParentNodeId(f);
+        switch (parent?.rmType) {
+            case 'ACTION':
+                return 'action_time';
+            case 'EVENT':
+            case 'OBSERVATION':
+                return 'event_time';
+            default:
+                return f.id;
+        }
     }
 
-  }
+// ... existing code ...
 
   private walkChoiceHeader(f: TemplateNode) {
 

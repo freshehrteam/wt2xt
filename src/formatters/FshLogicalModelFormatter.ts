@@ -80,7 +80,7 @@ export const fshl = {
     // Stop Choice being called twice as alreadty handled by Choice Header
     if (f.rmType === 'ELEMENT' || isChoice ) return
 
-//     appendFSHLM(dBuilder,f)
+   // appendFSHLM(dBuilder,f)
   },
 
   formatEntryHeader: (dBuilder: DocBuilder, f: TemplateNode) => {

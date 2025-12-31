@@ -5,6 +5,7 @@ import { fshl } from "./FshLogicalModelFormatter";
  import { fshq } from "./FshQuestionnaireFormatter";
 import { adoc } from "./AdocFormatter";
 import { xmind } from "./XmindFormatter";
+import {csv} from "./CsvFormatter.ts";
 
 export const formatDvCodedText = (docBuilder: DocBuilder, f: TemplateNode): void => {
 
@@ -20,6 +21,10 @@ export const formatDvCodedText = (docBuilder: DocBuilder, f: TemplateNode): void
       case ExportFormat.fshq:
       fn = fshq.dvTypes.formatDvCodedText
       break;
+    case ExportFormat.csv:
+      fn = csv.dvTypes.formatDvCodedText
+      break;
+
     default:
       fn = adoc.dvTypes.formatDvCodedText
       break;
@@ -61,6 +66,10 @@ export const formatDvText = (docBuilder: DocBuilder, f: TemplateNode): void => {
     case ExportFormat.fshq:
       fn = fshq.dvTypes.formatDvText
       break;
+    case ExportFormat.csv:
+      fn = csv.dvTypes.formatDvText
+      break;
+
     default:
       fn = adoc.dvTypes.formatDvText
       break;
@@ -77,6 +86,9 @@ export const formatDvCount = (docBuilder: DocBuilder, f: TemplateNode): void => 
     case ExportFormat.xmind:
     case ExportFormat.fshl:
     case ExportFormat.fshq:
+      break;
+    case ExportFormat.csv:
+      fn = csv.dvTypes.formatDvDefault
       break;
     default:
       fn = adoc.dvTypes.formatDvCount
@@ -99,6 +111,9 @@ export const formatDvQuantity = (docBuilder: DocBuilder, f: TemplateNode): void 
       case ExportFormat.fshq:
       fn = fshq.dvTypes.formatDvQuantity
       break;
+    case ExportFormat.csv:
+      fn = csv.dvTypes.formatDvQuantity
+      break;
     default:
       fn = adoc.dvTypes.formatDvQuantity
       break;
@@ -119,6 +134,9 @@ export const formatDvOrdinal = (docBuilder: DocBuilder, f: TemplateNode): void =
       break;
       case ExportFormat.fshq:
       break;
+    case ExportFormat.csv:
+      fn = csv.dvTypes.formatDvDefault
+      break;
     default:
       fn = adoc.dvTypes.formatDvOrdinal
       break;
@@ -138,6 +156,9 @@ export const formatDvDefault = (docBuilder: DocBuilder, f: TemplateNode): void =
       break;
       case ExportFormat.fshq:
       fn = fshq.dvTypes.formatDvDefault
+      break;
+    case ExportFormat.csv:
+      fn = csv.dvTypes.formatDvDefault
       break;
     default:
       fn = adoc.dvTypes.formatDvDefault
