@@ -226,6 +226,7 @@ export const formatEntryHeader = (docBuilder: DocBuilder, f: TemplateNode): void
       fn = fshq.formatEntryHeader;
       break;
       case ExportFormat.csv:
+          fn = csv.formatEntryHeader;
           break;
     default:
       fn = adoc.formatLeafHeader
@@ -251,6 +252,7 @@ export const formatLeafHeader = (docBuilder: DocBuilder, f: TemplateNode): void 
         fn = fshq.formatLeafHeader;
         break;
       case ExportFormat.csv:
+          fn = csv.formatLeafHeader;
           break;
     default:
         fn = adoc.formatLeafHeader
@@ -321,7 +323,8 @@ export const formatCluster = (docBuilder: DocBuilder, f: TemplateNode): void => 
       fn = fshq.formatCluster
       break;
       case ExportFormat.csv:
-          break;
+          fn = csv.formatCluster
+          break
     default:
       fn = adoc.formatCluster
       break;

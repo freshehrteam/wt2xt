@@ -1,14 +1,22 @@
 import { DocBuilder } from "../DocBuilder";
 import { TemplateInput, TemplateNode } from '../types/TemplateNodes';
-import { formatOccurrences, isEntry, mapRmType2FHIR, snakeToCamel } from '../types/TemplateTypes';
+import {
+  formatOccurrences,
+  isEntry,
+  isSection,
+  mapRmType2FHIR,
+  mapRmTypeText,
+  snakeToCamel
+} from '../types/TemplateTypes';
 import {formatLeafHeader} from './DocFormatter';
 import {appendCodesystem, appendCodeSystemFSH, formatValueSetDefinition} from './FshTerminologyFormatter';
+import {StringBuilder} from "../StringBuilder.ts";
 
 
 const Separator: string = ',';
 const Quoter : string = '"';
 
-const csvColumns: string[] = ['nodeId','nodeName','Description','datatype','cardinality','comments','aqlPath']//const sanitiseFhirName  = (name: string): string  => name.replace(/[^a-zA-Z0-9_-]/g, '_')
+const csvColumns: string[] = ['EHDS Name','Node ID','Text','Description','Data type','Included','Occurrences','Comments','Path','Mapping Comments']//const sanitiseFhirName  = (name: string): string  => name.replace(/[^a-zA-Z0-9_-]/g, '_')
 
 const formatCsvNode = (value: string, firstCol: boolean = false) => {
   return (firstCol ? "" : Separator )+ Quoter + value.replace(/[",]+/g, '') + Quoter
@@ -25,9 +33,19 @@ const formatSpaces = (node:TemplateNode) => {
 
 const formatNodeId = (f: TemplateNode):string => f.nodeId?f.nodeId:`RM`
 
-const appendRow = (dBuilder: DocBuilder, f: TemplateNode, typeConstraint: string = '') => {
-  const { sb } = dBuilder;
-  sb.append(`${formatCsvNode(f.localizedName?f.localizedName:f.id,true)} ${formatCsvNode(formatOccurrences(f,true))} ${formatCsvNode(mapRmType2FHIR(f.rmType))} ${formatCsvNode(formatLocalName(f))} ${formatCsvNode(dBuilder.getDescription(f))}`)
+const appendRow = (dBuilder: DocBuilder, f: TemplateNode, constraintBuilder: StringBuilder|null = null) => {
+  const {sb} = dBuilder;
+
+  const isRootNode =  isEntry(f.rmType) || isSection(f.rmType)
+  const nodeId: string = isRootNode? (f.nodeId || f.id): ''
+  const comment: string = f?.annotations?.['comment']|| ''
+  const ehdsName: string = f?.annotations?.['ehdsName']|| ''
+  const fhirPath: string = f?.annotations?.['fhirPath']|| ''
+  const constraint = constraintBuilder?.toString()
+  const rmDatatype = mapRmTypeText(f.rmType)
+  const datatype: string = constraint?rmDatatype + '\n' + constraint: rmDatatype
+
+      sb.append(`${formatCsvNode(ehdsName, true)}${formatCsvNode(nodeId)}${formatCsvNode(formatLocalName(f))}${formatCsvNode(dBuilder.getDescription(f))}${formatCsvNode(datatype)}${formatCsvNode('true')}${formatCsvNode(formatOccurrences(f, false))}${formatCsvNode(comment)}${formatCsvNode(f.aqlPath)}${formatCsvNode(fhirPath)}${formatCsvNode('')}`)
 }
 
 const appendExternalBinding = (f: TemplateNode, input: TemplateInput) => {
@@ -87,19 +105,19 @@ export const csv = {
   //  if (config.entriesOnly)
   //    formatFSHDefinition(dBuilder, f);
 
-//    formatLeafHeader(dBuilder,f)
+    formatLeafHeader(dBuilder,f)
   },
 
   formatLeafHeader: (dBuilder: DocBuilder, f: TemplateNode) => {
-//    appendFSHLM(dBuilder,f)
+   appendRow(dBuilder,f)
   },
 
   formatCluster: (dBuilder: DocBuilder, f: TemplateNode) => {
-//    appendFSHLM(dBuilder,f)
+    appendRow(dBuilder,f)
   },
 
   formatObservationEvent: (dBuilder: DocBuilder, f: TemplateNode) => {
-//    appendFSHLM(dBuilder,f)
+    appendRow(dBuilder,f)
   },
 
   formatChoiceHeader: (dBuilder: DocBuilder, f: TemplateNode, _isChoice = true) => {
@@ -123,30 +141,32 @@ export const csv = {
   },
 
   dvTypes: {
+
     formatDvCodedText: (dBuilder: DocBuilder, f: TemplateNode) => {
-      const { ab } = dBuilder;
 
-     appendRow(dBuilder, f)
-return
-      const csUrl = appendCodesystem(f)
-        const uniqueVS = formatValueSetDefinition(f)
+      const { sb, config } = dBuilder;
+      const cb = new StringBuilder();
 
-        f?.inputs?.forEach((input: TemplateInput) => {
-          if (input.suffix === 'code') {
-            if (f?.annotations?.['vset_description'])
-              appendExternalBinding(f, input)
-            else
-            {
-              if (input.list && input.list.length >0) {
-                input.list?.forEach((item) => {
-                ab.append(`* ${csUrl}#${item.value} "${item.label}"`);
-              })
+      f?.inputs?.forEach((item) => {
+        const term = item.terminology === undefined ? 'local' : item.terminology;
+        if (item.list) {
+          item.list.forEach((list) => {
+            const termPhrase = `${term}:${list.value}`
+                cb.append(`-  ${list.label} ${termPhrase}`)
+          })
+        } else
+            // Pick up an external Valueset description annotation
+        if (item.suffix === 'code' && f?.annotations?.["vset_description"]) {
+          // Convert /n characters to linebreaks
+          const newLined = f.annotations?.["vset_description"].replace(/\\n/g, String.fromCharCode(10));
+          cb.append(newLined)
+        }
 
-              }
-              appendLocalBinding(f, input,uniqueVS)
-             }
-          }
-      })
+        if (item.listOpen)
+          cb.append(`* _Other text/ coded text allowed_`);
+
+        appendRow(dBuilder, f,cb)
+      });
     },
 
 formatDvText: (dBuilder: DocBuilder, f: TemplateNode) => {

@@ -263,7 +263,7 @@ export const formatOccurrences = (f: TemplateNode, techDisplay :boolean = true) 
   }
 
   if (f.min === 0 && f.max ===1)
-    return ''
+    return 'optional'
 
   if (f.min === 0)
     min= ''
@@ -274,7 +274,7 @@ export const formatOccurrences = (f: TemplateNode, techDisplay :boolean = true) 
     min = `${f.min}`
 
   if (f.max < 0)
-    max = 'multiple'
+    max = 'recurring'
   else if (f.max === 1)
     max = ''
   else
