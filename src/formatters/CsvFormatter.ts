@@ -9,7 +9,6 @@ import {
   snakeToCamel
 } from '../types/TemplateTypes';
 import {formatLeafHeader} from './DocFormatter';
-import {appendCodesystem} from './FshTerminologyFormatter';
 import {StringBuilder} from "../StringBuilder.ts";
 
 
@@ -111,7 +110,6 @@ export const csv = {
   },
 
   formatChoiceHeader: (dBuilder: DocBuilder, f: TemplateNode, _isChoice = true) => {
-    const { sb} = dBuilder;
 
     let rmTypeText = '';
     let newText: string = ''
