@@ -1,5 +1,3 @@
-import { Config } from '../BuilderConfig';
-
 export const PORT = process.env['PORT'] || 3000;
 export const CORS_ORIGIN = process.env['CORS_ORIGIN'] || '*';
 
@@ -56,27 +54,32 @@ export const handleHeartbeat = () => new Response(null, {
     }
 });
 
-export const getContentTypeForFormat = (exportFormat: string): string => {
-    switch (exportFormat) {
-        case 'adoc':
-        case 'md':
-        case 'fshl':
-        case 'fsht':
-        case 'fshq':
-            return 'text/plain';
-        case 'docx':
-            return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
-        case 'pdf':
-            return 'application/pdf';
-        case 'xmind':
-            return 'application/octet-stream';
-        case 'fhirl':
-            return 'application/zip';
-        case 'html':
-            return 'text/html';
+export let server: Bun.Server<WebSocket> | null = null;
 
-        default:
-            return 'text/plain';
+export const start = async (fetch: (req: Request) => Promise<Response> | Response) => {
+    try {
+        server = Bun.serve({
+            port: Number(PORT),
+            hostname: '0.0.0.0',
+            idleTimeout: 0, // Disable timeout
+            fetch,
+            development: process.env.NODE_ENV !== 'production'
+        });
+
+        console.log(`Server started`);
+        return server;
+    } catch (error) {
+        console.error('Failed to start server:', error);
+        throw error;
+    }
+};
+
+export const close = async () => {
+    if (server) {
+        // @ts-ignore
+        await server.stop(true)
+        server = null;
+        console.log('Server stopped');
     }
 };
 

@@ -1,21 +1,18 @@
-import { DocBuilder } from '../DocBuilder';
-import { Config, importConfig } from '../BuilderConfig';
+import {DocBuilder} from '../DocBuilder';
+import {Config, importConfig} from '../BuilderConfig';
 import {ExportFormat, getOutputBuffer} from '../formatters/DocFormatter';
-import { WebTemplate } from "../types/WebTemplate.ts";
-import { cleanOptText } from "../tools/patchText.ts";
+import {WebTemplate} from "../types/WebTemplate.ts";
+import {cleanOptText} from "../tools/patchText.ts";
 import {
-    PORT,
-    requireAuth,
+    close as closeServer,
+    createErrorResponse,
     createUnauthorizedResponse,
+    getCORSHeaders,
     handleCorsPreflightRequest,
     handleHeartbeat,
-    getContentTypeForFormat,
-    createErrorResponse,
-    getCORSHeaders
+    requireAuth,
+    start as startServer
 } from './serverUtils';
-
-// Create a server instance that we can export for testing
-let server: Bun.Server<WebSocket> | null = null;
 
 // Clean an OPT/XML payload by applying the same textual patches used by the CLI tool.
 const handleCleanOpt = async (req: Request) => {
@@ -116,6 +113,29 @@ const parseTemplateFromRequest = async (req: Request): Promise<IncomingConvertBo
     }
 };
 
+const getContentTypeForFormat = (exportFormat: string): string => {
+    switch (exportFormat) {
+        case 'adoc':
+        case 'md':
+        case 'fshl':
+        case 'fsht':
+        case 'fshq':
+            return 'text/plain';
+        case 'docx':
+            return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+        case 'pdf':
+            return 'application/pdf';
+        case 'xmind':
+            return 'application/octet-stream';
+        case 'fhirl':
+            return 'application/zip';
+        case 'html':
+            return 'text/html';
+
+        default:
+            return 'text/plain';
+    }
+};
 const handleConvert = async (req: Request, url: URL) => {
     if (!requireAuth(req)) return createUnauthorizedResponse();
 
@@ -196,31 +216,12 @@ async function handleRequest(req: Request): Promise<Response> {
 
 // Start the server
 const start = async () => {
-  try {
-    server = Bun.serve({
-        port: Number(PORT),
-      hostname: '0.0.0.0',
-      idleTimeout: 0, // Disable timeout
-      fetch: handleRequest,
-      development: process.env.NODE_ENV !== 'production'
-    });
-
-    console.log(`Server started`);
-    return server;
-  } catch (error) {
-    console.error('Failed to start server:', error);
-    throw error;
-  }
+    return startServer(handleRequest);
 };
 
 // Close the server
 const close = async () => {
-  if (server) {
-    // @ts-ignore
-      await server.stop(true)
-    server = null;
-    console.log('Server stopped');
-  }
+    await closeServer();
 };
 
 // Export the functions for use in other modules
