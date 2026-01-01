@@ -142,27 +142,37 @@ export function isDisplayableNode(rmType: string)
 
 const displayableNodeTextTable = {
   ELEMENT: 'Choice',
-  DV_CODED_TEXT: 'Coded text',
+  DV_CODED_TEXT: 'CodedText',
   DV_TEXT: 'Text',
   DV_ORDINAL: 'Ordinal',
   DV_SCALE: 'Scale',
   DV_QUANTITY: 'Quantity',
   DV_DURATION: 'Duration',
   DV_COUNT: 'Count',
-  DV_DATE_TIME: 'Date/time',
+  DV_DATE_TIME: 'DateTime',
   DV_IDENTIFIER: 'Identifier',
   DV_MULTIMEDIA: 'Multimedia',
-  DV_URI: "External URI",
-  DV_EHR_URI: "Internal URI",
+  DV_URI: "ExternalURI",
+  DV_EHR_URI: "InternalURI",
   DV_PARSABLE: "Parsable text",
   DV_PROPORTION: "Proportion",
   DV_STATE: "State",
   DV_BOOLEAN: "Boolean",
   DV_DATE: "Date",
   DV_TIME: "Time",
-  CODE_PHRASE: "Code phrase",
+  CODE_PHRASE: "CodePhrase",
   PARTY_PROXY: "Party",
-  STRING: "String"
+  STRING: "String",
+  EVALUATION:"Evaluation",
+  SECTION: "Section",
+  OBSERVATION:"Observation",
+  INSTRUCTION: "Instruction",
+  ACTION:"Action",
+  ADMIN_ENTRY: "Admin Entry",
+  GENERIC_ENTRY: "GenericEntry",
+  EVENT: "Event",
+  CLUSTER: "Cluster",
+
 }
 
 export const openEHR2FHIRDatatypeTable = {
@@ -187,7 +197,17 @@ export const openEHR2FHIRDatatypeTable = {
   DV_TIME: "time",
   CODE_PHRASE: "Coding",
   PARTY_PROXY: "BackboneElement",
-  STRING: "string"
+  STRING: "string",
+  EVALUATION:"Evaluation",
+  SECTION: "Section",
+  OBSERVATION:"Observation",
+  INSTRUCTION: "Instruction",
+  ACTION:"Action",
+  ADMIN_ENTRY: "Admin entry",
+  GENERIC_ENTRY: "Generic Entry",
+  EVENT: "Event",
+  CLUSTER: "Cluster",
+
 }
 
 export const openEHR2FHIRQuestionTypeTable = {
@@ -213,6 +233,16 @@ export const openEHR2FHIRQuestionTypeTable = {
   CODE_PHRASE: "coding",
   PARTY_PROXY: "group",
   STRING: "string",
+  EVALUATION:"group",
+  SECTION: "group",
+  OBSERVATION:"group",
+  INSTRUCTION: "group",
+  ACTION:"group",
+  ADMIN_ENTRY: "group",
+  GENERIC_ENTRY: "group",
+  EVENT: "group",
+  CLUSTER: "group",
+
 }
 
 export const openEHRInterval2FHIRTable = {

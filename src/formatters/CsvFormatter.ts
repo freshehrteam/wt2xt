@@ -9,7 +9,7 @@ import {
   snakeToCamel
 } from '../types/TemplateTypes';
 import {formatLeafHeader} from './DocFormatter';
-import {appendCodesystem, appendCodeSystemFSH, formatValueSetDefinition} from './FshTerminologyFormatter';
+import {appendCodesystem} from './FshTerminologyFormatter';
 import {StringBuilder} from "../StringBuilder.ts";
 
 
@@ -31,7 +31,7 @@ const formatSpaces = (node:TemplateNode) => {
   return " ".repeat(node.depth * 2)
 }
 
-const formatNodeId = (f: TemplateNode):string => f.nodeId?f.nodeId:`RM`
+//const formatNodeId = (f: TemplateNode):string => f.nodeId?f.nodeId:`RM`
 
 const appendRow = (dBuilder: DocBuilder, f: TemplateNode, constraintBuilder: StringBuilder|null = null) => {
   const {sb} = dBuilder;
@@ -44,8 +44,9 @@ const appendRow = (dBuilder: DocBuilder, f: TemplateNode, constraintBuilder: Str
   const constraint = constraintBuilder?.toString()
   const rmDatatype = mapRmTypeText(f.rmType)
   const datatype: string = constraint?rmDatatype + '\n' + constraint: rmDatatype
+  const aqlString = f?.aqlPath || '/'
 
-      sb.append(`${formatCsvNode(ehdsName, true)}${formatCsvNode(nodeId)}${formatCsvNode(formatLocalName(f))}${formatCsvNode(dBuilder.getDescription(f))}${formatCsvNode(datatype)}${formatCsvNode('true')}${formatCsvNode(formatOccurrences(f, false))}${formatCsvNode(comment)}${formatCsvNode(f.aqlPath)}${formatCsvNode(fhirPath)}${formatCsvNode('')}`)
+      sb.append(`${formatCsvNode(ehdsName, true)}${formatCsvNode(nodeId)}${formatCsvNode(formatLocalName(f))}${formatCsvNode(dBuilder.getDescription(f))}${formatCsvNode(datatype)}${formatCsvNode('true')}${formatCsvNode(formatOccurrences(f, false))}${formatCsvNode(comment)}${formatCsvNode(aqlString)}${formatCsvNode(fhirPath)}${formatCsvNode('')}`)
 }
 
 const appendExternalBinding = (f: TemplateNode, input: TemplateInput) => {
@@ -100,7 +101,7 @@ export const csv = {
 
   formatEntryHeader: (dBuilder: DocBuilder, f: TemplateNode) => {
 //    sb.append(`${spaces}* ${nodeName} ${occurrencesText} ${rmTypeText} "${localName}" "${f.nodeId}: ${localizedDescription}"`)
-    const { config } = dBuilder;
+  //  const { config } = dBuilder;
 
   //  if (config.entriesOnly)
   //    formatFSHDefinition(dBuilder, f);
@@ -144,38 +145,37 @@ export const csv = {
 
     formatDvCodedText: (dBuilder: DocBuilder, f: TemplateNode) => {
 
-      const { sb, config } = dBuilder;
       const cb = new StringBuilder();
 
       f?.inputs?.forEach((item) => {
-        const term = item.terminology === undefined ? 'local' : item.terminology;
-        if (item.list) {
-          item.list.forEach((list) => {
-            const termPhrase = `${term}:${list.value}`
-                cb.append(`-  ${list.label} ${termPhrase}`)
-          })
-        } else
-            // Pick up an external Valueset description annotation
-        if (item.suffix === 'code' && f?.annotations?.["vset_description"]) {
-          // Convert /n characters to linebreaks
-          const newLined = f.annotations?.["vset_description"].replace(/\\n/g, String.fromCharCode(10));
-          cb.append(newLined)
+
+        const term = item.terminology || 'local'
+
+        item.list?.forEach((list) => cb.append(` ${list.label} ${term}:${list.value}`))
+
+        if (!item.list) {
+          cb.append(term.replace('//fhir.hl7.org/ValueSet/$expand?url=',' '))
+          if (f?.annotations?.["vset_description"]) {
+            // Convert /n characters to linebreaks
+            const newLined = f.annotations?.["vset_description"].replace(/\\n/g, String.fromCharCode(10));
+            cb.append(newLined)
+          }
         }
 
         if (item.listOpen)
-          cb.append(`* _Other text/ coded text allowed_`);
+          cb.append('-Other Text/CodedText allowed');
 
-        appendRow(dBuilder, f,cb)
       });
+
+      appendRow(dBuilder, f,cb)
+
     },
 
 formatDvText: (dBuilder: DocBuilder, f: TemplateNode) => {
   const { ab} = dBuilder;
+  const cb = new StringBuilder();
 
-  appendRow(dBuilder, f)
-  return
-
-  appendCodeSystemFSH(dBuilder)
+  //appendCodeSystemFSH(dBuilder)
   //  const uniqueVS = formatValueSetDefinition(f)
 
       f.inputs?.forEach((input: TemplateInput) => {
@@ -184,39 +184,39 @@ formatDvText: (dBuilder: DocBuilder, f: TemplateNode) => {
             appendExternalBinding(f, input)
           else {
             input.list?.forEach((item) => {
-              ab.append(`* $local$#{item.value} "${item.label}"`);
+              cb.append(` ${item.value} ${item.label}`);
             })
-            appendLocalBinding(f, input,undefined)
+           // appendLocalBinding(f, input,undefined)
           }
     })
+  appendRow(dBuilder, f,cb)
+
 },
 
-  formatDvOrdinal: (dBuilder: DocBuilder, f: TemplateNode) => {
-  const { sb , config} = dBuilder;
-
-    appendCodesystem(f)
+formatDvOrdinal: (dBuilder: DocBuilder, f: TemplateNode) => {
+  const { sb } = dBuilder;
+  const cb = new StringBuilder();
+//    appendCodesystem(f)
   f.inputs?.forEach((input) => {
     if (input.list)
       input.list.forEach((listItem) => {
-        if (!config.hideXmindValues)
-          sb.append(`${formatSpaces(f)} (${listItem.ordinal}) ${listItem.label} [B]`)
+          cb.append(`(${listItem.ordinal}) ${listItem.label} ${listItem.value}`)
       })
   })
+  appendRow(dBuilder, f, cb)
 },
-    formatDvQuantity: (dBuilder: DocBuilder, f: TemplateNode) => {
+
+formatDvQuantity: (dBuilder: DocBuilder, f: TemplateNode) => {
 
       let unitStr = ' | '
-
-        f.inputs?.forEach((item) => {
-          if (item.list && item.suffix === 'unit') {
-            item.list.forEach((val) => {
-              unitStr = unitStr.concat(`${val.label}`);
-            });
-          }
-        });
-
-      appendRow(dBuilder, f)
-//      appendFSHLM(dBuilder, f, ' '+ unitStr)
+      const cb = new StringBuilder();
+      f.inputs?.forEach((item) => {
+        if (item.suffix === 'unit') {
+          item.list?.forEach((val) => unitStr = unitStr.concat(`${val.label}`))
+          cb.append(unitStr)
+        }
+      });
+      appendRow(dBuilder, f, cb)
     },
 
     formatDvDefault: (dBuilder: DocBuilder, f: TemplateNode) => {

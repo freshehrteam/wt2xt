@@ -135,7 +135,7 @@ export const formatDvOrdinal = (docBuilder: DocBuilder, f: TemplateNode): void =
       case ExportFormat.fshq:
       break;
     case ExportFormat.csv:
-      fn = csv.dvTypes.formatDvDefault
+      fn = csv.dvTypes.formatDvOrdinal
       break;
     default:
       fn = adoc.dvTypes.formatDvOrdinal

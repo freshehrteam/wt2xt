@@ -212,7 +212,7 @@ export const formatCompositionContextHeader = (docBuilder: DocBuilder, f: Templa
 }
 
 export const formatEntryHeader = (docBuilder: DocBuilder, f: TemplateNode): void => {
-  let fn: FormatElementFn|null = null;
+  let fn: FormatElementFn|null;
 
   switch (docBuilder.config.exportFormat) {
     case ExportFormat.xmind:
@@ -238,7 +238,7 @@ export const formatEntryHeader = (docBuilder: DocBuilder, f: TemplateNode): void
 }
 
 export const formatLeafHeader = (docBuilder: DocBuilder, f: TemplateNode): void => {
-  let fn: FormatElementFn|null = null;
+  let fn: FormatElementFn|null;
 
   switch (docBuilder.config.exportFormat) {
     case ExportFormat.xmind:
@@ -309,7 +309,7 @@ export const formatInstructionActivity = (docBuilder: DocBuilder, f: TemplateNod
 }
 
 export const formatCluster = (docBuilder: DocBuilder, f: TemplateNode): void => {
-  let fn: FormatElementFn|null = null;
+  let fn: FormatElementFn|null;
 
   switch (docBuilder.config.exportFormat) {
     case ExportFormat.xmind:
