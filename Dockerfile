@@ -32,8 +32,8 @@ WORKDIR /app
 
 # Install Pandoc and TeX Live components needed for DOCX and PDF (XeLaTeX)
 # Create a non-root user and set permissions
-RUN addgroup --system --gid 1001 bunuser && \
-    adduser --system --uid 1001 --ingroup bunuser bunuser && \
+RUN groupadd --system --gid 1001 bunuser && \
+    useradd --system --uid 1001 --gid bunuser bunuser && \
     chown -R bunuser:bunuser /app
 
 # Install Docker CLI
