@@ -70,13 +70,11 @@ export const csv = {
   },
 
 
-    formatCompositionHeader: (dBuilder: DocBuilder, f: TemplateNode) => {
-
+  formatCompositionHeader: (dBuilder: DocBuilder, f: TemplateNode) => {
     const { config } = dBuilder;
 
     if (config.entriesOnly) return
-
-   // formatFSHDefinition(dBuilder,f)
+    appendRow(dBuilder,f)
   },
 
 
