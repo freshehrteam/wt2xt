@@ -18,7 +18,9 @@ const Quoter : string = '"';
 const csvColumns: string[] = ['EHDS Name','Node ID','Text','Description','Data type','Included','Occurrences','Comments','Path','Mapping Comments']//const sanitiseFhirName  = (name: string): string  => name.replace(/[^a-zA-Z0-9_-]/g, '_')
 
 const formatCsvNode = (value: string, firstCol: boolean = false) => {
-  return (firstCol ? "" : Separator )+ Quoter + value.replace(/[",]+/g, '') + Quoter
+  const cleanValue  = value? value.replace(/[",]+/g, '') : ''
+  return `${firstCol ? "":Separator}${Quoter}${cleanValue}${Quoter}`
+
 }
 
 const formatLocalName = (f:TemplateNode) => f.localizedName ? f.localizedName : f.name;
@@ -180,7 +182,7 @@ formatDvOrdinal: (dBuilder: DocBuilder, f: TemplateNode) => {
   f.inputs?.forEach((input) => {
     if (input.list)
       input.list.forEach((listItem) => {
-          cb.append(`(${listItem.ordinal}) ${listItem.label} ${listItem.value}`)
+          cb.append(`[${listItem.ordinal}] ${listItem.label} local::${listItem.value}`)
       })
   })
   appendRow(dBuilder, f, cb)
@@ -188,11 +190,11 @@ formatDvOrdinal: (dBuilder: DocBuilder, f: TemplateNode) => {
 
 formatDvQuantity: (dBuilder: DocBuilder, f: TemplateNode) => {
 
-      let unitStr = ' | '
+      let unitStr = ''
       const cb = new StringBuilder();
       f.inputs?.forEach((item) => {
         if (item.suffix === 'unit') {
-          item.list?.forEach((val) => unitStr = unitStr.concat(`${val.label}`))
+          item.list?.forEach((val) => unitStr = unitStr.concat(` ${val.label}\n`))
           cb.append(unitStr)
         }
       });
