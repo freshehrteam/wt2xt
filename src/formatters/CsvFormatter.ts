@@ -15,7 +15,7 @@ import {StringBuilder} from "../StringBuilder.ts";
 const Separator: string = ',';
 const Quoter : string = '"';
 
-const csvColumns: string[] = ['EHDS Name','Node ID','Text','Description','Data type','Included','Occurrences','Comments','Path','Mapping Comments']//const sanitiseFhirName  = (name: string): string  => name.replace(/[^a-zA-Z0-9_-]/g, '_')
+const csvColumns: string[] = ['EHDSName','Node ID','Text','Description','Data type','Included','Occurrences','Comments','Path','FhirPath','MappingNotes','EHDSValues','ConceptMapUri']//const sanitiseFhirName  = (name: string): string  => name.replace(/[^a-zA-Z0-9_-]/g, '_')
 
 const formatCsvNode = (value: string, firstCol: boolean = false) => {
   const cleanValue  = value? value.replace(/[",]+/g, '') : ''
@@ -41,13 +41,17 @@ const appendRow = (dBuilder: DocBuilder, f: TemplateNode, constraintBuilder: Str
   const nodeId: string = isRootNode? (f.nodeId || f.id): ''
   const comment: string = f?.annotations?.['comment']|| ''
   const ehdsName: string = f?.annotations?.['ehdsName']|| ''
+  const ehdsValues: string = f?.annotations?.['ehdValues']|| ''
+  const conceptMapUri: string = f?.annotations?.['conceptMapUri']|| ''
+  const ehdsMappingNotes: string = f?.annotations?.['ehdsMappingNotes']|| ''
   const fhirPath: string = f?.annotations?.['fhirPath']|| ''
+
   const constraint = constraintBuilder?.toString()
   const rmDatatype = mapRmTypeText(f.rmType)
   const datatype: string = constraint?rmDatatype + '\n' + constraint: rmDatatype
   const aqlString = f?.aqlPath || '/'
 
-      sb.append(`${formatCsvNode(ehdsName, true)}${formatCsvNode(nodeId)}${formatCsvNode(formatLocalName(f))}${formatCsvNode(dBuilder.getDescription(f))}${formatCsvNode(datatype)}${formatCsvNode('true')}${formatCsvNode(formatOccurrences(f, false))}${formatCsvNode(comment)}${formatCsvNode(aqlString)}${formatCsvNode(fhirPath)}${formatCsvNode('')}`)
+  sb.append(`${formatCsvNode(ehdsName, true)}${formatCsvNode(nodeId)}${formatCsvNode(formatLocalName(f))}${formatCsvNode(dBuilder.getDescription(f))}${formatCsvNode(datatype)}${formatCsvNode('true')}${formatCsvNode(formatOccurrences(f, false))}${formatCsvNode(comment)}${formatCsvNode(aqlString)}${formatCsvNode(fhirPath)}${formatCsvNode(ehdsMappingNotes)}${formatCsvNode(ehdsValues)}${formatCsvNode('')}${formatCsvNode(conceptMapUri)}`)
 }
 
 const appendExternalBinding = (f: TemplateNode, input: TemplateInput) => {
