@@ -27,7 +27,7 @@ bun run build
 ```
 
 
-## Usage 
+## CLI Usage 
 ```
 ❯ wt2xt
 Options:
@@ -35,7 +35,7 @@ Options:
     --version               Show version number                    [boolean]
     --web-template, -wt     Source web template                    [string] [required]
     --out-file,     -o       THe output file (default:import filename [string]
-    --export-format, -ex    Export format (default:adoc)           [string] adoc|xmind|docx|pdf|fshl|fhirl
+    --export-format, -ex    Export format (default:adoc)           [string] adoc|xmind|docx|pdf|fshl|fhirl|html|csv
     -- config-file,  -cfg    default: "config/wtconfig.json"           [string]
 
  ``` 
@@ -54,26 +54,24 @@ bun run dev -- --web-template=./templates/example.json
 
 ## Export formats
 
-- `adoc`: Asciidoc
+- `adoc`  : Asciidoc
 - `xmind` : Xmind mindmap
-- `docx` : Word document (see dependencies below)
-- `pdf` : PDF document (see dependencies below)
-- `md` : Markdown document (see dependencies below)
-- `fshl` : FHIR Logical model (FSH + FHIR datatypes)
+- `docx`  : Word document (see dependencies below)
+- `pdf`   : PDF document (see dependencies below)
+- `md`    : Markdown document (see dependencies below)
+- `fshl`  : FHIR Logical model (FSH + FHIR datatypes)
 - `fhirl` : FHIR Logical model (Zipped JSON + FHIR datatypes)
+- `html`  : HTML document (see dependencies below)
+- `csv`   : CSV document
 
 
 ## Export format dependencies 
 
-- **Adoc** (asciidoc) and **Xmind** are supported natively.
+- **Adoc** (asciidoc), **Xmind**, **HTML** and **CSV** are supported natively.
 
+- **Docx** **PDF** and **MD** require a local install of Pandoc Latex or will load a Pandoc/latex Docker image if running in a Docker container.
 
-- **Docx** requires a local install of Pandoc Latex or will load a Pandoc/latex Docker image if running in a Docker container.
-
-
-- **PDF** requires local install of Pandoc Latex or will load a Pandoc/latex Docker image if running in a Docker container
-
-- **MD** requires local install of Pandoc Latex or will load a Pandoc/latex Docker image if running in a Docker container. This requires use of HTML to recreate the more complex ASCII table 
+- **MD** includes embedded HTML to recreate the more complex ASCIIDoc tables 
 
 ## Configuration
 
@@ -110,7 +108,6 @@ The default configuration is
 ```
 
 
-
 ## API Usage
 
 The application now provides an API endpoint that allows you to convert templates programmatically.
@@ -132,10 +129,10 @@ bun run api:dev
 Converts a JSON template to the specified format.
 
 **Query Parameters:**
-- `exportAs` (optional): The output format (adoc, docx, pdf, fshl, fhirl, xmind, md). Default: adoc
+- `exportAs` (optional): The output format (adoc, docx, pdf, fshl, fhirl, xmind, md, html, csv). Default: adoc
 
 **Request Body:**
-- `template`: The JSON template to convert
+- `body`: A JSON web-template or a JSON object containing the JSON template, and an optional config document
 
 **Response:**
 - An object containing the exported file content
