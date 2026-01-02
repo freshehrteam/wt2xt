@@ -172,6 +172,7 @@ const displayableNodeTextTable = {
   GENERIC_ENTRY: "GenericEntry",
   EVENT: "Event",
   CLUSTER: "Cluster",
+  COMPOSITION: "Composition",
 
 }
 
@@ -203,10 +204,11 @@ export const openEHR2FHIRDatatypeTable = {
   OBSERVATION:"Observation",
   INSTRUCTION: "Instruction",
   ACTION:"Action",
-  ADMIN_ENTRY: "Admin entry",
-  GENERIC_ENTRY: "Generic Entry",
+  ADMIN_ENTRY: "AdminEntry",
+  GENERIC_ENTRY: "GenericEntry",
   EVENT: "Event",
   CLUSTER: "Cluster",
+  COMPOSITION: "Composition",
 
 }
 
@@ -242,6 +244,7 @@ export const openEHR2FHIRQuestionTypeTable = {
   GENERIC_ENTRY: "group",
   EVENT: "group",
   CLUSTER: "group",
+  COMPOSITION: "group",
 
 }
 

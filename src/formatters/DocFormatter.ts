@@ -64,7 +64,7 @@ export const formatTemplateHeader = (docBuilder: DocBuilder): void => {
 
 export const formatCompositionHeader = (docBuilder: DocBuilder, f: TemplateNode): void => {
 
-  let fn: FormatCompositionHeaderFn|null = null;
+  let fn: FormatCompositionHeaderFn|null;
 
   switch (docBuilder.config.exportFormat) {
     case ExportFormat.xmind:
@@ -78,6 +78,7 @@ export const formatCompositionHeader = (docBuilder: DocBuilder, f: TemplateNode)
       fn = fshq.formatCompositionHeader
       break;
       case ExportFormat.csv:
+          fn = csv.formatCompositionHeader
           break;
 
     default:
