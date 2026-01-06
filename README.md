@@ -107,6 +107,16 @@ The default configuration is
 }
 ```
 
+## Annotations
+
+These Template annotations are recognised by the CSV export
+
+- `vset_description` : Human readable external Valueset description 
+- `mapTargetName` : Name of the equivalent node in the mapping target 
+- `mapTargetConstraints` : Constraints on the target node 
+- `mapTargetNotes`: Notes on the mapping 
+- `conceptMapUrl`: Url of any related FHIR concept map 
+- `mapTargetFhirPath`: The FHIR path to the mapping target node 
 
 ## API Usage
 

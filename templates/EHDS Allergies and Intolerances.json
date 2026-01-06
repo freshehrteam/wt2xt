@@ -1,6 +1,6 @@
 {
   "templateId" : "EHDS Allergies and Intolerances",
-  "semVer" : "1.0.0-alpha.8",
+  "semVer" : "1.0.0-alpha.10",
   "version" : "2.3",
   "defaultLanguage" : "en",
   "languages" : [ "en" ],
@@ -20,15 +20,15 @@
     },
     "aqlPath" : "",
     "children" : [ {
-      "id" : "allergy_intolerance",
-      "name" : "Allergy Intolerance",
-      "localizedName" : "Allergy Intolerance",
+      "id" : "ehdsallergyintolerance",
+      "name" : "EHDSAllergyIntolerance",
+      "localizedName" : "EHDSAllergyIntolerance",
       "rmType" : "EVALUATION",
       "nodeId" : "openEHR-EHR-EVALUATION.adverse_reaction_risk.v2",
       "min" : 0,
       "max" : -1,
       "localizedNames" : {
-        "en" : "Allergy Intolerance"
+        "en" : "EHDSAllergyIntolerance"
       },
       "localizedDescriptions" : {
         "en" : "Clinical assessment of the propensity for an individual to experience a harmful or undesirable physiological response if exposed, or re-exposed, to a substance."
@@ -37,43 +37,48 @@
         "comment" : "Substances include, but are not limited to: a therapeutic substance administered correctly at an appropriate dosage for the individual; food; material derived from plants or animals; or venom from insect stings.",
         "source" : "openEHR,FHIR"
       },
-      "aqlPath" : "/items[openEHR-EHR-EVALUATION.adverse_reaction_risk.v2,'Allergy Intolerance']",
+      "aqlPath" : "/items[openEHR-EHR-EVALUATION.adverse_reaction_risk.v2,'EHDSAllergyIntolerance']",
       "children" : [ {
-        "id" : "substance",
-        "name" : "Substance",
-        "localizedName" : "Substance",
+        "id" : "agentorallergen",
+        "name" : "agentOrAllergen",
+        "localizedName" : "agentOrAllergen",
         "rmType" : "DV_TEXT",
         "nodeId" : "at0002",
         "min" : 1,
         "max" : 1,
         "localizedNames" : {
-          "en" : "Substance"
+          "en" : "agentOrAllergen"
         },
         "localizedDescriptions" : {
           "en" : "Identification of a substance, or substance class, that is considered to put the individual at risk of an adverse reaction event."
         },
         "annotations" : {
-          "comment" : "Both an individual substance and a substance class are valid entries in 'Substance'. A substance may be a compound of simpler substances, for example a medicinal product. It is strongly recommended that the 'Substance' is coded with a terminology capable of triggering decision support, where possible. For example: Snomed CT, DM+D, RxNorm, NDFRT, ATC, New Zealand Universal List of Medicines and Australian Medicines Terminology. Free text entry should only be used if there is no appropriate terminology available."
+          "mapTargetNotes" : "Work in progress",
+          "ConceptMapUrl" : "http://org.fhir/ConceptMap",
+          "comment" : "Both an individual substance and a substance class are valid entries in 'Substance'. A substance may be a compound of simpler substances, for example a medicinal product. It is strongly recommended that the 'Substance' is coded with a terminology capable of triggering decision support, where possible. For example: Snomed CT, DM+D, RxNorm, NDFRT, ATC, New Zealand Universal List of Medicines and Australian Medicines Terminology. Free text entry should only be used if there is no appropriate terminology available.",
+          "mapTargetConstraints" : "SNOMED IPS agent",
+          "mapTargetFhirPath" : ".section.code",
+          "mapTargetName" : "agentorAllergen"
         },
-        "aqlPath" : "/items[openEHR-EHR-EVALUATION.adverse_reaction_risk.v2,'Allergy Intolerance']/data[at0001]/items[at0002]/value",
+        "aqlPath" : "/items[openEHR-EHR-EVALUATION.adverse_reaction_risk.v2,'EHDSAllergyIntolerance']/data[at0001]/items[at0002,'agentOrAllergen']/value",
         "inputs" : [ {
           "type" : "TEXT"
         } ]
       }, {
-        "id" : "active_inactive_status",
-        "name" : "Active/inactive status",
-        "localizedName" : "Active/inactive status",
+        "id" : "status",
+        "name" : "status",
+        "localizedName" : "status",
         "rmType" : "DV_CODED_TEXT",
         "nodeId" : "at0130",
         "min" : 0,
         "max" : 1,
         "localizedNames" : {
-          "en" : "Active/inactive status"
+          "en" : "status"
         },
         "localizedDescriptions" : {
           "en" : "Status about whether the adverse reaction risk statement is active or inactive."
         },
-        "aqlPath" : "/items[openEHR-EHR-EVALUATION.adverse_reaction_risk.v2,'Allergy Intolerance']/data[at0001]/items[at0130]/value",
+        "aqlPath" : "/items[openEHR-EHR-EVALUATION.adverse_reaction_risk.v2,'EHDSAllergyIntolerance']/data[at0001]/items[at0130,'status']/value",
         "inputs" : [ {
           "suffix" : "code",
           "type" : "TEXT",
@@ -84,15 +89,15 @@
           "terminology" : "//fhir.hl7.org/ValueSet/$expand?url=http://hl7.org/fhir/ValueSet/allergyintolerance-clinical"
         } ]
       }, {
-        "id" : "verification_status",
-        "name" : "Verification status",
-        "localizedName" : "Verification status",
+        "id" : "certainty",
+        "name" : "certainty",
+        "localizedName" : "certainty",
         "rmType" : "DV_CODED_TEXT",
         "nodeId" : "at0063",
         "min" : 0,
         "max" : 1,
         "localizedNames" : {
-          "en" : "Verification status"
+          "en" : "certainty"
         },
         "localizedDescriptions" : {
           "en" : "Assertion about the certainty of the propensity, or potential future risk, of the identified 'Substance' to cause a reaction."
@@ -100,7 +105,7 @@
         "annotations" : {
           "comment" : "Decision support would typically raise alerts for 'Unconfirmed' and 'Confirmed', and ignore a 'Refuted' reaction. Clinical systems may choose not to display Adverse reaction entries with a 'Refuted' status in the Adverse Reaction List. However, 'Refuted' may be useful for reconciliation of the adverse reaction list or when communicating between systems. Some implementations may choose to make this field mandatory. The free text data type will allow for local variation by enabling other value sets to be applied to this data element in a template - in this situation it is recommended that values should be coded using a terminology."
         },
-        "aqlPath" : "/items[openEHR-EHR-EVALUATION.adverse_reaction_risk.v2,'Allergy Intolerance']/data[at0001]/items[at0063]/value",
+        "aqlPath" : "/items[openEHR-EHR-EVALUATION.adverse_reaction_risk.v2,'EHDSAllergyIntolerance']/data[at0001]/items[at0063,'certainty']/value",
         "inputs" : [ {
           "suffix" : "code",
           "type" : "CODED_TEXT",
@@ -139,14 +144,14 @@
         } ]
       }, {
         "id" : "criticality",
-        "name" : "Criticality",
-        "localizedName" : "Criticality",
+        "name" : "criticality",
+        "localizedName" : "criticality",
         "rmType" : "DV_CODED_TEXT",
         "nodeId" : "at0101",
         "min" : 0,
         "max" : 1,
         "localizedNames" : {
-          "en" : "Criticality"
+          "en" : "criticality"
         },
         "localizedDescriptions" : {
           "en" : "An indication of the potential for critical system organ damage or life threatening consequence."
@@ -155,7 +160,7 @@
           "comment" : "This can be regarded as a predictive judgement of a 'worst case scenario'. In most contexts 'Low' would be regarded as the default value.",
           "source" : "DAM, openEHR"
         },
-        "aqlPath" : "/items[openEHR-EHR-EVALUATION.adverse_reaction_risk.v2,'Allergy Intolerance']/data[at0001]/items[at0101]/value",
+        "aqlPath" : "/items[openEHR-EHR-EVALUATION.adverse_reaction_risk.v2,'EHDSAllergyIntolerance']/data[at0001]/items[at0101,'criticality']/value",
         "inputs" : [ {
           "suffix" : "code",
           "type" : "TEXT",
@@ -170,15 +175,15 @@
           "type" : "TEXT"
         } ]
       }, {
-        "id" : "onset_of_first_reaction",
-        "name" : "Onset of first reaction",
-        "localizedName" : "Onset of first reaction",
+        "id" : "onsetdate",
+        "name" : "onsetDate",
+        "localizedName" : "onsetDate",
         "rmType" : "DV_DATE_TIME",
         "nodeId" : "at0133",
         "min" : 0,
         "max" : 1,
         "localizedNames" : {
-          "en" : "Onset of first reaction"
+          "en" : "onsetDate"
         },
         "localizedDescriptions" : {
           "en" : "The onset of the first known occurrence of a reaction event."
@@ -186,20 +191,20 @@
         "annotations" : {
           "comment" : "For example: the actual date and/or time of onset; the interval of time during which the onset occurred; the age of the individual at the time of the onset; or the duration of time since the onset occurred. A partial date is valid, using the DV_DATE_TIME data type, to record only a year."
         },
-        "aqlPath" : "/items[openEHR-EHR-EVALUATION.adverse_reaction_risk.v2,'Allergy Intolerance']/data[at0001]/items[at0133]/value",
+        "aqlPath" : "/items[openEHR-EHR-EVALUATION.adverse_reaction_risk.v2,'EHDSAllergyIntolerance']/data[at0001]/items[at0133,'onsetDate']/value",
         "inputs" : [ {
           "type" : "DATETIME"
         } ]
       }, {
-        "id" : "reaction_mechanism",
-        "name" : "Reaction mechanism",
-        "localizedName" : "Reaction mechanism",
+        "id" : "typeofpropensity",
+        "name" : "typeOfPropensity",
+        "localizedName" : "typeOfPropensity",
         "rmType" : "DV_TEXT",
         "nodeId" : "at0058",
         "min" : 0,
         "max" : 1,
         "localizedNames" : {
-          "en" : "Reaction mechanism"
+          "en" : "typeOfPropensity"
         },
         "localizedDescriptions" : {
           "en" : "Identification of the underlying physiological mechanism for the adverse reaction."
@@ -207,7 +212,7 @@
         "annotations" : {
           "comment" : "Immune-mediated responses have been traditionally regarded as an indicator for escalation of significant future risk. Contemporary knowledge suggests that some reactions previously thought to be immune are actually non-immune and still carry life threatening risk. \r\n\r\nImmunological testing may provide supporting evidence for the mechanism and causative substance , but no tests are 100% sensitive or specific for a sensitivity. \r\n\r\nIt is acknowledged that most clinicians will NOT be able to distinguish the mechanism of any specific reaction. However this data element is included because many legacy systems have captured this attribute."
         },
-        "aqlPath" : "/items[openEHR-EHR-EVALUATION.adverse_reaction_risk.v2,'Allergy Intolerance']/data[at0001]/items[at0058]/value",
+        "aqlPath" : "/items[openEHR-EHR-EVALUATION.adverse_reaction_risk.v2,'EHDSAllergyIntolerance']/data[at0001]/items[at0058,'typeOfPropensity']/value",
         "inputs" : [ {
           "type" : "TEXT",
           "list" : [ {
@@ -220,30 +225,30 @@
           "listOpen" : false
         } ]
       }, {
-        "id" : "adverse_reaction_event",
-        "name" : "Adverse reaction event",
-        "localizedName" : "Adverse reaction event",
+        "id" : "reaction",
+        "name" : "reaction",
+        "localizedName" : "reaction",
         "rmType" : "CLUSTER",
         "nodeId" : "openEHR-EHR-CLUSTER.adverse_reaction_event.v1",
         "min" : 0,
         "max" : -1,
         "localizedNames" : {
-          "en" : "Adverse reaction event"
+          "en" : "reaction"
         },
         "localizedDescriptions" : {
           "en" : "Information about a specific adverse reaction event caused by exposure to a specific substance."
         },
-        "aqlPath" : "/items[openEHR-EHR-EVALUATION.adverse_reaction_risk.v2,'Allergy Intolerance']/data[at0001]/items[openEHR-EHR-CLUSTER.adverse_reaction_event.v1]",
+        "aqlPath" : "/items[openEHR-EHR-EVALUATION.adverse_reaction_risk.v2,'EHDSAllergyIntolerance']/data[at0001]/items[openEHR-EHR-CLUSTER.adverse_reaction_event.v1,'reaction']",
         "children" : [ {
           "id" : "manifestation",
-          "name" : "Manifestation",
-          "localizedName" : "Manifestation",
+          "name" : "manifestation",
+          "localizedName" : "manifestation",
           "rmType" : "DV_TEXT",
           "nodeId" : "at0006",
           "min" : 0,
           "max" : -1,
           "localizedNames" : {
-            "en" : "Manifestation"
+            "en" : "manifestation"
           },
           "localizedDescriptions" : {
             "en" : "Clinical symptoms and/or signs that are observed or associated with the adverse reaction."
@@ -251,38 +256,38 @@
           "annotations" : {
             "comment" : "Manifestation can be expressed as a single word, phrase or brief description. For example: nausea, rash. 'No reaction' may be appropriate where a previous reaction has been noted but the reaction did not re-occur after further exposure. It is preferable that 'Manifestation' should be coded with a terminology, where possible. The values entered here may be used to display on an application screen as part of a list of adverse reactions."
           },
-          "aqlPath" : "/items[openEHR-EHR-EVALUATION.adverse_reaction_risk.v2,'Allergy Intolerance']/data[at0001]/items[openEHR-EHR-CLUSTER.adverse_reaction_event.v1]/items[at0006]/value",
+          "aqlPath" : "/items[openEHR-EHR-EVALUATION.adverse_reaction_risk.v2,'EHDSAllergyIntolerance']/data[at0001]/items[openEHR-EHR-CLUSTER.adverse_reaction_event.v1,'reaction']/items[at0006,'manifestation']/value",
           "inputs" : [ {
             "type" : "TEXT"
           } ]
         }, {
-          "id" : "onset_of_reaction",
-          "name" : "Onset of reaction",
-          "localizedName" : "Onset of reaction",
+          "id" : "date",
+          "name" : "date",
+          "localizedName" : "date",
           "rmType" : "DV_DATE_TIME",
           "nodeId" : "at0008",
           "min" : 0,
           "max" : 1,
           "localizedNames" : {
-            "en" : "Onset of reaction"
+            "en" : "date"
           },
           "localizedDescriptions" : {
             "en" : "The date and/or time of the onset of the reaction."
           },
-          "aqlPath" : "/items[openEHR-EHR-EVALUATION.adverse_reaction_risk.v2,'Allergy Intolerance']/data[at0001]/items[openEHR-EHR-CLUSTER.adverse_reaction_event.v1]/items[at0008]/value",
+          "aqlPath" : "/items[openEHR-EHR-EVALUATION.adverse_reaction_risk.v2,'EHDSAllergyIntolerance']/data[at0001]/items[openEHR-EHR-CLUSTER.adverse_reaction_event.v1,'reaction']/items[at0008,'date']/value",
           "inputs" : [ {
             "type" : "DATETIME"
           } ]
         }, {
-          "id" : "severity_of_reaction",
-          "name" : "Severity of reaction",
-          "localizedName" : "Severity of reaction",
+          "id" : "severity",
+          "name" : "severity",
+          "localizedName" : "severity",
           "rmType" : "DV_CODED_TEXT",
           "nodeId" : "at0010",
           "min" : 0,
           "max" : 1,
           "localizedNames" : {
-            "en" : "Severity of reaction"
+            "en" : "severity"
           },
           "localizedDescriptions" : {
             "en" : "Clinical assessment of the severity of the reaction event as a whole, potentially considering multiple different manifestations."
@@ -290,7 +295,7 @@
           "annotations" : {
             "comment" : "It is acknowledged that this assessment is very subjective. There may be some some specific practice domains where objective scales have been applied. Objective scales can be included in this model using the 'Reaction details' Cluster."
           },
-          "aqlPath" : "/items[openEHR-EHR-EVALUATION.adverse_reaction_risk.v2,'Allergy Intolerance']/data[at0001]/items[openEHR-EHR-CLUSTER.adverse_reaction_event.v1]/items[at0010]/value",
+          "aqlPath" : "/items[openEHR-EHR-EVALUATION.adverse_reaction_risk.v2,'EHDSAllergyIntolerance']/data[at0001]/items[openEHR-EHR-CLUSTER.adverse_reaction_event.v1,'reaction']/items[at0010,'severity']/value",
           "inputs" : [ {
             "suffix" : "code",
             "type" : "CODED_TEXT",
@@ -329,15 +334,15 @@
           } ]
         } ]
       }, {
-        "id" : "comment",
-        "name" : "Comment",
-        "localizedName" : "Comment",
+        "id" : "description",
+        "name" : "description",
+        "localizedName" : "description",
         "rmType" : "DV_TEXT",
         "nodeId" : "at0006",
         "min" : 0,
         "max" : 1,
         "localizedNames" : {
-          "en" : "Comment"
+          "en" : "description"
         },
         "localizedDescriptions" : {
           "en" : "Additional narrative about the propensity for the adverse reaction, not captured in other fields."
@@ -345,28 +350,9 @@
         "annotations" : {
           "comment" : "For example: including reason for flagging a 'Criticality' of 'High risk'; and instructions related to future exposure or administration of the Substance, such as administration within an Intensive Care Unit or under corticosteroid cover."
         },
-        "aqlPath" : "/items[openEHR-EHR-EVALUATION.adverse_reaction_risk.v2,'Allergy Intolerance']/data[at0001]/items[at0006]/value",
+        "aqlPath" : "/items[openEHR-EHR-EVALUATION.adverse_reaction_risk.v2,'EHDSAllergyIntolerance']/data[at0001]/items[at0006,'description']/value",
         "inputs" : [ {
           "type" : "TEXT"
-        } ]
-      }, {
-        "id" : "last_updated",
-        "name" : "Last updated",
-        "localizedName" : "Last updated",
-        "rmType" : "DV_DATE_TIME",
-        "nodeId" : "at0062",
-        "min" : 0,
-        "max" : 1,
-        "dependsOn" : [ "substance", "criticality", "onset_of_first_reaction", "reaction_mechanism", "comment", "active_inactive_status", "verification_status", "adverse_reaction_event" ],
-        "localizedNames" : {
-          "en" : "Last updated"
-        },
-        "localizedDescriptions" : {
-          "en" : "Date when the propensity or the reaction event was updated."
-        },
-        "aqlPath" : "/items[openEHR-EHR-EVALUATION.adverse_reaction_risk.v2,'Allergy Intolerance']/protocol[at0042]/items[at0062]/value",
-        "inputs" : [ {
-          "type" : "DATETIME"
         } ]
       }, {
         "id" : "language",
@@ -374,7 +360,7 @@
         "rmType" : "CODE_PHRASE",
         "min" : 1,
         "max" : 1,
-        "aqlPath" : "/items[openEHR-EHR-EVALUATION.adverse_reaction_risk.v2,'Allergy Intolerance']/language",
+        "aqlPath" : "/items[openEHR-EHR-EVALUATION.adverse_reaction_risk.v2,'EHDSAllergyIntolerance']/language",
         "inContext" : true
       }, {
         "id" : "encoding",
@@ -382,7 +368,7 @@
         "rmType" : "CODE_PHRASE",
         "min" : 1,
         "max" : 1,
-        "aqlPath" : "/items[openEHR-EHR-EVALUATION.adverse_reaction_risk.v2,'Allergy Intolerance']/encoding",
+        "aqlPath" : "/items[openEHR-EHR-EVALUATION.adverse_reaction_risk.v2,'EHDSAllergyIntolerance']/encoding",
         "inContext" : true
       }, {
         "id" : "subject",
@@ -390,7 +376,7 @@
         "rmType" : "PARTY_PROXY",
         "min" : 1,
         "max" : 1,
-        "aqlPath" : "/items[openEHR-EHR-EVALUATION.adverse_reaction_risk.v2,'Allergy Intolerance']/subject",
+        "aqlPath" : "/items[openEHR-EHR-EVALUATION.adverse_reaction_risk.v2,'EHDSAllergyIntolerance']/subject",
         "inputs" : [ {
           "suffix" : "id",
           "type" : "TEXT"

@@ -40,18 +40,18 @@ const appendRow = (dBuilder: DocBuilder, f: TemplateNode, constraintBuilder: Str
   const isRootNode =  isEntry(f.rmType) || isSection(f.rmType)
   const nodeId: string = isRootNode? (f.nodeId || f.id): ''
   const comment: string = f?.annotations?.['comment']|| ''
-  const ehdsName: string = f?.annotations?.['ehdsName']|| ''
-  const ehdsValues: string = f?.annotations?.['ehdValues']|| ''
-  const conceptMapUri: string = f?.annotations?.['conceptMapUri']|| ''
-  const ehdsMappingNotes: string = f?.annotations?.['ehdsMappingNotes']|| ''
-  const fhirPath: string = f?.annotations?.['fhirPath']|| ''
+  const mapTargetName: string = f?.annotations?.['mapTargetName']|| ''
+  const mapTargetConstraints: string = f?.annotations?.['mapTargetConstraints']|| ''
+  const conceptMapUrl: string = f?.annotations?.['conceptMapUrl']|| ''
+  const mapTargetNotes: string = f?.annotations?.['mapTargetNotes']|| ''
+  const mapTargetFhirPath: string = f?.annotations?.['mapTargetFhirPath']|| ''
 
   const constraint = constraintBuilder?.toString()
   const rmDatatype = mapRmTypeText(f.rmType)
   const datatype: string = constraint?rmDatatype + '\n' + constraint: rmDatatype
   const aqlString = f?.aqlPath || '/'
 
-  sb.append(`${formatCsvNode(ehdsName, true)}${formatCsvNode(nodeId)}${formatCsvNode(formatLocalName(f))}${formatCsvNode(dBuilder.getDescription(f))}${formatCsvNode(datatype)}${formatCsvNode('true')}${formatCsvNode(formatOccurrences(f, false))}${formatCsvNode(comment)}${formatCsvNode(aqlString)}${formatCsvNode(fhirPath)}${formatCsvNode(ehdsMappingNotes)}${formatCsvNode(ehdsValues)}${formatCsvNode('')}${formatCsvNode(conceptMapUri)}`)
+  sb.append(`${formatCsvNode(mapTargetName, true)}${formatCsvNode(nodeId)}${formatCsvNode(formatLocalName(f))}${formatCsvNode(dBuilder.getDescription(f))}${formatCsvNode(datatype)}${formatCsvNode('true')}${formatCsvNode(formatOccurrences(f, false))}${formatCsvNode(comment)}${formatCsvNode(aqlString)}${formatCsvNode(mapTargetFhirPath)}${formatCsvNode(mapTargetNotes)}${formatCsvNode(mapTargetFhirPath)}${formatCsvNode(mapTargetConstraints)}${formatCsvNode(conceptMapUrl)}`)
 }
 
 const appendExternalBinding = (f: TemplateNode, input: TemplateInput) => {
