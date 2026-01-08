@@ -8,6 +8,7 @@ export enum WtxRegenerate  {
 }
 
 export type Config = {
+  useNodeNameAsMapTarget: boolean;
   displayTechnicalOccurrences: boolean;
   hideNodeIds: boolean;
   skippedAQLPaths: string[];
@@ -37,6 +38,7 @@ export type Config = {
 
 
 const defaultConfig: Config = {
+  useNodeNameAsMapTarget: true,
   displayTechnicalOccurrences: false,
   hideNodeIds: true,
   skippedAQLPaths: [],
@@ -61,7 +63,7 @@ const defaultConfig: Config = {
   regenerateWtx: WtxRegenerate.never,
   fhirBaseUrl: 'http://openehr.org',
   entriesOnly: false,
-    returnFHIRJson: true,
+  returnFHIRJson: true,
 };
 
  export async function importConfig(path: string): Promise<Config> {

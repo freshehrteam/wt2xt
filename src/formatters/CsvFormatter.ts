@@ -35,13 +35,19 @@ const formatSpaces = (node:TemplateNode) => {
 //const formatNodeId = (f: TemplateNode):string => f.nodeId?f.nodeId:`RM`
 
 const appendRow = (dBuilder: DocBuilder, f: TemplateNode, constraintBuilder: StringBuilder|null = null) => {
-  const {sb} = dBuilder;
+  const {sb,config} = dBuilder;
 
   const isRootNode =  isEntry(f.rmType) || isSection(f.rmType)
   const nodeId: string = isRootNode? (f.nodeId || f.id): ''
   const comment: string = f?.annotations?.['comment']|| ''
-  const mapTargetName: string = f?.annotations?.['mapTargetName']|| ''
-  const mapTargetConstraints: string = f?.annotations?.['mapTargetConstraints']|| ''
+  const mapTargetName=  () => {
+    if (config.useNodeNameAsMapTarget)
+      return f?.annotations?.['mapTargetName']|| ''
+
+      return f?.localizedName|| ''
+}
+
+const mapTargetConstraints: string = f?.annotations?.['mapTargetConstraints']|| ''
   const conceptMapUrl: string = f?.annotations?.['conceptMapUrl']|| ''
   const mapTargetNotes: string = f?.annotations?.['mapTargetNotes']|| ''
   const mapTargetFhirPath: string = f?.annotations?.['mapTargetFhirPath']|| ''
@@ -51,7 +57,7 @@ const appendRow = (dBuilder: DocBuilder, f: TemplateNode, constraintBuilder: Str
   const datatype: string = constraint?rmDatatype + '\n' + constraint: rmDatatype
   const aqlString = f?.aqlPath || '/'
 
-  sb.append(`${formatCsvNode(mapTargetName, true)}${formatCsvNode(nodeId)}${formatCsvNode(formatLocalName(f))}${formatCsvNode(dBuilder.getDescription(f))}${formatCsvNode(datatype)}${formatCsvNode('true')}${formatCsvNode(formatOccurrences(f, false))}${formatCsvNode(comment)}${formatCsvNode(aqlString)}${formatCsvNode(mapTargetFhirPath)}${formatCsvNode(mapTargetNotes)}${formatCsvNode(mapTargetFhirPath)}${formatCsvNode(mapTargetConstraints)}${formatCsvNode(conceptMapUrl)}`)
+  sb.append(`${formatCsvNode(mapTargetName(), true)}${formatCsvNode(nodeId)}${formatCsvNode(formatLocalName(f))}${formatCsvNode(dBuilder.getDescription(f))}${formatCsvNode(datatype)}${formatCsvNode('true')}${formatCsvNode(formatOccurrences(f, false))}${formatCsvNode(comment)}${formatCsvNode(aqlString)}${formatCsvNode(mapTargetFhirPath)}${formatCsvNode(mapTargetNotes)}${formatCsvNode(mapTargetFhirPath)}${formatCsvNode(mapTargetConstraints)}${formatCsvNode(conceptMapUrl)}`)
 }
 
 const appendExternalBinding = (f: TemplateNode, input: TemplateInput) => {
