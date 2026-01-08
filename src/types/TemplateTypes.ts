@@ -92,9 +92,7 @@ export const mapRmTypeText = (rmTypeString: string) => {
 }
 
 export const mapRmType2FHIR = (rmTypeString: string) => {
-
   return dataValueFHIRMapper(rmTypeString)
-
 }
 
 export enum DvDataValues{
