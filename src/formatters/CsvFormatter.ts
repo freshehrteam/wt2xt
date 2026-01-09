@@ -14,8 +14,26 @@ import {StringBuilder} from "../StringBuilder.ts";
 
 const Separator: string = ',';
 const Quoter : string = '"';
+const csvColumns: string[] = [
+    'Node ID',
+    'openehr Name',
+    'EHDS Name',
+    'openEHR Description',
+    'openEHR Comment',
+    'EHDS Description',
+    'openEHR Cardinality',
+    'openEHR Datatype',
+    'openEHR Values',
+    'EHDS Binding',
+    'EHDS Values',
+    'Concept Map',
+    'openEHR Path',
+    'EHDS Path',
+    'MappingNotes']
 
-const csvColumns: string[] = ['EHDSName','Node ID','Text','Description','Data type','Included','Occurrences','Comments','Path','FhirPath','MappingNotes','EHDSValues','ConceptMapUri']//const sanitiseFhirName  = (name: string): string  => name.replace(/[^a-zA-Z0-9_-]/g, '_')
+
+
+//const sanitiseFhirName  = (name: string): string  => name.replace(/[^a-zA-Z0-9_-]/g, '_')
 
 const formatCsvNode = (value: string, firstCol: boolean = false) => {
   const cleanValue  = value? value.replace(/[",]+/g, '') : ''
@@ -46,18 +64,40 @@ const appendRow = (dBuilder: DocBuilder, f: TemplateNode, constraintBuilder: Str
 
       return f?.localizedName|| ''
 }
+  const mapTargetDescription =f?.annotations?.['mapTargetDescription']|| ''
+  const mapTargetValues =f?.annotations?.['mapTargetValues']|| ''
 
-const mapTargetConstraints: string = f?.annotations?.['mapTargetConstraints']|| ''
+  const archetypeNodeId :string = f?.nodeId || ''
+  const mapTargetConstraints: string = f?.annotations?.['mapTargetConstraints']|| ''
+  const mapTargetBindings: string = f?.annotations?.['mapTargetBindings']|| ''
   const conceptMapUrl: string = f?.annotations?.['conceptMapUrl']|| ''
   const mapTargetNotes: string = f?.annotations?.['mapTargetNotes']|| ''
   const mapTargetFhirPath: string = f?.annotations?.['mapTargetFhirPath']|| ''
 
-  const constraint = constraintBuilder?.toString()
+  const constraint:string = constraintBuilder?.toString() || ''
   const rmDatatype = mapRmTypeText(f.rmType)
-  const datatype: string = constraint?rmDatatype + '\n' + constraint: rmDatatype
+ // const datatype: string = constraint?rmDatatype + '\n' + constraint: rmDatatype
   const aqlString = f?.aqlPath || '/'
 
-  sb.append(`${formatCsvNode(mapTargetName(), true)}${formatCsvNode(nodeId)}${formatCsvNode(formatLocalName(f))}${formatCsvNode(dBuilder.getDescription(f))}${formatCsvNode(datatype)}${formatCsvNode('true')}${formatCsvNode(formatOccurrences(f, false))}${formatCsvNode(comment)}${formatCsvNode(aqlString)}${formatCsvNode(mapTargetFhirPath)}${formatCsvNode(mapTargetNotes)}${formatCsvNode(mapTargetFhirPath)}${formatCsvNode(mapTargetConstraints)}${formatCsvNode(conceptMapUrl)}`)
+  sb.append(
+      + formatCsvNode(nodeId, true)
+      + formatCsvNode(archetypeNodeId)
+      + formatCsvNode(mapTargetName())
+  //    + formatCsvNode(formatLocalName(f))
+      + formatCsvNode(mapTargetFhirPath)
+      + formatCsvNode(dBuilder.getDescription(f))
+      + formatCsvNode(comment)
+      + formatCsvNode(mapTargetDescription)
+      + formatCsvNode(rmDatatype)
+      + formatCsvNode(constraint)
+      + formatCsvNode(formatOccurrences(f, true))
+      + formatCsvNode(mapTargetBindings)
+      + formatCsvNode(mapTargetConstraints)
+      + formatCsvNode(conceptMapUrl)
+      + formatCsvNode(aqlString)
+      + formatCsvNode(mapTargetFhirPath)
+      + formatCsvNode(mapTargetNotes)
+      + formatCsvNode(mapTargetFhirPath))
 }
 
 const appendExternalBinding = (f: TemplateNode, input: TemplateInput) => {
