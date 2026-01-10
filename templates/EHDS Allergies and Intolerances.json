@@ -54,7 +54,7 @@
         },
         "annotations" : {
           "mapTargetNotes" : "Work in progress",
-          "ConceptMapUrl" : "http://org.fhir/ConceptMap",
+          "conceptMapUrl" : "http://org.fhir/ConceptMap",
           "comment" : "Both an individual substance and a substance class are valid entries in 'Substance'. A substance may be a compound of simpler substances, for example a medicinal product. It is strongly recommended that the 'Substance' is coded with a terminology capable of triggering decision support, where possible. For example: Snomed CT, DM+D, RxNorm, NDFRT, ATC, New Zealand Universal List of Medicines and Australian Medicines Terminology. Free text entry should only be used if there is no appropriate terminology available.",
           "mapTargetConstraints" : "SNOMED IPS agent",
           "mapTargetFhirPath" : ".section.code",
