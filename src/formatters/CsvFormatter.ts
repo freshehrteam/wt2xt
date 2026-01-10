@@ -57,19 +57,18 @@ const appendRow = (dBuilder: DocBuilder, f: TemplateNode, constraintBuilder: Str
   const {sb,config} = dBuilder;
 
 
-
+  const isRootNode =  isEntry(f.rmType) || isSection(f.rmType)
   const nodeId = (f: TemplateNode) =>
   {
-    const isRootNode =  isEntry(f.rmType) || isSection(f.rmType)
+
     if (isRootNode)
       return (f.nodeId || f.id)
     else
       return ''
   }
   const openehrComment: string = f?.annotations?.['comment']|| ''
-  const mapTargetName=  () => {
-    return f?.annotations?.['mapTargetName']|| f?.localizedName
-  }
+  const mapTargetName=  () => f?.annotations?.['mapTargetName']|| snakeToCamel(f.localizedName,isRootNode)
+
   const mapTargetDescription =f?.annotations?.['mapTargetDescription']|| ''
   const archetypeNodeId :string =  f?.localizedName|| ''
   const mapTargetConstraints: string = f?.annotations?.['mapTargetConstraints']|| ''
