@@ -37,7 +37,8 @@ const csvColumns: string[] = [
 
 const formatCsvNode = (value: string, firstCol: boolean = false) => {
   const cleanValue  = value? value.replace(/[",]+/g, '') : ''
-  return `${firstCol ? "":Separator}${Quoter}${cleanValue}${Quoter}`
+  const quotedValue = `${Quoter}${cleanValue}${Quoter}`
+  return `${firstCol ? "":Separator}`+ quotedValue
 
 }
 
@@ -55,49 +56,54 @@ const formatSpaces = (node:TemplateNode) => {
 const appendRow = (dBuilder: DocBuilder, f: TemplateNode, constraintBuilder: StringBuilder|null = null) => {
   const {sb,config} = dBuilder;
 
-  const isRootNode =  isEntry(f.rmType) || isSection(f.rmType)
-  const nodeId: string = isRootNode? (f.nodeId || f.id): ''
-  const comment: string = f?.annotations?.['comment']|| ''
+
+
+  const nodeId = (f: TemplateNode) =>
+  {
+    const isRootNode =  isEntry(f.rmType) || isSection(f.rmType)
+    if (isRootNode)
+      return (f.nodeId || f.id)
+    else
+      return ''
+  }
+  const openehrComment: string = f?.annotations?.['comment']|| ''
   const mapTargetName=  () => {
     if (config.useNodeNameAsMapTarget)
-      return f?.annotations?.['mapTargetName']|| ''
-
       return f?.localizedName|| ''
-}
-  const mapTargetDescription =f?.annotations?.['mapTargetDescription']|| ''
-  const mapTargetValues =f?.annotations?.['mapTargetValues']|| ''
+    else return f?.annotations?.['mapTargetName']|| ''
 
-  const archetypeNodeId :string = f?.nodeId || ''
+
+  }
+  const mapTargetDescription =f?.annotations?.['mapTargetDescription']|| ''
+  const archetypeNodeId :string =  f?.localizedName|| ''
   const mapTargetConstraints: string = f?.annotations?.['mapTargetConstraints']|| ''
   const mapTargetBindings: string = f?.annotations?.['mapTargetBindings']|| ''
   const conceptMapUrl: string = f?.annotations?.['conceptMapUrl']|| ''
   const mapTargetNotes: string = f?.annotations?.['mapTargetNotes']|| ''
   const mapTargetFhirPath: string = f?.annotations?.['mapTargetFhirPath']|| ''
 
-  const constraint:string = constraintBuilder?.toString() || ''
+  const openehrConstraints:string = constraintBuilder?.toString() || ''
   const rmDatatype = mapRmTypeText(f.rmType)
  // const datatype: string = constraint?rmDatatype + '\n' + constraint: rmDatatype
   const aqlString = f?.aqlPath || '/'
 
   sb.append(
-      + formatCsvNode(nodeId, true)
+      formatCsvNode(nodeId(f), true)
       + formatCsvNode(archetypeNodeId)
       + formatCsvNode(mapTargetName())
-  //    + formatCsvNode(formatLocalName(f))
-      + formatCsvNode(mapTargetFhirPath)
       + formatCsvNode(dBuilder.getDescription(f))
-      + formatCsvNode(comment)
+      + formatCsvNode(openehrComment)
+      //    + formatCsvNode(formatLocalName(f))
       + formatCsvNode(mapTargetDescription)
-      + formatCsvNode(rmDatatype)
-      + formatCsvNode(constraint)
       + formatCsvNode(formatOccurrences(f, true))
+      + formatCsvNode(rmDatatype)
+      + formatCsvNode(openehrConstraints)
       + formatCsvNode(mapTargetBindings)
       + formatCsvNode(mapTargetConstraints)
       + formatCsvNode(conceptMapUrl)
       + formatCsvNode(aqlString)
       + formatCsvNode(mapTargetFhirPath)
-      + formatCsvNode(mapTargetNotes)
-      + formatCsvNode(mapTargetFhirPath))
+      + formatCsvNode(mapTargetNotes))
 }
 
 const appendExternalBinding = (f: TemplateNode, input: TemplateInput) => {
@@ -184,9 +190,11 @@ export const csv = {
 
       const cb = new StringBuilder();
 
-      f?.inputs?.forEach((item) => {
+      for (const item of f?.inputs || []) {
 
-        const term = item.terminology || 'local'
+        if (item.suffix !== 'code') break
+
+        const term =  item?.terminology || 'local'
 
         item.list?.forEach((list) => cb.append(` ${list.label} ${term}:${list.value}`))
 
@@ -202,7 +210,7 @@ export const csv = {
         if (item.listOpen)
           cb.append('-Other Text/CodedText allowed');
 
-      });
+      }
 
       appendRow(dBuilder, f,cb)
 
