@@ -68,11 +68,7 @@ const appendRow = (dBuilder: DocBuilder, f: TemplateNode, constraintBuilder: Str
   }
   const openehrComment: string = f?.annotations?.['comment']|| ''
   const mapTargetName=  () => {
-    if (config.useNodeNameAsMapTarget)
-      return f?.localizedName|| ''
-    else return f?.annotations?.['mapTargetName']|| ''
-
-
+    return f?.annotations?.['mapTargetName']|| f?.localizedName
   }
   const mapTargetDescription =f?.annotations?.['mapTargetDescription']|| ''
   const archetypeNodeId :string =  f?.localizedName|| ''

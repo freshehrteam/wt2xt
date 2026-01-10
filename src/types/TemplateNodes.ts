@@ -35,6 +35,7 @@ export interface TemplateNode extends WebTemplateNode{
   revision?: string;
   lifecycleState?:string;
   build_id?:string;
+  archetypeNodeName?:string;
   questionnaireItemRoot: QuestionnaireItem[];
 }
 
