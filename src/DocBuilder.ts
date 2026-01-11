@@ -70,6 +70,7 @@ export class DocBuilder {
     currentQuestionnaireItem: Array<QuestionnaireItem> | undefined = [];
 
   config: Config;
+  currentArchetype:unknown = {};
   localArchetypeList : ArchetypeList = [];
 //  candidateArchetypeList: ArchetypeList = []
   remoteArchetypeList: ArchetypeList = [];
@@ -210,6 +211,7 @@ export class DocBuilder {
      }
      else
        f.archetype_id = f.parentNode.archetype_id;
+
 
     if (isComposition(f.rmType))
       await this.walkComposition(f)

@@ -1,8 +1,6 @@
 /node_modules/
 /.env
 /out/
-/templates/OL - Living arrangements.json
 /tests/server.run.xml
 /cli/wt2xmacos
-/tmp/tmp.adoc
-/tmp/tmpDocbook.xml
+/config/wtconfig-local.json

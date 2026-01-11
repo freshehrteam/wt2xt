@@ -60,7 +60,7 @@ const defaultConfig: Config = {
   inFileDir: './templates',
   exportFormat: ExportFormat.adoc,
   defaultLang: 'en',
-  regenerateWtx: WtxRegenerate.never,
+  regenerateWtx: WtxRegenerate.whenStale,
   fhirBaseUrl: 'http://openehr.org',
   entriesOnly: false,
   returnFHIRJson: true,

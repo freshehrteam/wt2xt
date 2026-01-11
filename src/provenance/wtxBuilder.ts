@@ -43,9 +43,12 @@ export const resolveTemplateFiles = (config: Config): ResolvedTemplateFiles => {
 
      if(!config.ADPassword || !config.ADUsername) return
 
-  await fetchADArchetype(f.nodeId,config.ADUsername, config.ADPassword, config.ADRepositoryId, config.repositoryToken)
+     const language = docBuilder._wt.defaultLanguage
+
+     await fetchADArchetype(f.nodeId,config.ADUsername, config.ADPassword, config.ADRepositoryId, config.repositoryToken)
     .then((data) => {
 
+        docBuilder.currentArchetype = data;
       f.lifecycleState = data?.description?.lifecycleState.codeString
 
       if(typeof data?.description?.otherDetails === 'object') {
@@ -54,7 +57,7 @@ export const resolveTemplateFiles = (config: Config): ResolvedTemplateFiles => {
           original_namespace,
           custodian_namespace,
           custodian_organisation,
-          revision
+          revision,
         } = data.description.otherDetails;
         f.original_namespace = original_namespace;
         f.original_publisher = original_publisher;

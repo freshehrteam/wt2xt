@@ -70,7 +70,14 @@ const appendRow = (dBuilder: DocBuilder, f: TemplateNode, constraintBuilder: Str
   const mapTargetName=  () => f?.annotations?.['mapTargetName']|| snakeToCamel(f.localizedName,isRootNode)
 
   const mapTargetDescription =f?.annotations?.['mapTargetDescription']|| ''
-  const archetypeNodeId :string =  f?.localizedName|| ''
+  const archetypeNodeName= (): string => {
+    const atCode: string = f?.nodeId;
+
+    // @ts-ignore
+    const termDefinitions:Record<any, any> = dBuilder?.currentArchetype?.terminology?.termDefinitions[dBuilder._wt.defaultLanguage]
+    return termDefinitions?.[atCode]?.text || f?.localizedName || ''
+  }
+
   const mapTargetConstraints: string = f?.annotations?.['mapTargetConstraints']|| ''
   const mapTargetBindings: string = f?.annotations?.['mapTargetBindings']|| ''
   const conceptMapUrl: string = f?.annotations?.['conceptMapUrl']|| ''
@@ -84,7 +91,7 @@ const appendRow = (dBuilder: DocBuilder, f: TemplateNode, constraintBuilder: Str
 
   sb.append(
       formatCsvNode(nodeId(f), true)
-      + formatCsvNode(archetypeNodeId)
+      + formatCsvNode(archetypeNodeName())
       + formatCsvNode(mapTargetName())
       + formatCsvNode(dBuilder.getDescription(f))
       + formatCsvNode(openehrComment)
