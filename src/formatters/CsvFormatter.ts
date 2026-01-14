@@ -20,13 +20,13 @@ const csvColumns: string[] = [
     'EHDS Name',
     'openEHR Description',
     'openEHR Comment',
-    'EHDS Description',
+    'EHDS Definition',
     'openEHR Cardinality',
     'openEHR Datatype',
     'openEHR Values',
     'EHDS Cardinality',
     'EHDS Binding',
-    'EHDS Values',
+ //   'EHDS Values',
     'Concept Map',
     'openEHR Path',
     'EHDS Path',
@@ -90,6 +90,22 @@ const appendRow = (dBuilder: DocBuilder, f: TemplateNode, constraintBuilder: Str
  // const datatype: string = constraint?rmDatatype + '\n' + constraint: rmDatatype
   const aqlString = f?.aqlPath || '/'
 
+  // 'Node ID',
+  //     'openehr Name',
+  //     'EHDS Name',
+  //     'openEHR Description',
+  //     'openEHR Comment',
+  //     'EHDS Description',
+  //     'openEHR Cardinality',
+  //     'openEHR Datatype',
+  //     'openEHR Values',
+  //     'EHDS Cardinality',
+  //     'EHDS Binding',
+  //     'EHDS Values',
+  //     'Concept Map',
+  //     'openEHR Path',
+  //     'EHDS Path',
+  //     'MappingNotes']
   sb.append(
       formatCsvNode(nodeId(f), true)
       + formatCsvNode(archetypeNodeName())
@@ -101,9 +117,10 @@ const appendRow = (dBuilder: DocBuilder, f: TemplateNode, constraintBuilder: Str
       + formatCsvNode(formatOccurrences(f, true))
       + formatCsvNode(rmDatatype)
       + formatCsvNode(openehrConstraints)
-      + formatCsvNode(mapTargetBindings)
-      + formatCsvNode(mapTargetConstraints)
       + formatCsvNode(mapTargetCardinality)
+      + formatCsvNode(mapTargetBindings)
+ //     + formatCsvNode(mapTargetConstraints)
+
       + formatCsvNode(conceptMapUrl)
       + formatCsvNode(aqlString)
       + formatCsvNode(mapTargetFhirPath)
