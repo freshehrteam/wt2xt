@@ -24,6 +24,7 @@ const csvColumns: string[] = [
     'openEHR Cardinality',
     'openEHR Datatype',
     'openEHR Values',
+    'EHDS Cardinality',
     'EHDS Binding',
     'EHDS Values',
     'Concept Map',
@@ -69,7 +70,7 @@ const appendRow = (dBuilder: DocBuilder, f: TemplateNode, constraintBuilder: Str
   const openehrComment: string = f?.annotations?.['comment']|| ''
   const mapTargetName=  () => f?.annotations?.['mapTargetName']|| snakeToCamel(f.localizedName,isRootNode)
 
-  const mapTargetDescription =f?.annotations?.['mapTargetDescription']|| ''
+  const mapTargetDefinition =f?.annotations?.['mapTargetDefinition']|| ''
   const archetypeNodeName= (): string => {
     const atCode: string = f?.nodeId;
 
@@ -83,7 +84,7 @@ const appendRow = (dBuilder: DocBuilder, f: TemplateNode, constraintBuilder: Str
   const conceptMapUrl: string = f?.annotations?.['conceptMapUrl']|| ''
   const mapTargetNotes: string = f?.annotations?.['mapTargetNotes']|| ''
   const mapTargetFhirPath: string = f?.annotations?.['mapTargetFhirPath']|| ''
-
+  const mapTargetCardinality: string = f?.annotations?.['mapTargetCardinality']|| ''
   const openehrConstraints:string = constraintBuilder?.toString() || ''
   const rmDatatype = mapRmTypeText(f.rmType)
  // const datatype: string = constraint?rmDatatype + '\n' + constraint: rmDatatype
@@ -96,12 +97,13 @@ const appendRow = (dBuilder: DocBuilder, f: TemplateNode, constraintBuilder: Str
       + formatCsvNode(dBuilder.getDescription(f))
       + formatCsvNode(openehrComment)
       //    + formatCsvNode(formatLocalName(f))
-      + formatCsvNode(mapTargetDescription)
+      + formatCsvNode(mapTargetDefinition)
       + formatCsvNode(formatOccurrences(f, true))
       + formatCsvNode(rmDatatype)
       + formatCsvNode(openehrConstraints)
       + formatCsvNode(mapTargetBindings)
       + formatCsvNode(mapTargetConstraints)
+      + formatCsvNode(mapTargetCardinality)
       + formatCsvNode(conceptMapUrl)
       + formatCsvNode(aqlString)
       + formatCsvNode(mapTargetFhirPath)
