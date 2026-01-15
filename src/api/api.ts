@@ -97,7 +97,7 @@ const parseTemplateFromRequest = async (req: Request): Promise<IncomingConvertBo
 
     try {
         const body = await req.json() as any;
-
+console.log('Body',body);
         // New shape
         if (body && typeof body === 'object' && 'template' in body) {
             if (!body.template)
