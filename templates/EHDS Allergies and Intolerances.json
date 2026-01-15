@@ -1,6 +1,6 @@
 {
   "templateId" : "EHDS Allergies and Intolerances",
-  "semVer" : "1.0.0-alpha.10",
+  "semVer" : "1.0.0-alpha.18",
   "version" : "2.3",
   "defaultLanguage" : "en",
   "languages" : [ "en" ],
@@ -18,6 +18,11 @@
     "localizedDescriptions" : {
       "en" : "A generic section header which should be renamed in a template to suit a specific clinical context."
     },
+    "annotations" : {
+      "mapTargetDefinition" : "Section: Allergies and intolerances",
+      "mapTargetCardinality" : "1..1",
+      "mapTargetFhirPath" : "EHDSPatientSummary.allergiesAndIntolerances"
+    },
     "aqlPath" : "",
     "children" : [ {
       "id" : "ehdsallergyintolerance",
@@ -34,15 +39,17 @@
         "en" : "Clinical assessment of the propensity for an individual to experience a harmful or undesirable physiological response if exposed, or re-exposed, to a substance."
       },
       "annotations" : {
+        "mapTargetDefinition" : "EHDS refined base model for allergy/intolerance.",
+        "mapTargetCardinality" : "0..*",
         "comment" : "Substances include, but are not limited to: a therapeutic substance administered correctly at an appropriate dosage for the individual; food; material derived from plants or animals; or venom from insect stings.",
-        "source" : "openEHR,FHIR"
+        "mapTargetFhirPath" : "EHDSAllergyIntolerance"
       },
       "aqlPath" : "/items[openEHR-EHR-EVALUATION.adverse_reaction_risk.v2,'EHDSAllergyIntolerance']",
       "children" : [ {
         "id" : "agentorallergen",
         "name" : "agentOrAllergen",
         "localizedName" : "agentOrAllergen",
-        "rmType" : "DV_TEXT",
+        "rmType" : "DV_CODED_TEXT",
         "nodeId" : "at0002",
         "min" : 1,
         "max" : 1,
@@ -53,16 +60,21 @@
           "en" : "Identification of a substance, or substance class, that is considered to put the individual at risk of an adverse reaction event."
         },
         "annotations" : {
-          "mapTargetNotes" : "Work in progress",
-          "conceptMapUrl" : "http://org.fhir/ConceptMap",
+          "mapTargetDefinition" : "A specific allergen or other agent/substance (drug, food, chemical agent, etc.) to which the patient has an adverse reaction propensity.",
+          "mapTargetCardinality" : "1..1",
           "comment" : "Both an individual substance and a substance class are valid entries in 'Substance'. A substance may be a compound of simpler substances, for example a medicinal product. It is strongly recommended that the 'Substance' is coded with a terminology capable of triggering decision support, where possible. For example: Snomed CT, DM+D, RxNorm, NDFRT, ATC, New Zealand Universal List of Medicines and Australian Medicines Terminology. Free text entry should only be used if there is no appropriate terminology available.",
-          "mapTargetConstraints" : "SNOMED IPS agent",
-          "mapTargetFhirPath" : ".section.code",
-          "mapTargetName" : "agentorAllergen"
+          "mapTargetBindings" : "1.3.6.1.4.1.12559.11.10.1.3.1.42.24 eHDSIActiveIngredient (ATC, used in MH@EU); 1.3.6.1.4.1.12559.11.10.1.3.1.42.61 eHDSISubstance (EMA SMS, used in MH@EU); 1.3.6.1.4.1.12559.11.10.1.3.1.42.19 eHDSIAllergenNoDrug (SCT, used in MH@EU); ICD-11 Allergens",
+          "mapTargetFhirPath" : "EHDSAllergyIntolerance.agentOrAllergen"
         },
         "aqlPath" : "/items[openEHR-EHR-EVALUATION.adverse_reaction_risk.v2,'EHDSAllergyIntolerance']/data[at0001]/items[at0002,'agentOrAllergen']/value",
         "inputs" : [ {
-          "type" : "TEXT"
+          "suffix" : "code",
+          "type" : "TEXT",
+          "terminology" : "https://termgit.elga.gv.at/ValueSet/ehdsi-activeingredient"
+        }, {
+          "suffix" : "value",
+          "type" : "TEXT",
+          "terminology" : "https://termgit.elga.gv.at/ValueSet/ehdsi-activeingredient"
         } ]
       }, {
         "id" : "status",
@@ -77,6 +89,13 @@
         },
         "localizedDescriptions" : {
           "en" : "Status about whether the adverse reaction risk statement is active or inactive."
+        },
+        "annotations" : {
+          "mapTargetDefinition" : "Current status of the allergy or intolerance, for example, whether it is active, in remission, resolved, etc.",
+          "mapTargetCardinality" : "0..1",
+          "mapTargetBindings" : "1.3.6.1.4.1.12559.11.10.1.3.1.42.59 eHDSIAllergyStatus (HL7, used in MH@EU); [FHIR AllergyIntoleranceClinicalStatusCodes](http://hl7.org/fhir/ValueSet/allergyintolerance-clinical) (HL7, required in HL7 FHIR)",
+          "mapTargetFhirPath" : "EHDSAllergyIntolerance.status",
+          "conceptMapUrl" : "http://nictiz.org/fhir/ConceptMap/openehr-adversereaction-to-fhir-allergyintolerance-clinical"
         },
         "aqlPath" : "/items[openEHR-EHR-EVALUATION.adverse_reaction_risk.v2,'EHDSAllergyIntolerance']/data[at0001]/items[at0130,'status']/value",
         "inputs" : [ {
@@ -103,7 +122,11 @@
           "en" : "Assertion about the certainty of the propensity, or potential future risk, of the identified 'Substance' to cause a reaction."
         },
         "annotations" : {
-          "comment" : "Decision support would typically raise alerts for 'Unconfirmed' and 'Confirmed', and ignore a 'Refuted' reaction. Clinical systems may choose not to display Adverse reaction entries with a 'Refuted' status in the Adverse Reaction List. However, 'Refuted' may be useful for reconciliation of the adverse reaction list or when communicating between systems. Some implementations may choose to make this field mandatory. The free text data type will allow for local variation by enabling other value sets to be applied to this data element in a template - in this situation it is recommended that values should be coded using a terminology."
+          "mapTargetDefinition" : "Assertion about the certainty associated with a propensity, or potential risk, of a reaction to the identified substance. Diagnostic and /or clinical evidence of condition.",
+          "mapTargetCardinality" : "0..1",
+          "comment" : "Decision support would typically raise alerts for 'Unconfirmed' and 'Confirmed', and ignore a 'Refuted' reaction. Clinical systems may choose not to display Adverse reaction entries with a 'Refuted' status in the Adverse Reaction List. However, 'Refuted' may be useful for reconciliation of the adverse reaction list or when communicating between systems. Some implementations may choose to make this field mandatory. The free text data type will allow for local variation by enabling other value sets to be applied to this data element in a template - in this situation it is recommended that values should be coded using a terminology.",
+          "mapTargetBindings" : "1.3.6.1.4.1.12559.11.10.1.3.1.42.58 eHDSIAllergyCertainty (HL7, used in MH@EU) ; [FHIR AllergyIntoleranceVerificationStatus](http://hl7.org/fhir/ValueSet/allergyintolerance-verification) (HL7, required in HL7 FHIR)",
+          "mapTargetFhirPath" : "EHDSAllergyIntolerance.certainty"
         },
         "aqlPath" : "/items[openEHR-EHR-EVALUATION.adverse_reaction_risk.v2,'EHDSAllergyIntolerance']/data[at0001]/items[at0063,'certainty']/value",
         "inputs" : [ {
@@ -157,8 +180,11 @@
           "en" : "An indication of the potential for critical system organ damage or life threatening consequence."
         },
         "annotations" : {
+          "mapTargetDefinition" : "Estimate of the potential clinical harm, or seriousness, of a reaction to an identified substance.",
+          "mapTargetCardinality" : "0..1",
           "comment" : "This can be regarded as a predictive judgement of a 'worst case scenario'. In most contexts 'Low' would be regarded as the default value.",
-          "source" : "DAM, openEHR"
+          "mapTargetBindings" : "1.3.6.1.4.1.12559.11.10.1.3.1.42.57 eHDSICriticality (HL7, used in MH@EU); [FHIR AllergyIntoleranceCriticality](http://hl7.org/fhir/ValueSet/allergy-intolerance-criticality) (HL7, required in HL7 FHIR)",
+          "mapTargetFhirPath" : "EHDSAllergyIntolerance.criticality"
         },
         "aqlPath" : "/items[openEHR-EHR-EVALUATION.adverse_reaction_risk.v2,'EHDSAllergyIntolerance']/data[at0001]/items[at0101,'criticality']/value",
         "inputs" : [ {
@@ -189,7 +215,10 @@
           "en" : "The onset of the first known occurrence of a reaction event."
         },
         "annotations" : {
-          "comment" : "For example: the actual date and/or time of onset; the interval of time during which the onset occurred; the age of the individual at the time of the onset; or the duration of time since the onset occurred. A partial date is valid, using the DV_DATE_TIME data type, to record only a year."
+          "mapTargetDefinition" : "When allergy or intolerance was identified.",
+          "mapTargetCardinality" : "0..1",
+          "comment" : "For example: the actual date and/or time of onset; the interval of time during which the onset occurred; the age of the individual at the time of the onset; or the duration of time since the onset occurred. A partial date is valid, using the DV_DATE_TIME data type, to record only a year.",
+          "mapTargetFhirPath" : "EHDSAllergyIntolerance.onsetDate"
         },
         "aqlPath" : "/items[openEHR-EHR-EVALUATION.adverse_reaction_risk.v2,'EHDSAllergyIntolerance']/data[at0001]/items[at0133,'onsetDate']/value",
         "inputs" : [ {
@@ -210,7 +239,11 @@
           "en" : "Identification of the underlying physiological mechanism for the adverse reaction."
         },
         "annotations" : {
-          "comment" : "Immune-mediated responses have been traditionally regarded as an indicator for escalation of significant future risk. Contemporary knowledge suggests that some reactions previously thought to be immune are actually non-immune and still carry life threatening risk. \r\n\r\nImmunological testing may provide supporting evidence for the mechanism and causative substance , but no tests are 100% sensitive or specific for a sensitivity. \r\n\r\nIt is acknowledged that most clinicians will NOT be able to distinguish the mechanism of any specific reaction. However this data element is included because many legacy systems have captured this attribute."
+          "mapTargetDefinition" : "This element describes whether this condition refers to an allergy, non-allergy intolerance, or unknown class of intolerance (not known to be allergy or intolerance).",
+          "mapTargetCardinality" : "0..1",
+          "comment" : "Immune-mediated responses have been traditionally regarded as an indicator for escalation of significant future risk. Contemporary knowledge suggests that some reactions previously thought to be immune are actually non-immune and still carry life threatening risk. \r\n\r\nImmunological testing may provide supporting evidence for the mechanism and causative substance , but no tests are 100% sensitive or specific for a sensitivity. \r\n\r\nIt is acknowledged that most clinicians will NOT be able to distinguish the mechanism of any specific reaction. However this data element is included because many legacy systems have captured this attribute.",
+          "mapTargetBindings" : "1.3.6.1.4.1.12559.11.10.1.3.1.42.18 eHDSIAdverseEventType (SCT, used in MH@EU); [FHIR AllergyIntoleranceType](http://hl7.org/fhir/ValueSet/allergy-intolerance-type) (HL7, required in HL7 FHIR)",
+          "mapTargetFhirPath" : "EHDSAllergyIntolerance.typeOfPropensity"
         },
         "aqlPath" : "/items[openEHR-EHR-EVALUATION.adverse_reaction_risk.v2,'EHDSAllergyIntolerance']/data[at0001]/items[at0058,'typeOfPropensity']/value",
         "inputs" : [ {
@@ -238,6 +271,11 @@
         "localizedDescriptions" : {
           "en" : "Information about a specific adverse reaction event caused by exposure to a specific substance."
         },
+        "annotations" : {
+          "mapTargetDefinition" : "Adverse Reaction Events linked to exposure to substance.",
+          "mapTargetFhirPath" : "EHDSAllergyIntolerance.reaction",
+          "mapTargetCard" : "0..*"
+        },
         "aqlPath" : "/items[openEHR-EHR-EVALUATION.adverse_reaction_risk.v2,'EHDSAllergyIntolerance']/data[at0001]/items[openEHR-EHR-CLUSTER.adverse_reaction_event.v1,'reaction']",
         "children" : [ {
           "id" : "manifestation",
@@ -254,7 +292,11 @@
             "en" : "Clinical symptoms and/or signs that are observed or associated with the adverse reaction."
           },
           "annotations" : {
-            "comment" : "Manifestation can be expressed as a single word, phrase or brief description. For example: nausea, rash. 'No reaction' may be appropriate where a previous reaction has been noted but the reaction did not re-occur after further exposure. It is preferable that 'Manifestation' should be coded with a terminology, where possible. The values entered here may be used to display on an application screen as part of a list of adverse reactions."
+            "mapTargetDefinition" : "Description of the clinical manifestation of the allergic reaction. Example: anaphylactic shock, angioedema. (the clinical manifestation also gives information about the severity of the observed reaction).",
+            "mapTargetCardinality" : "0..*",
+            "comment" : "Manifestation can be expressed as a single word, phrase or brief description. For example: nausea, rash. 'No reaction' may be appropriate where a previous reaction has been noted but the reaction did not re-occur after further exposure. It is preferable that 'Manifestation' should be coded with a terminology, where possible. The values entered here may be used to display on an application screen as part of a list of adverse reactions.",
+            "mapTargetBindings" : "1.3.6.1.4.1.12559.11.10.1.3.1.42.5 eHDSIIllnessandDisorder (ICD-10, alternative in MH@EU); 1.3.6.1.4.1.12559.11.10.1.3.1.42.11 eHDSIReactionAllergy (SCT, alternative in MH@EU); ICD-11 MMS",
+            "mapTargetFhirPath" : "EHDSAllergyIntolerance.reaction.manifestation"
           },
           "aqlPath" : "/items[openEHR-EHR-EVALUATION.adverse_reaction_risk.v2,'EHDSAllergyIntolerance']/data[at0001]/items[openEHR-EHR-CLUSTER.adverse_reaction_event.v1,'reaction']/items[at0006,'manifestation']/value",
           "inputs" : [ {
@@ -273,6 +315,11 @@
           },
           "localizedDescriptions" : {
             "en" : "The date and/or time of the onset of the reaction."
+          },
+          "annotations" : {
+            "mapTargetDefinition" : "Date and time of allergy manifestation.",
+            "mapTargetCardinality" : "0..1",
+            "mapTargetFhirPath" : "EHDSAllergyIntolerance.reaction.date"
           },
           "aqlPath" : "/items[openEHR-EHR-EVALUATION.adverse_reaction_risk.v2,'EHDSAllergyIntolerance']/data[at0001]/items[openEHR-EHR-CLUSTER.adverse_reaction_event.v1,'reaction']/items[at0008,'date']/value",
           "inputs" : [ {
@@ -293,7 +340,11 @@
             "en" : "Clinical assessment of the severity of the reaction event as a whole, potentially considering multiple different manifestations."
           },
           "annotations" : {
-            "comment" : "It is acknowledged that this assessment is very subjective. There may be some some specific practice domains where objective scales have been applied. Objective scales can be included in this model using the 'Reaction details' Cluster."
+            "mapTargetDefinition" : "Severity of the clinical manifestation of the allergic reaction.",
+            "mapTargetCardinality" : "0..1",
+            "comment" : "It is acknowledged that this assessment is very subjective. There may be some some specific practice domains where objective scales have been applied. Objective scales can be included in this model using the 'Reaction details' Cluster.",
+            "mapTargetBindings" : "1.3.6.1.4.1.12559.11.10.1.3.1.42.13 eHDSISeverity (SCT, used in MH@EU); [FHIR AllergyIntoleranceSeverity](http://hl7.org/fhir/ValueSet/reaction-event-severity) (HL7, Required in HL7 FHIR)",
+            "mapTargetFhirPath" : "EHDSAllergyIntolerance.reaction.severity"
           },
           "aqlPath" : "/items[openEHR-EHR-EVALUATION.adverse_reaction_risk.v2,'EHDSAllergyIntolerance']/data[at0001]/items[openEHR-EHR-CLUSTER.adverse_reaction_event.v1,'reaction']/items[at0010,'severity']/value",
           "inputs" : [ {
@@ -348,7 +399,10 @@
           "en" : "Additional narrative about the propensity for the adverse reaction, not captured in other fields."
         },
         "annotations" : {
-          "comment" : "For example: including reason for flagging a 'Criticality' of 'High risk'; and instructions related to future exposure or administration of the Substance, such as administration within an Intensive Care Unit or under corticosteroid cover."
+          "mapTargetDefinition" : "Textual description of the allergy or intolerance.",
+          "mapTargetCardinality" : "0..1",
+          "comment" : "For example: including reason for flagging a 'Criticality' of 'High risk'; and instructions related to future exposure or administration of the Substance, such as administration within an Intensive Care Unit or under corticosteroid cover.",
+          "mapTargetFhirPath" : "EHDSAllergyIntolerance.description"
         },
         "aqlPath" : "/items[openEHR-EHR-EVALUATION.adverse_reaction_risk.v2,'EHDSAllergyIntolerance']/data[at0001]/items[at0006,'description']/value",
         "inputs" : [ {
@@ -422,7 +476,11 @@
           "en" : "Overall statement of exclusion about all adverse reactions at the time of recording."
         },
         "annotations" : {
-          "comment" : "For example: 'No previous diagnoses', 'No known family history', 'No known history of adverse reactions', 'Never taken any medications' or 'No known operations or significant procedures'."
+          "mapTargetDefinition" : "Reason for absence of data (indicates whether the person is known to have no allergies or the data is considered incomplete).",
+          "mapTargetCardinality" : "0..1",
+          "comment" : "For example: 'No previous diagnoses', 'No known family history', 'No known history of adverse reactions', 'Never taken any medications' or 'No known operations or significant procedures'.",
+          "mapTargetFhirPath" : "EHDSPatientSummary.allergiesAndIntolerances.emptyReason",
+          "mapTargetName" : "emptyReason"
         },
         "aqlPath" : "/items[openEHR-EHR-EVALUATION.exclusion_global.v1]/data[at0001]/items[at0002,'Global exclusion of adverse reactions']/value",
         "inputs" : [ {
@@ -510,7 +568,11 @@
           "en" : "Positive statement that no information is available."
         },
         "annotations" : {
-          "comment" : "For example: \"No information available about adverse reactions\"; No information available about problems or diagnoses\"; \"No information available about previous procedures performed\"; or \"No information available about medications used\"."
+          "mapTargetDefinition" : "Reason for absence of data (indicates whether the person is known to have no allergies or the data is considered incomplete).",
+          "mapTargetCardinality" : "0..1",
+          "comment" : "For example: \"No information available about adverse reactions\"; No information available about problems or diagnoses\"; \"No information available about previous procedures performed\"; or \"No information available about medications used\".",
+          "mapTargetFhirPath" : "EHDSPatientSummary.allergiesAndIntolerances.emptyReason",
+          "mapTargetName" : "emptyReason"
         },
         "aqlPath" : "/items[openEHR-EHR-EVALUATION.absence.v2]/data[at0001]/items[at0002]/value",
         "inputs" : [ {
@@ -520,25 +582,6 @@
             "label" : "No information about allergies"
           } ],
           "listOpen" : false
-        } ]
-      }, {
-        "id" : "last_updated",
-        "name" : "Last updated",
-        "localizedName" : "Last updated",
-        "rmType" : "DV_DATE_TIME",
-        "nodeId" : "at0004",
-        "min" : 0,
-        "max" : 1,
-        "dependsOn" : [ "absence_statement" ],
-        "localizedNames" : {
-          "en" : "Last updated"
-        },
-        "localizedDescriptions" : {
-          "en" : "The date at which the absence was last updated."
-        },
-        "aqlPath" : "/items[openEHR-EHR-EVALUATION.absence.v2]/protocol[at0003]/items[at0004]/value",
-        "inputs" : [ {
-          "type" : "DATETIME"
         } ]
       }, {
         "id" : "language",

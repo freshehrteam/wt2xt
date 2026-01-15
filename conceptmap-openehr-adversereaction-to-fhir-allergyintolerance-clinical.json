@@ -1,0 +1,58 @@
+{
+  "resourceType": "ConceptMap",
+  "id": "openehr-adversereaction-to-fhir-allergyintolerance-clinical",
+  "url": "http://freshehr.com/fhir/ConceptMap/openehr-adversereaction-to-fhir-allergyintolerance-clinical",
+  "version": "1.0.0",
+  "name": "OpenEHRAdverseReactionToFHIRAllergyIntoleranceClinical",
+  "title": "openEHR Adverse Reaction Status to FHIR AllergyIntolerance Clinical Status",
+  "status": "draft",
+  "experimental": false,
+  "date": "2026-01-15",
+  "description": "Mapping from openEHR Adverse Reaction status terms to FHIR AllergyIntolerance clinical status codes",
+  "sourceCanonical": "http://openehr.org/ckm/archetypes/1.4.1",
+  "targetCanonical": "http://hl7.org/fhir/ValueSet/allergyintolerance-clinical",
+  "group": [
+    {
+      "source": "http://openehr.org/ckm/archetypes/1.4.1",
+      "target": "http://terminology.hl7.org/CodeSystem/allergyintolerance-clinical",
+      "element": [
+        {
+          "code": "local:at0064",
+          "display": "Unconfirmed",
+          "target": [
+            {
+              "code": "active",
+              "display": "Active",
+              "relationship": "equivalent",
+              "comment": "Unconfirmed adverse reactions are mapped to active as the subject is potentially at risk pending confirmation"
+            }
+          ]
+        },
+        {
+          "code": "local:at0065",
+          "display": "Confirmed",
+          "target": [
+            {
+              "code": "active",
+              "display": "Active",
+              "relationship": "equivalent",
+              "comment": "Confirmed adverse reactions are actively present and the subject is at risk"
+            }
+          ]
+        },
+        {
+          "code": "local:at0066",
+          "display": "Refuted",
+          "target": [
+            {
+              "code": "resolved",
+              "display": "Resolved",
+              "relationship": "equivalent",
+              "comment": "Refuted adverse reactions have been clinically reassessed and determined not to be present"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

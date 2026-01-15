@@ -16,7 +16,7 @@ const Separator: string = ',';
 const Quoter : string = '"';
 const csvColumns: string[] = [
     'Node ID',
-    'openehr Name',
+    'openEHR Name',
     'EHDS Name',
     'openEHR Description',
     'openEHR Comment',
