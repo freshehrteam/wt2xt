@@ -115,6 +115,12 @@ export enum DvDataValues{
   'DV_PARSABLE',
 }
 
+export enum FshDataTypesFormat {
+  'FHIR',
+  'OPENEHR',
+  'CDI'
+}
+
 export enum NonDvDataValues{
   'DV_STATE' ,
   'ELEMENT',
@@ -255,6 +261,8 @@ export const openEHRInterval2FHIRTable = {
   DV_DATE: "Period",
   DV_TIME: "Period",
 }
+
+export const fsh
 
 
 export const dataValueLabelMapper = (dataValue: string) =>

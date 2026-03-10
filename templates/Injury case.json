@@ -1,0 +1,601 @@
+{
+  "templateId" : "Injury case",
+  "semVer" : "1.3.0",
+  "version" : "2.3",
+  "defaultLanguage" : "en",
+  "languages" : [ "en" ],
+  "tree" : {
+    "id" : "injury_case",
+    "name" : "Injury case",
+    "localizedName" : "Injury case",
+    "rmType" : "COMPOSITION",
+    "nodeId" : "openEHR-EHR-COMPOSITION.report.v1",
+    "min" : 1,
+    "max" : 1,
+    "localizedNames" : {
+      "en" : "Injury case"
+    },
+    "localizedDescriptions" : {
+      "en" : "Document to communicate information to others, commonly in response to a request from another party."
+    },
+    "aqlPath" : "",
+    "children" : [ {
+      "id" : "context",
+      "rmType" : "EVENT_CONTEXT",
+      "nodeId" : "",
+      "min" : 1,
+      "max" : 1,
+      "aqlPath" : "/context",
+      "children" : [ {
+        "id" : "start_time",
+        "name" : "Start_time",
+        "rmType" : "DV_DATE_TIME",
+        "min" : 1,
+        "max" : 1,
+        "aqlPath" : "/context/start_time",
+        "inputs" : [ {
+          "type" : "DATETIME"
+        } ],
+        "inContext" : true
+      }, {
+        "id" : "setting",
+        "name" : "Setting",
+        "rmType" : "DV_CODED_TEXT",
+        "min" : 1,
+        "max" : 1,
+        "aqlPath" : "/context/setting",
+        "inputs" : [ {
+          "suffix" : "code",
+          "type" : "TEXT"
+        }, {
+          "suffix" : "value",
+          "type" : "TEXT"
+        } ],
+        "inContext" : true
+      } ]
+    }, {
+      "id" : "physical_examination",
+      "name" : "Physical examination",
+      "localizedName" : "Physical examination",
+      "rmType" : "OBSERVATION",
+      "nodeId" : "openEHR-EHR-OBSERVATION.exam.v1",
+      "min" : 0,
+      "max" : 1,
+      "localizedNames" : {
+        "en" : "Physical examination"
+      },
+      "localizedDescriptions" : {
+        "en" : "Findings observed during the physical examination of a subject of care."
+      },
+      "aqlPath" : "/content[openEHR-EHR-OBSERVATION.exam.v1,'Physical examination']",
+      "children" : [ {
+        "id" : "physical_examination_findings",
+        "name" : "Physical examination findings",
+        "localizedName" : "Physical examination findings",
+        "rmType" : "CLUSTER",
+        "nodeId" : "openEHR-EHR-CLUSTER.exam.v2",
+        "min" : 0,
+        "max" : 1,
+        "localizedNames" : {
+          "en" : "Physical examination findings"
+        },
+        "localizedDescriptions" : {
+          "en" : "Findings observed during the physical examination of a body system or anatomical structure."
+        },
+        "aqlPath" : "/content[openEHR-EHR-OBSERVATION.exam.v1,'Physical examination']/data[at0001]/events[at0002,'Point in time']/data[at0003]/items[openEHR-EHR-CLUSTER.exam.v2]",
+        "children" : [ {
+          "id" : "system_or_structure_examined",
+          "name" : "System or structure examined",
+          "localizedName" : "System or structure examined",
+          "rmType" : "DV_CODED_TEXT",
+          "nodeId" : "at0001",
+          "min" : 1,
+          "max" : 1,
+          "localizedNames" : {
+            "en" : "System or structure examined"
+          },
+          "localizedDescriptions" : {
+            "en" : "Identification of the examined body system or anatomical structure."
+          },
+          "annotations" : {
+            "comment" : "Coding of the system or structure examined with a terminology is preferred, where possible."
+          },
+          "aqlPath" : "/content[openEHR-EHR-OBSERVATION.exam.v1,'Physical examination']/data[at0001]/events[at0002,'Point in time']/data[at0003]/items[openEHR-EHR-CLUSTER.exam.v2]/items[at0001]/value",
+          "inputs" : [ {
+            "suffix" : "code",
+            "type" : "CODED_TEXT",
+            "list" : [ {
+              "value" : "82169009",
+              "label" : "Left knee",
+              "localizedLabels" : {
+                "en" : "Left knee"
+              }
+            }, {
+              "value" : "6757004",
+              "label" : "Right knee",
+              "localizedLabels" : {
+                "en" : "Right knee"
+              }
+            } ],
+            "terminology" : "SNOMED-CT"
+          } ]
+        }, {
+          "id" : "description",
+          "name" : "Description",
+          "localizedName" : "Description",
+          "rmType" : "DV_TEXT",
+          "nodeId" : "at0003",
+          "min" : 0,
+          "max" : 1,
+          "localizedNames" : {
+            "en" : "Description"
+          },
+          "localizedDescriptions" : {
+            "en" : "Narrative description of the overall findings observed during the physical examination."
+          },
+          "aqlPath" : "/content[openEHR-EHR-OBSERVATION.exam.v1,'Physical examination']/data[at0001]/events[at0002,'Point in time']/data[at0003]/items[openEHR-EHR-CLUSTER.exam.v2]/items[at0003,'Description']/value",
+          "inputs" : [ {
+            "type" : "TEXT"
+          } ]
+        } ]
+      }, {
+        "id" : "time",
+        "name" : "Time",
+        "rmType" : "DV_DATE_TIME",
+        "min" : 1,
+        "max" : 1,
+        "aqlPath" : "/content[openEHR-EHR-OBSERVATION.exam.v1,'Physical examination']/data[at0001]/events[at0002,'Point in time']/time",
+        "inputs" : [ {
+          "type" : "DATETIME"
+        } ],
+        "inContext" : true
+      }, {
+        "id" : "language",
+        "name" : "Language",
+        "rmType" : "CODE_PHRASE",
+        "min" : 1,
+        "max" : 1,
+        "aqlPath" : "/content[openEHR-EHR-OBSERVATION.exam.v1,'Physical examination']/language",
+        "inContext" : true
+      }, {
+        "id" : "encoding",
+        "name" : "Encoding",
+        "rmType" : "CODE_PHRASE",
+        "min" : 1,
+        "max" : 1,
+        "aqlPath" : "/content[openEHR-EHR-OBSERVATION.exam.v1,'Physical examination']/encoding",
+        "inContext" : true
+      }, {
+        "id" : "subject",
+        "name" : "Subject",
+        "rmType" : "PARTY_PROXY",
+        "min" : 1,
+        "max" : 1,
+        "aqlPath" : "/content[openEHR-EHR-OBSERVATION.exam.v1,'Physical examination']/subject",
+        "inputs" : [ {
+          "suffix" : "id",
+          "type" : "TEXT"
+        }, {
+          "suffix" : "id_scheme",
+          "type" : "TEXT"
+        }, {
+          "suffix" : "id_namespace",
+          "type" : "TEXT"
+        }, {
+          "suffix" : "name",
+          "type" : "TEXT"
+        } ],
+        "inContext" : true
+      } ]
+    }, {
+      "id" : "medication",
+      "name" : "Medication",
+      "localizedName" : "Medication",
+      "rmType" : "OBSERVATION",
+      "nodeId" : "openEHR-EHR-OBSERVATION.medication_screening.v1",
+      "min" : 0,
+      "max" : 1,
+      "localizedNames" : {
+        "en" : "Medication"
+      },
+      "localizedDescriptions" : {
+        "en" : "Series of questions and associated answers used to screen for the use of medications."
+      },
+      "annotations" : {
+        "comment" : "The answers may be self-reported."
+      },
+      "aqlPath" : "/content[openEHR-EHR-OBSERVATION.medication_screening.v1,'Medication']",
+      "children" : [ {
+        "id" : "steroids",
+        "name" : "Steroids",
+        "localizedName" : "Steroids",
+        "rmType" : "CLUSTER",
+        "nodeId" : "at0026",
+        "min" : 0,
+        "max" : -1,
+        "localizedNames" : {
+          "en" : "Steroids"
+        },
+        "localizedDescriptions" : {
+          "en" : "Details about a specified medication or grouping of medications relevant for the screening purpose."
+        },
+        "annotations" : {
+          "comment" : "Use separate instances of this CLUSTER to differentiate between specific medications or groupings of medication."
+        },
+        "aqlPath" : "/content[openEHR-EHR-OBSERVATION.medication_screening.v1,'Medication']/data[at0022]/events[at0023,'Point in time']/data[at0001]/items[at0026,'Steroids']",
+        "children" : [ {
+          "id" : "medication_name",
+          "name" : "Medication name",
+          "localizedName" : "Medication name",
+          "rmType" : "DV_CODED_TEXT",
+          "nodeId" : "at0021",
+          "min" : 1,
+          "max" : 1,
+          "localizedNames" : {
+            "en" : "Medication name"
+          },
+          "localizedDescriptions" : {
+            "en" : "Name of medication or grouping of medication."
+          },
+          "annotations" : {
+            "comment" : "For example: 'alendronic acid', 'anti osteoporosis medications' or 'bisphosphonates'.\r\nCoding of the 'Medication name' with a terminology is preferred, where possible."
+          },
+          "aqlPath" : "/content[openEHR-EHR-OBSERVATION.medication_screening.v1,'Medication']/data[at0022]/events[at0023,'Point in time']/data[at0001]/items[at0026,'Steroids']/items[at0021]/value",
+          "inputs" : [ {
+            "suffix" : "code",
+            "type" : "CODED_TEXT",
+            "list" : [ {
+              "value" : "71691000146104",
+              "label" : "Use of steroids",
+              "localizedLabels" : {
+                "en" : "Use of steroids"
+              }
+            } ],
+            "defaultValue" : "71691000146104",
+            "terminology" : "SNOMED-CT"
+          } ]
+        }, {
+          "id" : "steroid_use",
+          "name" : "Steroid use",
+          "localizedName" : "Steroid use",
+          "rmType" : "DV_CODED_TEXT",
+          "nodeId" : "at0024",
+          "min" : 0,
+          "max" : 1,
+          "localizedNames" : {
+            "en" : "Steroid use"
+          },
+          "localizedDescriptions" : {
+            "en" : "Is there a history of use of a specific medication or group of medications?"
+          },
+          "annotations" : {
+            "comment" : "In a template, the data element would usually be renamed to the specific question asked. The proposed value set can be adapted for local use by using the DV_TEXT or the DV_BOOLEAN datatypes choice to match each specific use case. \r\nFor example an alternative valueset using the DV_TEXT datatype can be: \r\nCurrently using [The individual currently uses the specific medication either on a regular basis or as required.]\r\nNever used [The individual has never used the specific medication.]\r\nUsed in the past [The individual has used the specific medication in the past, but isn't currently using it.]\r\nUnknown [It is not known whether the individual uses or has used the specific medication.]"
+          },
+          "aqlPath" : "/content[openEHR-EHR-OBSERVATION.medication_screening.v1,'Medication']/data[at0022]/events[at0023,'Point in time']/data[at0001]/items[at0026,'Steroids']/items[at0024,'Steroid use']/value",
+          "inputs" : [ {
+            "suffix" : "code",
+            "type" : "CODED_TEXT",
+            "list" : [ {
+              "value" : "at0036",
+              "label" : "Yes",
+              "localizedLabels" : {
+                "en" : "Yes"
+              },
+              "localizedDescriptions" : {
+                "en" : ""
+              },
+              "termBindings" : {
+                "SNOMED-CT" : {
+                  "value" : "[SNOMED-CT::373066001]",
+                  "terminologyId" : "SNOMED-CT"
+                }
+              }
+            }, {
+              "value" : "at0037",
+              "label" : "No",
+              "localizedLabels" : {
+                "en" : "No"
+              },
+              "localizedDescriptions" : {
+                "en" : ""
+              },
+              "termBindings" : {
+                "SNOMED-CT" : {
+                  "value" : "[SNOMED-CT::373067005]",
+                  "terminologyId" : "SNOMED-CT"
+                }
+              }
+            } ]
+          } ]
+        } ]
+      }, {
+        "id" : "time",
+        "name" : "Time",
+        "rmType" : "DV_DATE_TIME",
+        "min" : 1,
+        "max" : 1,
+        "aqlPath" : "/content[openEHR-EHR-OBSERVATION.medication_screening.v1,'Medication']/data[at0022]/events[at0023,'Point in time']/time",
+        "inputs" : [ {
+          "type" : "DATETIME"
+        } ],
+        "inContext" : true
+      }, {
+        "id" : "language",
+        "name" : "Language",
+        "rmType" : "CODE_PHRASE",
+        "min" : 1,
+        "max" : 1,
+        "aqlPath" : "/content[openEHR-EHR-OBSERVATION.medication_screening.v1,'Medication']/language",
+        "inContext" : true
+      }, {
+        "id" : "encoding",
+        "name" : "Encoding",
+        "rmType" : "CODE_PHRASE",
+        "min" : 1,
+        "max" : 1,
+        "aqlPath" : "/content[openEHR-EHR-OBSERVATION.medication_screening.v1,'Medication']/encoding",
+        "inContext" : true
+      }, {
+        "id" : "subject",
+        "name" : "Subject",
+        "rmType" : "PARTY_PROXY",
+        "min" : 1,
+        "max" : 1,
+        "aqlPath" : "/content[openEHR-EHR-OBSERVATION.medication_screening.v1,'Medication']/subject",
+        "inputs" : [ {
+          "suffix" : "id",
+          "type" : "TEXT"
+        }, {
+          "suffix" : "id_scheme",
+          "type" : "TEXT"
+        }, {
+          "suffix" : "id_namespace",
+          "type" : "TEXT"
+        }, {
+          "suffix" : "name",
+          "type" : "TEXT"
+        } ],
+        "inContext" : true
+      } ]
+    }, {
+      "id" : "injury",
+      "name" : "Injury",
+      "localizedName" : "Injury",
+      "rmType" : "EVALUATION",
+      "nodeId" : "openEHR-EHR-EVALUATION.problem_diagnosis.v1",
+      "min" : 0,
+      "max" : 1,
+      "localizedNames" : {
+        "en" : "Injury"
+      },
+      "localizedDescriptions" : {
+        "en" : "Details about a single identified health condition, injury, disability or any other issue which impacts on the physical, mental and/or social well-being of an individual."
+      },
+      "annotations" : {
+        "comment" : "Clear delineation between the scope of a problem versus a diagnosis is not easy to achieve in practice. For the purposes of clinical documentation with this archetype, problem and diagnosis are regarded as a continuum, with increasing levels of detail and supportive evidence usually providing weight towards the label of 'diagnosis'."
+      },
+      "aqlPath" : "/content[openEHR-EHR-EVALUATION.problem_diagnosis.v1,'Injury']",
+      "children" : [ {
+        "id" : "injury_name",
+        "name" : "Injury name",
+        "localizedName" : "Injury name",
+        "rmType" : "DV_CODED_TEXT",
+        "nodeId" : "at0002",
+        "min" : 1,
+        "max" : 1,
+        "localizedNames" : {
+          "en" : "Injury name"
+        },
+        "localizedDescriptions" : {
+          "en" : "Identification of the problem or diagnosis, by name."
+        },
+        "annotations" : {
+          "comment" : "Coding of the name of the problem or diagnosis with a terminology is preferred, where possible."
+        },
+        "aqlPath" : "/content[openEHR-EHR-EVALUATION.problem_diagnosis.v1,'Injury']/data[at0001]/items[at0002,'Injury name']/value",
+        "inputs" : [ {
+          "suffix" : "code",
+          "type" : "CODED_TEXT",
+          "list" : [ {
+            "value" : "S83.5",
+            "label" : "Sprain and strain involving (anterior)(posterior) cruciate ligament of knee",
+            "localizedLabels" : {
+              "en" : "Sprain and strain involving (anterior)(posterior) cruciate ligament of knee"
+            }
+          } ],
+          "terminology" : "ICD-10"
+        } ]
+      }, {
+        "id" : "description",
+        "name" : "Description",
+        "localizedName" : "Description",
+        "rmType" : "DV_TEXT",
+        "nodeId" : "at0009",
+        "min" : 0,
+        "max" : 1,
+        "localizedNames" : {
+          "en" : "Description"
+        },
+        "localizedDescriptions" : {
+          "en" : "Narrative description about the problem or diagnosis."
+        },
+        "annotations" : {
+          "comment" : "Use to provide background and context, including evolution, episodes or exacerbations, progress and any other relevant details, about the problem or diagnosis."
+        },
+        "aqlPath" : "/content[openEHR-EHR-EVALUATION.problem_diagnosis.v1,'Injury']/data[at0001]/items[at0009,'Description']/value",
+        "inputs" : [ {
+          "type" : "TEXT"
+        } ]
+      }, {
+        "id" : "body_site",
+        "name" : "Body site",
+        "localizedName" : "Body site",
+        "rmType" : "DV_CODED_TEXT",
+        "nodeId" : "at0012",
+        "min" : 0,
+        "max" : 1,
+        "localizedNames" : {
+          "en" : "Body site"
+        },
+        "localizedDescriptions" : {
+          "en" : "Identification of a simple body site for the location of the problem or diagnosis."
+        },
+        "annotations" : {
+          "comment" : "Coding of the name of the anatomical location with a terminology is preferred, where possible.\r\nUse this data element to record precoordinated anatomical locations. If the requirements for recording the anatomical location are determined at run-time by the application or require more complex modelling such as relative locations then use the CLUSTER.anatomical_location or CLUSTER.relative_location within the 'Structured anatomical location' SLOT in this archetype. Occurrences for this data element are unbounded to allow for clinical scenarios such as describing a rash in multiple locations but where all of the other attributes are identical. If the anatomical location is included in the Problem/diagnosis name via precoordinated codes, this data element becomes redundant."
+        },
+        "aqlPath" : "/content[openEHR-EHR-EVALUATION.problem_diagnosis.v1,'Injury']/data[at0001]/items[at0012]/value",
+        "inputs" : [ {
+          "suffix" : "code",
+          "type" : "CODED_TEXT",
+          "list" : [ {
+            "value" : "82169009",
+            "label" : "Left knee",
+            "localizedLabels" : {
+              "en" : "Left knee"
+            }
+          }, {
+            "value" : "6757004",
+            "label" : "Right knee",
+            "localizedLabels" : {
+              "en" : "Right knee"
+            }
+          } ],
+          "terminology" : "SNOMED-CT"
+        } ]
+      }, {
+        "id" : "date_of_injury",
+        "name" : "Date of injury",
+        "localizedName" : "Date of injury",
+        "rmType" : "DV_DATE_TIME",
+        "nodeId" : "at0077",
+        "min" : 0,
+        "max" : 1,
+        "localizedNames" : {
+          "en" : "Date of injury"
+        },
+        "localizedDescriptions" : {
+          "en" : "Estimated or actual date/time that signs or symptoms of the problem/diagnosis were first observed."
+        },
+        "annotations" : {
+          "comment" : "Data captured/imported as \"Age at onset\" should be converted to a date using the subject's date of birth."
+        },
+        "aqlPath" : "/content[openEHR-EHR-EVALUATION.problem_diagnosis.v1,'Injury']/data[at0001]/items[at0077,'Date of injury']/value",
+        "inputs" : [ {
+          "type" : "DATETIME"
+        } ]
+      }, {
+        "id" : "comment",
+        "name" : "Comment",
+        "localizedName" : "Comment",
+        "rmType" : "DV_TEXT",
+        "nodeId" : "at0069",
+        "min" : 0,
+        "max" : 1,
+        "localizedNames" : {
+          "en" : "Comment"
+        },
+        "localizedDescriptions" : {
+          "en" : "Additional narrative about the problem or diagnosis not captured in other fields."
+        },
+        "aqlPath" : "/content[openEHR-EHR-EVALUATION.problem_diagnosis.v1,'Injury']/data[at0001]/items[at0069]/value",
+        "inputs" : [ {
+          "type" : "TEXT"
+        } ]
+      }, {
+        "id" : "language",
+        "name" : "Language",
+        "rmType" : "CODE_PHRASE",
+        "min" : 1,
+        "max" : 1,
+        "aqlPath" : "/content[openEHR-EHR-EVALUATION.problem_diagnosis.v1,'Injury']/language",
+        "inContext" : true
+      }, {
+        "id" : "encoding",
+        "name" : "Encoding",
+        "rmType" : "CODE_PHRASE",
+        "min" : 1,
+        "max" : 1,
+        "aqlPath" : "/content[openEHR-EHR-EVALUATION.problem_diagnosis.v1,'Injury']/encoding",
+        "inContext" : true
+      }, {
+        "id" : "subject",
+        "name" : "Subject",
+        "rmType" : "PARTY_PROXY",
+        "min" : 1,
+        "max" : 1,
+        "aqlPath" : "/content[openEHR-EHR-EVALUATION.problem_diagnosis.v1,'Injury']/subject",
+        "inputs" : [ {
+          "suffix" : "id",
+          "type" : "TEXT"
+        }, {
+          "suffix" : "id_scheme",
+          "type" : "TEXT"
+        }, {
+          "suffix" : "id_namespace",
+          "type" : "TEXT"
+        }, {
+          "suffix" : "name",
+          "type" : "TEXT"
+        } ],
+        "inContext" : true
+      } ]
+    }, {
+      "id" : "category",
+      "rmType" : "DV_CODED_TEXT",
+      "nodeId" : "",
+      "min" : 1,
+      "max" : 1,
+      "aqlPath" : "/category",
+      "inputs" : [ {
+        "suffix" : "code",
+        "type" : "CODED_TEXT",
+        "list" : [ {
+          "value" : "433",
+          "label" : "event",
+          "localizedLabels" : {
+            "en" : "event"
+          }
+        } ],
+        "terminology" : "openehr"
+      } ],
+      "inContext" : true
+    }, {
+      "id" : "language",
+      "name" : "Language",
+      "rmType" : "CODE_PHRASE",
+      "min" : 1,
+      "max" : 1,
+      "aqlPath" : "/language",
+      "inContext" : true
+    }, {
+      "id" : "territory",
+      "name" : "Territory",
+      "rmType" : "CODE_PHRASE",
+      "min" : 1,
+      "max" : 1,
+      "aqlPath" : "/territory",
+      "inContext" : true
+    }, {
+      "id" : "composer",
+      "name" : "Composer",
+      "rmType" : "PARTY_PROXY",
+      "min" : 1,
+      "max" : 1,
+      "aqlPath" : "/composer",
+      "inputs" : [ {
+        "suffix" : "id",
+        "type" : "TEXT"
+      }, {
+        "suffix" : "id_scheme",
+        "type" : "TEXT"
+      }, {
+        "suffix" : "id_namespace",
+        "type" : "TEXT"
+      }, {
+        "suffix" : "name",
+        "type" : "TEXT"
+      } ],
+      "inContext" : true
+    } ]
+  }
+}

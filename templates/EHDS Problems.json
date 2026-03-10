@@ -1,0 +1,820 @@
+{
+  "templateId" : "EHDS Problems",
+  "semVer" : "1.0.0-alpha.8",
+  "version" : "2.3",
+  "defaultLanguage" : "en",
+  "languages" : [ "en" ],
+  "tree" : {
+    "id" : "ehds_problems",
+    "name" : "EHDS Problems",
+    "localizedName" : "EHDS Problems",
+    "rmType" : "SECTION",
+    "nodeId" : "openEHR-EHR-SECTION.adhoc.v1",
+    "min" : 1,
+    "max" : 1,
+    "localizedNames" : {
+      "en" : "EHDS Problems"
+    },
+    "localizedDescriptions" : {
+      "en" : "A generic section header which should be renamed in a template to suit a specific clinical context."
+    },
+    "aqlPath" : "",
+    "children" : [ {
+      "id" : "ehdscondition",
+      "name" : "EHDSCondition",
+      "localizedName" : "EHDSCondition",
+      "rmType" : "EVALUATION",
+      "nodeId" : "openEHR-EHR-EVALUATION.problem_diagnosis.v1",
+      "min" : 0,
+      "max" : 1,
+      "localizedNames" : {
+        "en" : "EHDSCondition"
+      },
+      "localizedDescriptions" : {
+        "en" : "Details about a single identified health condition, injury, disability or any other issue which impacts on the physical, mental and/or social well-being of an individual."
+      },
+      "annotations" : {
+        "comment" : "Clear delineation between the scope of a problem versus a diagnosis is not easy to achieve in practice. For the purposes of clinical documentation with this archetype, problem and diagnosis are regarded as a continuum, with increasing levels of detail and supportive evidence usually providing weight towards the label of 'diagnosis'."
+      },
+      "aqlPath" : "/items[openEHR-EHR-EVALUATION.problem_diagnosis.v1,'EHDSCondition']",
+      "children" : [ {
+        "id" : "problem",
+        "name" : "problem",
+        "localizedName" : "problem",
+        "rmType" : "DV_TEXT",
+        "nodeId" : "at0002",
+        "min" : 1,
+        "max" : 1,
+        "localizedNames" : {
+          "en" : "problem"
+        },
+        "localizedDescriptions" : {
+          "en" : "Identification of the problem or diagnosis, by name."
+        },
+        "annotations" : {
+          "comment" : "Coding of the name of the problem or diagnosis with a terminology is preferred, where possible."
+        },
+        "aqlPath" : "/items[openEHR-EHR-EVALUATION.problem_diagnosis.v1,'EHDSCondition']/data[at0001]/items[at0002,'problem']/value",
+        "inputs" : [ {
+          "type" : "TEXT"
+        } ]
+      }, {
+        "id" : "ehdsbodystructure",
+        "name" : "EHDSBodyStructure",
+        "localizedName" : "EHDSBodyStructure",
+        "rmType" : "CLUSTER",
+        "nodeId" : "openEHR-EHR-CLUSTER.anatomical_location.v1",
+        "min" : 0,
+        "max" : 1,
+        "localizedNames" : {
+          "en" : "EHDSBodyStructure"
+        },
+        "localizedDescriptions" : {
+          "en" : "A physical site on or within the human body."
+        },
+        "aqlPath" : "/items[openEHR-EHR-EVALUATION.problem_diagnosis.v1,'EHDSCondition']/data[at0001]/items[openEHR-EHR-CLUSTER.anatomical_location.v1,'EHDSBodyStructure']",
+        "children" : [ {
+          "id" : "location",
+          "name" : "location",
+          "localizedName" : "location",
+          "rmType" : "DV_TEXT",
+          "nodeId" : "at0001",
+          "min" : 1,
+          "max" : 1,
+          "localizedNames" : {
+            "en" : "location"
+          },
+          "localizedDescriptions" : {
+            "en" : "Identification of a single physical site either on, or within, the human body."
+          },
+          "annotations" : {
+            "comment" : "This data element is the only mandated data point in this archetype and should be used as the primary data point to record an anatomical location with a commonly used name. It is strongly recommended that 'Body site name' be recorded as specifically as is anatomically possible. For example: record 'upper eyelid' rather than recording 'eyelid' with 'upper' as a qualifier; 'fifth rib' rather than 'rib' with a numeric qualifier. Use the other data elements for laterality, aspect, region and anatomical line to provide more detail.\r\n\r\nThis data element should be coded with a terminology capable of triggering decision support, where possible - an appropriate termset for use here could comprise individual concepts or a list of precoordinated terms. Free text should be used only if there is no appropriate terminology available.\r\n\r\nIf 'Body site name' is already identified in an archetype in which this Anatomical location archetype has been nested, then this data element may be redundant. However, it might be reasonable to duplicate 'Body site name' in this archetype to support semantic querying using this archetype, instead of the archetype in which it has been nested."
+          },
+          "aqlPath" : "/items[openEHR-EHR-EVALUATION.problem_diagnosis.v1,'EHDSCondition']/data[at0001]/items[openEHR-EHR-CLUSTER.anatomical_location.v1,'EHDSBodyStructure']/items[at0001,'location']/value",
+          "inputs" : [ {
+            "type" : "TEXT"
+          } ]
+        }, {
+          "id" : "locationqualifier",
+          "name" : "locationQualifier",
+          "localizedName" : "locationQualifier",
+          "rmType" : "DV_TEXT",
+          "nodeId" : "at0065",
+          "min" : 0,
+          "max" : -1,
+          "localizedNames" : {
+            "en" : "locationQualifier"
+          },
+          "localizedDescriptions" : {
+            "en" : "Additional detail using a specific region or a point on, or within, the identified body site."
+          },
+          "annotations" : {
+            "comment" : "Use to increase precision of identification of the body site, if required. For example, the upper right quadrant or McBurney's point on the abdominal wall or interphalangeal joint of the great toe. If the 'Body site name' data element uses pre-coordinated terms that include the specific site, then this data element is redundant.\r\nIn most situations this will be a single specific site. This data element has multiple occurrences to support less common use cases which need to identify a single anatomical location involving two or more adjacent and continuous specific sites. For example, to describe the specific site of a single tumour extending across the 2nd, 3rd and 4th ribs."
+          },
+          "aqlPath" : "/items[openEHR-EHR-EVALUATION.problem_diagnosis.v1,'EHDSCondition']/data[at0001]/items[openEHR-EHR-CLUSTER.anatomical_location.v1,'EHDSBodyStructure']/items[at0065,'locationQualifier']/value",
+          "inputs" : [ {
+            "type" : "TEXT"
+          } ]
+        }, {
+          "id" : "laterality",
+          "name" : "laterality",
+          "localizedName" : "laterality",
+          "rmType" : "DV_CODED_TEXT",
+          "nodeId" : "at0002",
+          "min" : 0,
+          "max" : 1,
+          "localizedNames" : {
+            "en" : "laterality"
+          },
+          "localizedDescriptions" : {
+            "en" : "The side of the body on which the identified body site is located."
+          },
+          "annotations" : {
+            "comment" : "If the 'Body site name' includes a pre-coordinated term that already specifies laterality, this data element may be redundant. If the findings require documentation of a body site on both the left and right sides of the body, or involving both sides of a paired structure or region, use 'Left and right' only when the same anatomical site is affected on both sides and side-specific detail is not required. If the findings differ significantly between sides, each should be recorded as a separate instance of this archetype with the appropriate laterality."
+          },
+          "aqlPath" : "/items[openEHR-EHR-EVALUATION.problem_diagnosis.v1,'EHDSCondition']/data[at0001]/items[openEHR-EHR-CLUSTER.anatomical_location.v1,'EHDSBodyStructure']/items[at0002,'laterality']/value",
+          "inputs" : [ {
+            "suffix" : "code",
+            "type" : "CODED_TEXT",
+            "list" : [ {
+              "value" : "at0003",
+              "label" : "Left",
+              "localizedLabels" : {
+                "en" : "Left"
+              },
+              "localizedDescriptions" : {
+                "en" : "Left side of the body."
+              },
+              "termBindings" : {
+                "SNOMED-CT" : {
+                  "value" : "[SNOMED-CT::7771000]",
+                  "terminologyId" : "SNOMED-CT"
+                }
+              }
+            }, {
+              "value" : "at0004",
+              "label" : "Right",
+              "localizedLabels" : {
+                "en" : "Right"
+              },
+              "localizedDescriptions" : {
+                "en" : "Right side of the body."
+              },
+              "termBindings" : {
+                "SNOMED-CT" : {
+                  "value" : "[SNOMED-CT::24028007]",
+                  "terminologyId" : "SNOMED-CT"
+                }
+              }
+            }, {
+              "value" : "at0083",
+              "label" : "Left and right",
+              "localizedLabels" : {
+                "en" : "Left and right"
+              },
+              "localizedDescriptions" : {
+                "en" : "Both the left and right sides of the body, or involving both sides of a paired organ, body structure, or anatomical region."
+              },
+              "termBindings" : {
+                "SNOMED-CT" : {
+                  "value" : "[SNOMED-CT::51440002]",
+                  "terminologyId" : "SNOMED-CT"
+                }
+              }
+            } ]
+          } ],
+          "termBindings" : {
+            "SNOMED-CT" : {
+              "value" : "[SNOMED-CT::272741003]",
+              "terminologyId" : "SNOMED-CT"
+            }
+          }
+        }, {
+          "id" : "description",
+          "name" : "description",
+          "localizedName" : "description",
+          "rmType" : "DV_TEXT",
+          "nodeId" : "at0023",
+          "min" : 0,
+          "max" : 1,
+          "localizedNames" : {
+            "en" : "description"
+          },
+          "localizedDescriptions" : {
+            "en" : "Narrative description that can be used to further refine and support the 'Body site name'."
+          },
+          "annotations" : {
+            "comment" : "For example: adjacent to the vermilion border; a tattoo covers the bottom half of this area."
+          },
+          "aqlPath" : "/items[openEHR-EHR-EVALUATION.problem_diagnosis.v1,'EHDSCondition']/data[at0001]/items[openEHR-EHR-CLUSTER.anatomical_location.v1,'EHDSBodyStructure']/items[at0023,'description']/value",
+          "inputs" : [ {
+            "type" : "TEXT"
+          } ]
+        } ]
+      }, {
+        "id" : "onsetdate",
+        "name" : "onsetDate",
+        "localizedName" : "onsetDate",
+        "rmType" : "DV_DATE_TIME",
+        "nodeId" : "at0077",
+        "min" : 0,
+        "max" : 1,
+        "localizedNames" : {
+          "en" : "onsetDate"
+        },
+        "localizedDescriptions" : {
+          "en" : "Estimated or actual date/time that signs or symptoms of the problem/diagnosis were first observed."
+        },
+        "annotations" : {
+          "comment" : "Data captured/imported as \"Age at onset\" should be converted to a date using the subject's date of birth."
+        },
+        "aqlPath" : "/items[openEHR-EHR-EVALUATION.problem_diagnosis.v1,'EHDSCondition']/data[at0001]/items[at0077,'onsetDate']/value",
+        "inputs" : [ {
+          "type" : "DATETIME"
+        } ]
+      }, {
+        "id" : "severity",
+        "name" : "severity",
+        "localizedName" : "severity",
+        "rmType" : "DV_CODED_TEXT",
+        "nodeId" : "at0005",
+        "min" : 0,
+        "max" : 1,
+        "localizedNames" : {
+          "en" : "severity"
+        },
+        "localizedDescriptions" : {
+          "en" : "An assessment of the overall severity of the problem or diagnosis."
+        },
+        "annotations" : {
+          "comment" : "If severity is included in the Problem/diagnosis name via precoordinated codes, this data element becomes redundant. Note: more specific grading of severity can be recorded using the Specific details SLOT."
+        },
+        "aqlPath" : "/items[openEHR-EHR-EVALUATION.problem_diagnosis.v1,'EHDSCondition']/data[at0001]/items[at0005,'severity']/value",
+        "inputs" : [ {
+          "suffix" : "code",
+          "type" : "CODED_TEXT",
+          "list" : [ {
+            "value" : "at0047",
+            "label" : "Mild",
+            "localizedLabels" : {
+              "en" : "Mild"
+            },
+            "localizedDescriptions" : {
+              "en" : "The problem or diagnosis does not interfere with normal activity or may cause damage to health if left untreated."
+            }
+          }, {
+            "value" : "at0048",
+            "label" : "Moderate",
+            "localizedLabels" : {
+              "en" : "Moderate"
+            },
+            "localizedDescriptions" : {
+              "en" : "The problem or diagnosis causes interference with normal activity or will damage health if left untreated."
+            }
+          }, {
+            "value" : "at0049",
+            "label" : "Severe",
+            "localizedLabels" : {
+              "en" : "Severe"
+            },
+            "localizedDescriptions" : {
+              "en" : "The problem or diagnosis prevents normal activity or will seriously damage health if left untreated."
+            }
+          } ],
+          "listOpen" : true
+        }, {
+          "suffix" : "other",
+          "type" : "TEXT"
+        } ]
+      }, {
+        "id" : "enddate",
+        "name" : "endDate",
+        "localizedName" : "endDate",
+        "rmType" : "DV_DATE_TIME",
+        "nodeId" : "at0030",
+        "min" : 0,
+        "max" : 1,
+        "localizedNames" : {
+          "en" : "endDate"
+        },
+        "localizedDescriptions" : {
+          "en" : "Estimated or actual date/time of resolution or remission for this problem or diagnosis, as determined by a healthcare professional."
+        },
+        "annotations" : {
+          "comment" : "Partial dates are acceptable. If the subject of care is under the age of one year, then the complete date or a minimum of the month and year is necessary to enable accurate age calculations - for example, if used to drive decision support. Data captured/imported as \"Age at time of resolution\" should be converted to a date using the subject's date of birth.\r\n"
+        },
+        "aqlPath" : "/items[openEHR-EHR-EVALUATION.problem_diagnosis.v1,'EHDSCondition']/data[at0001]/items[at0030,'endDate']/value",
+        "inputs" : [ {
+          "type" : "DATETIME"
+        } ]
+      }, {
+        "id" : "problem_diagnosis_qualifier",
+        "name" : "Problem/Diagnosis qualifier",
+        "localizedName" : "Problem/Diagnosis qualifier",
+        "rmType" : "CLUSTER",
+        "nodeId" : "openEHR-EHR-CLUSTER.problem_qualifier.v2",
+        "min" : 0,
+        "max" : 1,
+        "localizedNames" : {
+          "en" : "Problem/Diagnosis qualifier"
+        },
+        "localizedDescriptions" : {
+          "en" : "Contextual or temporal qualifier for a specified problem or diagnosis."
+        },
+        "aqlPath" : "/items[openEHR-EHR-EVALUATION.problem_diagnosis.v1,'EHDSCondition']/data[at0001]/items[openEHR-EHR-CLUSTER.problem_qualifier.v2]",
+        "children" : [ {
+          "id" : "problemstatus",
+          "name" : "problemStatus",
+          "localizedName" : "problemStatus",
+          "rmType" : "DV_CODED_TEXT",
+          "nodeId" : "at0003",
+          "min" : 0,
+          "max" : 1,
+          "localizedNames" : {
+            "en" : "problemStatus"
+          },
+          "localizedDescriptions" : {
+            "en" : "Category that supports division of problems and diagnoses into Active or Inactive problem lists."
+          },
+          "annotations" : {
+            "comment" : "The Active/Inactive and Current/Past data elements have similar clinical impact but represent slightly different semantics. Both are actively used in different clinical settings, but usually not together. If a Current/Past qualifier is recorded, then this data element is likely to be redundant. An exception where a condition can be current but inactive is asthma that is not causing acute symptoms."
+          },
+          "aqlPath" : "/items[openEHR-EHR-EVALUATION.problem_diagnosis.v1,'EHDSCondition']/data[at0001]/items[openEHR-EHR-CLUSTER.problem_qualifier.v2]/items[at0003,'problemStatus']/value",
+          "inputs" : [ {
+            "suffix" : "code",
+            "type" : "CODED_TEXT",
+            "list" : [ {
+              "value" : "at0026",
+              "label" : "Active",
+              "localizedLabels" : {
+                "en" : "Active"
+              },
+              "localizedDescriptions" : {
+                "en" : "The problem or diagnosis is currently active and clinically relevant."
+              }
+            }, {
+              "value" : "at0027",
+              "label" : "Inactive",
+              "localizedLabels" : {
+                "en" : "Inactive"
+              },
+              "localizedDescriptions" : {
+                "en" : "The problem or diagnosis is not completely resolved but is inactive or felt less relevant to the current clinical context."
+              }
+            } ]
+          } ]
+        }, {
+          "id" : "problemstatus2",
+          "name" : "problemStatus",
+          "localizedName" : "problemStatus",
+          "rmType" : "DV_CODED_TEXT",
+          "nodeId" : "at0083",
+          "min" : 0,
+          "max" : 1,
+          "localizedNames" : {
+            "en" : "problemStatus"
+          },
+          "localizedDescriptions" : {
+            "en" : "Phase of healing for an acute problem or diagnosis."
+          },
+          "annotations" : {
+            "comment" : "For example: tracking the progress of resolution of a middle ear infection."
+          },
+          "aqlPath" : "/items[openEHR-EHR-EVALUATION.problem_diagnosis.v1,'EHDSCondition']/data[at0001]/items[openEHR-EHR-CLUSTER.problem_qualifier.v2]/items[at0083,'problemStatus']/value",
+          "inputs" : [ {
+            "suffix" : "code",
+            "type" : "CODED_TEXT",
+            "list" : [ {
+              "value" : "at0084",
+              "label" : "Resolved",
+              "localizedLabels" : {
+                "en" : "Resolved"
+              },
+              "localizedDescriptions" : {
+                "en" : "Problem or diagnosis has completed the normal phases of restoration or healing and can be considered resolved."
+              }
+            }, {
+              "value" : "at0097",
+              "label" : "Relapsed",
+              "localizedLabels" : {
+                "en" : "Relapsed"
+              },
+              "localizedDescriptions" : {
+                "en" : "Problem or diagnosis has deteriorated after a period of temporary improvement."
+              }
+            } ]
+          } ]
+        }, {
+          "id" : "problemstatus3",
+          "name" : "problemStatus",
+          "localizedName" : "problemStatus",
+          "rmType" : "DV_CODED_TEXT",
+          "nodeId" : "at0089",
+          "min" : 0,
+          "max" : 1,
+          "localizedNames" : {
+            "en" : "problemStatus"
+          },
+          "localizedDescriptions" : {
+            "en" : "Status of the remission of an incurable diagnosis."
+          },
+          "annotations" : {
+            "comment" : "For example: the status of a cancer or haematological diagnosis."
+          },
+          "aqlPath" : "/items[openEHR-EHR-EVALUATION.problem_diagnosis.v1,'EHDSCondition']/data[at0001]/items[openEHR-EHR-CLUSTER.problem_qualifier.v2]/items[at0089,'problemStatus']/value",
+          "inputs" : [ {
+            "suffix" : "code",
+            "type" : "CODED_TEXT",
+            "list" : [ {
+              "value" : "at0090",
+              "label" : "In remission",
+              "localizedLabels" : {
+                "en" : "In remission"
+              },
+              "localizedDescriptions" : {
+                "en" : "No ongoing signs or symptoms of the disease have been identified."
+              }
+            } ]
+          } ]
+        }, {
+          "id" : "problemstatus4",
+          "name" : "problemStatus",
+          "localizedName" : "problemStatus",
+          "rmType" : "DV_CODED_TEXT",
+          "nodeId" : "at0071",
+          "min" : 0,
+          "max" : 1,
+          "localizedNames" : {
+            "en" : "problemStatus"
+          },
+          "localizedDescriptions" : {
+            "en" : "Category of the occurrence for this problem or diagnosis."
+          },
+          "annotations" : {
+            "comment" : "This data element can be an additional qualifier to the 'New' value in the 'Episodicity' value set, that is a condition such as asthma can have recurring new episodes that have periods of resolution in between. However it can be important to identify the first ever episode of asthma from all of the other episodes."
+          },
+          "aqlPath" : "/items[openEHR-EHR-EVALUATION.problem_diagnosis.v1,'EHDSCondition']/data[at0001]/items[openEHR-EHR-CLUSTER.problem_qualifier.v2]/items[at0071,'problemStatus']/value",
+          "inputs" : [ {
+            "suffix" : "code",
+            "type" : "CODED_TEXT",
+            "list" : [ {
+              "value" : "at0096",
+              "label" : "Recurrence",
+              "localizedLabels" : {
+                "en" : "Recurrence"
+              },
+              "localizedDescriptions" : {
+                "en" : "New occurrence of the same problem or diagnosis after a previous episode was resolved."
+              }
+            } ]
+          } ]
+        }, {
+          "id" : "resolutioncircumstances",
+          "name" : "resolutionCircumstances",
+          "localizedName" : "resolutionCircumstances",
+          "rmType" : "DV_TEXT",
+          "nodeId" : "at0110",
+          "min" : 0,
+          "max" : 1,
+          "localizedNames" : {
+            "en" : "resolutionCircumstances"
+          },
+          "localizedDescriptions" : {
+            "en" : "Additional narrative about the Problem/Diagnosis qualifier values, not captured in other fields."
+          },
+          "aqlPath" : "/items[openEHR-EHR-EVALUATION.problem_diagnosis.v1,'EHDSCondition']/data[at0001]/items[openEHR-EHR-CLUSTER.problem_qualifier.v2]/items[at0110,'resolutionCircumstances']/value",
+          "inputs" : [ {
+            "type" : "TEXT"
+          } ]
+        } ]
+      }, {
+        "id" : "diagnosisassertionstatus",
+        "name" : "diagnosisAssertionStatus",
+        "localizedName" : "diagnosisAssertionStatus",
+        "rmType" : "DV_CODED_TEXT",
+        "nodeId" : "at0073",
+        "min" : 0,
+        "max" : 1,
+        "localizedNames" : {
+          "en" : "diagnosisAssertionStatus"
+        },
+        "localizedDescriptions" : {
+          "en" : "The level of confidence in the identification of the diagnosis."
+        },
+        "annotations" : {
+          "comment" : "If an alternative valueset is required, these values can be added to the DV_TEXT data type in a template."
+        },
+        "aqlPath" : "/items[openEHR-EHR-EVALUATION.problem_diagnosis.v1,'EHDSCondition']/data[at0001]/items[at0073,'diagnosisAssertionStatus']/value",
+        "inputs" : [ {
+          "suffix" : "code",
+          "type" : "CODED_TEXT",
+          "list" : [ {
+            "value" : "at0074",
+            "label" : "Suspected",
+            "localizedLabels" : {
+              "en" : "Suspected"
+            },
+            "localizedDescriptions" : {
+              "en" : "The diagnosis has been identified with a low level of certainty."
+            }
+          }, {
+            "value" : "at0075",
+            "label" : "Probable",
+            "localizedLabels" : {
+              "en" : "Probable"
+            },
+            "localizedDescriptions" : {
+              "en" : "The diagnosis has been identified with a high level of certainty."
+            }
+          }, {
+            "value" : "at0076",
+            "label" : "Confirmed",
+            "localizedLabels" : {
+              "en" : "Confirmed"
+            },
+            "localizedDescriptions" : {
+              "en" : "The diagnosis has been confirmed against recognised criteria."
+            }
+          } ],
+          "listOpen" : true
+        }, {
+          "suffix" : "other",
+          "type" : "TEXT"
+        } ]
+      }, {
+        "id" : "externalresource",
+        "name" : "externalResource",
+        "localizedName" : "externalResource",
+        "rmType" : "CLUSTER",
+        "nodeId" : "openEHR-EHR-CLUSTER.media_file.v1",
+        "min" : 0,
+        "max" : 1,
+        "dependsOn" : [ "severity", "problem_diagnosis_qualifier", "problem", "enddate", "onsetdate", "diagnosisassertionstatus", "ehdsbodystructure" ],
+        "localizedNames" : {
+          "en" : "externalResource"
+        },
+        "localizedDescriptions" : {
+          "en" : "A media file that is acquired or used as part of the healthcare process, and associated metadata."
+        },
+        "aqlPath" : "/items[openEHR-EHR-EVALUATION.problem_diagnosis.v1,'EHDSCondition']/protocol[at0032]/items[openEHR-EHR-CLUSTER.media_file.v1,'externalResource']",
+        "children" : [ {
+          "id" : "content",
+          "name" : "Content",
+          "localizedName" : "Content",
+          "rmType" : "DV_MULTIMEDIA",
+          "nodeId" : "at0001",
+          "min" : 0,
+          "max" : 1,
+          "localizedNames" : {
+            "en" : "Content"
+          },
+          "localizedDescriptions" : {
+            "en" : "Digital representation of the media file."
+          },
+          "annotations" : {
+            "comment" : "If the file is stored locally, the actual content will be captured and stored using the Multimedia data type. For example: RTF or PDF for a document; JPG for an image; MP4 for a video; or WAV for an audio file. Full list of available media types: https://specifications.openehr.org/releases/TERM/latest/SupportTerminology.html#_media_types.  If the file is stored at a location outside of the health record, the detailed path to the file is captured using the URI attribute in the Multimedia data type. The Multimedia data type has many RM attributes such as the size of file and URI to an external source - see https://specifications.openehr.org/releases/RM/latest/data_types.html#_dv_multimedia_class."
+          },
+          "aqlPath" : "/items[openEHR-EHR-EVALUATION.problem_diagnosis.v1,'EHDSCondition']/protocol[at0032]/items[openEHR-EHR-CLUSTER.media_file.v1,'externalResource']/items[at0001]/value",
+          "inputs" : [ {
+            "type" : "TEXT"
+          } ]
+        }, {
+          "id" : "content_name",
+          "name" : "Content name",
+          "localizedName" : "Content name",
+          "rmType" : "DV_TEXT",
+          "nodeId" : "at0002",
+          "min" : 0,
+          "max" : 1,
+          "localizedNames" : {
+            "en" : "Content name"
+          },
+          "localizedDescriptions" : {
+            "en" : "Descriptive name or title for the media file."
+          },
+          "annotations" : {
+            "comment" : "A description of the content of the media file. Use an agreed standardised naming convention, if available. For example: \"Right hand burn #1\" or \"Cardiology video consultation on May 2\"."
+          },
+          "aqlPath" : "/items[openEHR-EHR-EVALUATION.problem_diagnosis.v1,'EHDSCondition']/protocol[at0032]/items[openEHR-EHR-CLUSTER.media_file.v1,'externalResource']/items[at0002]/value",
+          "inputs" : [ {
+            "type" : "TEXT"
+          } ]
+        } ]
+      }, {
+        "id" : "language",
+        "name" : "Language",
+        "rmType" : "CODE_PHRASE",
+        "min" : 1,
+        "max" : 1,
+        "aqlPath" : "/items[openEHR-EHR-EVALUATION.problem_diagnosis.v1,'EHDSCondition']/language",
+        "inContext" : true
+      }, {
+        "id" : "encoding",
+        "name" : "Encoding",
+        "rmType" : "CODE_PHRASE",
+        "min" : 1,
+        "max" : 1,
+        "aqlPath" : "/items[openEHR-EHR-EVALUATION.problem_diagnosis.v1,'EHDSCondition']/encoding",
+        "inContext" : true
+      }, {
+        "id" : "subject",
+        "name" : "Subject",
+        "rmType" : "PARTY_PROXY",
+        "min" : 1,
+        "max" : 1,
+        "aqlPath" : "/items[openEHR-EHR-EVALUATION.problem_diagnosis.v1,'EHDSCondition']/subject",
+        "inputs" : [ {
+          "suffix" : "id",
+          "type" : "TEXT"
+        }, {
+          "suffix" : "id_scheme",
+          "type" : "TEXT"
+        }, {
+          "suffix" : "id_namespace",
+          "type" : "TEXT"
+        }, {
+          "suffix" : "name",
+          "type" : "TEXT"
+        } ],
+        "inContext" : true
+      } ]
+    }, {
+      "id" : "exclusion_-_global",
+      "name" : "Exclusion - global",
+      "localizedName" : "Exclusion - global",
+      "rmType" : "EVALUATION",
+      "nodeId" : "openEHR-EHR-EVALUATION.exclusion_global.v1",
+      "min" : 0,
+      "max" : 1,
+      "localizedNames" : {
+        "en" : "Exclusion - global"
+      },
+      "localizedDescriptions" : {
+        "en" : "An overall statement of exclusion about all Problems/diagnoses, Family history, Medications, Procedures, Adverse reactions or other clinical items that are either not currently present, or have not been present in the past."
+      },
+      "aqlPath" : "/items[openEHR-EHR-EVALUATION.exclusion_global.v1]",
+      "children" : [ {
+        "id" : "global_exclusion_of_problems_diagnoses",
+        "name" : "Global exclusion of problems/diagnoses",
+        "localizedName" : "Global exclusion of problems/diagnoses",
+        "rmType" : "DV_TEXT",
+        "nodeId" : "at0002",
+        "min" : 1,
+        "max" : 1,
+        "localizedNames" : {
+          "en" : "Global exclusion of problems/diagnoses"
+        },
+        "localizedDescriptions" : {
+          "en" : "Overall statement of exclusion of all problems or diagnoses at the time of recording."
+        },
+        "annotations" : {
+          "comment" : "For example: 'No previous diagnoses', 'No known family history', 'No known history of adverse reactions', 'Never taken any medications' or 'No known operations or significant procedures'."
+        },
+        "aqlPath" : "/items[openEHR-EHR-EVALUATION.exclusion_global.v1]/data[at0001]/items[at0002,'Global exclusion of problems/diagnoses']/value",
+        "inputs" : [ {
+          "type" : "TEXT",
+          "list" : [ {
+            "value" : "No known problems",
+            "label" : "No known problems"
+          } ],
+          "listOpen" : false
+        } ]
+      }, {
+        "id" : "language",
+        "name" : "Language",
+        "rmType" : "CODE_PHRASE",
+        "min" : 1,
+        "max" : 1,
+        "aqlPath" : "/items[openEHR-EHR-EVALUATION.exclusion_global.v1]/language",
+        "inContext" : true
+      }, {
+        "id" : "encoding",
+        "name" : "Encoding",
+        "rmType" : "CODE_PHRASE",
+        "min" : 1,
+        "max" : 1,
+        "aqlPath" : "/items[openEHR-EHR-EVALUATION.exclusion_global.v1]/encoding",
+        "inContext" : true
+      }, {
+        "id" : "subject",
+        "name" : "Subject",
+        "rmType" : "PARTY_PROXY",
+        "min" : 1,
+        "max" : 1,
+        "aqlPath" : "/items[openEHR-EHR-EVALUATION.exclusion_global.v1]/subject",
+        "inputs" : [ {
+          "suffix" : "id",
+          "type" : "TEXT"
+        }, {
+          "suffix" : "id_scheme",
+          "type" : "TEXT"
+        }, {
+          "suffix" : "id_namespace",
+          "type" : "TEXT"
+        }, {
+          "suffix" : "name",
+          "type" : "TEXT"
+        } ],
+        "inContext" : true
+      } ]
+    }, {
+      "id" : "absence_of_information",
+      "name" : "Absence of information",
+      "localizedName" : "Absence of information",
+      "rmType" : "EVALUATION",
+      "nodeId" : "openEHR-EHR-EVALUATION.absence.v2",
+      "min" : 0,
+      "max" : 1,
+      "localizedNames" : {
+        "en" : "Absence of information"
+      },
+      "localizedDescriptions" : {
+        "en" : "Statement that specified health information is not available for inclusion in the health record or extract at the time of recording."
+      },
+      "aqlPath" : "/items[openEHR-EHR-EVALUATION.absence.v2]",
+      "children" : [ {
+        "id" : "absence_statement",
+        "name" : "Absence statement",
+        "localizedName" : "Absence statement",
+        "rmType" : "DV_TEXT",
+        "nodeId" : "at0002",
+        "min" : 1,
+        "max" : 1,
+        "localizedNames" : {
+          "en" : "Absence statement"
+        },
+        "localizedDescriptions" : {
+          "en" : "Positive statement that no information is available."
+        },
+        "annotations" : {
+          "comment" : "For example: \"No information available about adverse reactions\"; No information available about problems or diagnoses\"; \"No information available about previous procedures performed\"; or \"No information available about medications used\"."
+        },
+        "aqlPath" : "/items[openEHR-EHR-EVALUATION.absence.v2]/data[at0001]/items[at0002]/value",
+        "inputs" : [ {
+          "type" : "TEXT",
+          "list" : [ {
+            "value" : "No information about current problems",
+            "label" : "No information about current problems"
+          } ],
+          "listOpen" : false
+        } ]
+      }, {
+        "id" : "last_updated",
+        "name" : "Last updated",
+        "localizedName" : "Last updated",
+        "rmType" : "DV_DATE_TIME",
+        "nodeId" : "at0004",
+        "min" : 0,
+        "max" : 1,
+        "dependsOn" : [ "absence_statement" ],
+        "localizedNames" : {
+          "en" : "Last updated"
+        },
+        "localizedDescriptions" : {
+          "en" : "The date at which the absence was last updated."
+        },
+        "aqlPath" : "/items[openEHR-EHR-EVALUATION.absence.v2]/protocol[at0003]/items[at0004]/value",
+        "inputs" : [ {
+          "type" : "DATETIME"
+        } ]
+      }, {
+        "id" : "language",
+        "name" : "Language",
+        "rmType" : "CODE_PHRASE",
+        "min" : 1,
+        "max" : 1,
+        "aqlPath" : "/items[openEHR-EHR-EVALUATION.absence.v2]/language",
+        "inContext" : true
+      }, {
+        "id" : "encoding",
+        "name" : "Encoding",
+        "rmType" : "CODE_PHRASE",
+        "min" : 1,
+        "max" : 1,
+        "aqlPath" : "/items[openEHR-EHR-EVALUATION.absence.v2]/encoding",
+        "inContext" : true
+      }, {
+        "id" : "subject",
+        "name" : "Subject",
+        "rmType" : "PARTY_PROXY",
+        "min" : 1,
+        "max" : 1,
+        "aqlPath" : "/items[openEHR-EHR-EVALUATION.absence.v2]/subject",
+        "inputs" : [ {
+          "suffix" : "id",
+          "type" : "TEXT"
+        }, {
+          "suffix" : "id_scheme",
+          "type" : "TEXT"
+        }, {
+          "suffix" : "id_namespace",
+          "type" : "TEXT"
+        }, {
+          "suffix" : "name",
+          "type" : "TEXT"
+        } ],
+        "inContext" : true
+      } ]
+    } ]
+  }
+}
