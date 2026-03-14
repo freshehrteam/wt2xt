@@ -192,7 +192,7 @@ export const csv = {
     let newText: string = ''
     f.children?.forEach((child) => {
       child.parentNode = f
-      newText = mapRmType2FHIR(child.rmType)
+      newText = mapRmType2FHIR(child.rmType, dBuilder.config.FSHDataTypesFormat)
       if ((rmTypeText.length) === 0)
         rmTypeText = newText
       else {

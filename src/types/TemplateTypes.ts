@@ -91,8 +91,12 @@ export const mapRmTypeText = (rmTypeString: string) => {
     return `${intervalPrefix}${dataValueLabelMapper(rmType as keyof typeof displayableNodeTextTable)}`
 }
 
-export const mapRmType2FHIR = (rmTypeString: string) => {
-  return dataValueFHIRMapper(rmTypeString)
+export const mapRmType2FHIR = (rmTypeString: string, dataTypeFormat: FSHDataTypesFormat) => {
+
+  if (dataTypeFormat === FSHDataTypesFormat.FHIR)
+    return dataValueFHIRMapper(rmTypeString)
+ else
+  return rmTypeString
 }
 
 export enum DvDataValues{
@@ -115,7 +119,7 @@ export enum DvDataValues{
   'DV_PARSABLE',
 }
 
-export enum FshDataTypesFormat {
+export enum FSHDataTypesFormat {
   'FHIR',
   'OPENEHR',
   'CDI'
@@ -262,13 +266,13 @@ export const openEHRInterval2FHIRTable = {
   DV_TIME: "Period",
 }
 
-export const fsh
 
 
 export const dataValueLabelMapper = (dataValue: string) =>
   displayableNodeTextTable[dataValue as keyof typeof displayableNodeTextTable] || `RM type not supported ${dataValue}`
 
 export const dataValueFHIRMapper = (dataValue:string) => {
+
   if (isBranchNode(dataValue))
      return 'BackboneElement'
    else
