@@ -96,7 +96,7 @@ export const mapRmType2FHIR = (rmTypeString: string, dataTypeFormat: FSHDataType
   if (dataTypeFormat === FSHDataTypesFormat.FHIR)
     return dataValueFHIRMapper(rmTypeString)
  else
-  return rmTypeString
+  return dataValueFHSLMapper(rmTypeString)
 }
 
 export enum DvDataValues{
@@ -217,7 +217,41 @@ export const openEHR2FHIRDatatypeTable = {
   EVENT: "Event",
   CLUSTER: "Cluster",
   COMPOSITION: "Composition",
+}
 
+export const openEHR2FHSLDatatypeTable = {
+  ELEMENT: 'Choice',
+  DV_CODED_TEXT: 'DvCodedText',
+  DV_TEXT: 'DvText',
+  DV_ORDINAL: 'CodeableConcept',
+  DV_SCALE: 'CodeableConcept',
+  DV_QUANTITY: 'DvQuantity',
+  DV_DURATION: 'Duration',
+  DV_COUNT: 'Count',
+  DV_DATE_TIME: 'DvDateTime',
+  DV_IDENTIFIER: 'Identifier',
+  DV_MULTIMEDIA: 'Attachment',
+  DV_URI: "uri",
+  DV_EHR_URI: "uri",
+  DV_PARSABLE: "string",
+  DV_PROPORTION: "Ratio",
+  DV_STATE: "State",
+  DV_BOOLEAN: "boolean",
+  DV_DATE: "date",
+  DV_TIME: "time",
+  CODE_PHRASE: "Coding",
+  PARTY_PROXY: "BackboneElement",
+  STRING: "string",
+  EVALUATION:"Evaluation",
+  SECTION: "Section",
+  OBSERVATION:"Observation",
+  INSTRUCTION: "Instruction",
+  ACTION: "Action",
+  ADMIN_ENTRY: "AdminEntry",
+  GENERIC_ENTRY: "GenericEntry",
+  EVENT: "Event",
+  CLUSTER: "Cluster",
+  COMPOSITION: "Composition",
 }
 
 export const openEHR2FHIRQuestionTypeTable = {
@@ -277,6 +311,11 @@ export const dataValueFHIRMapper = (dataValue:string) => {
      return 'BackboneElement'
    else
      return openEHR2FHIRDatatypeTable[dataValue as keyof typeof openEHR2FHIRDatatypeTable] || `(FHIR mapping not supported) ${dataValue}`
+}
+
+export const dataValueFHSLMapper = (dataValue:string) => {
+
+    return openEHR2FHSLDatatypeTable[dataValue as keyof typeof openEHR2FHSLDatatypeTable] || `(openEHR FHSL mapping not supported) ${dataValue}`
 }
 
 export const dataValueFHIRQuestionTypeMapper = (dataValue:string) :string => {
