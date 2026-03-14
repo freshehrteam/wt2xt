@@ -112,8 +112,9 @@ const getUniqueName = (base: string, existing: string[] | Set<string>): string =
 };
 
 export const formatValueSetDefinition = (node: TemplateNode):string => {
-    const { ab, valueSetNames,fshLogicalRoot } = node.builder; // valueSetNames: string[] or Set<string>
+    const { ab, valueSetNames,fshLogicalRoot, wt} = node.builder; // valueSetNames: string[] or Set<string>
 
+    const templateId = wt.templateId
     const baseTechName = `${fshLogicalRoot}${snakeToCamel(node.localizedName, true)}`;
     const uniqueTechName = getUniqueName(baseTechName, valueSetNames);
 
@@ -126,7 +127,7 @@ export const formatValueSetDefinition = (node: TemplateNode):string => {
 
     ab.newline('');
     ab.append(`ValueSet: ${uniqueTechName}`);
-    ab.append(`Title: "${node.localizedName}"`);
+    ab.append(`Title: "${templateId}: ${node.localizedName}"`);
 
     return uniqueTechName
 };
