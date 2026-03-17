@@ -91,6 +91,21 @@ export const mapRmTypeText = (rmTypeString: string) => {
     return `${intervalPrefix}${dataValueLabelMapper(rmType as keyof typeof displayableNodeTextTable)}`
 }
 
+export const mapRmTypetoFSHL = (rmTypeString: string) => {
+
+  // if (!isDisplayableNode(rmTypeString)) return ''
+
+  let rmType = rmTypeString
+  let intervalPrefix = ''
+
+  if (rmTypeString.startsWith('DV_INTERVAL')) {
+    intervalPrefix = "DvInterval-"
+    rmType = rmTypeString.replace(/(^.*<|>.*$)/g, '');
+  }
+
+  return `${intervalPrefix}${dataValueLabelMapper(rmType as keyof typeof displayableNodeTextTable)}`
+}
+
 export const mapRmType2FHIR = (rmTypeString: string, dataTypeFormat: FSHDataTypesFormat) => {
 
   if (dataTypeFormat === FSHDataTypesFormat.FHIR)
@@ -229,6 +244,7 @@ export const openEHR2FHSLDatatypeTable = {
   DV_DURATION: 'DvDuration',
   DV_COUNT: 'DvCount',
   DV_DATE_TIME: 'DvDateTime',
+  DV_INTERVAL: 'DvInterval',
   DV_IDENTIFIER: 'DvIdentifier',
   DV_MULTIMEDIA: 'DvMultimedia',
   DV_URI: "DvUri",
@@ -241,7 +257,7 @@ export const openEHR2FHSLDatatypeTable = {
   DV_TIME: "DvTime",
   CODE_PHRASE: "CODE_PHRASE",
   PARTY_PROXY: "PARTY_PROXY",
-  STRING: "String",
+  STRING: "string",
   EVALUATION:"EVALUATION",
   SECTION: "SECTION",
   OBSERVATION:"OBSERVATION",
@@ -250,7 +266,8 @@ export const openEHR2FHSLDatatypeTable = {
   ADMIN_ENTRY: "ADMIN_ENTRY",
   GENERIC_ENTRY: "GENERIC_ENTRY",
   EVENT: "EVENT",
-  CLUSTER: "CLUSTER",
+  EVENT_CONTEXT: "EVENT_CONTEXT",
+  CLUSTER: "Cluster",
   COMPOSITION: "COMPOSITION",
 }
 
@@ -315,7 +332,15 @@ export const dataValueFHIRMapper = (dataValue:string) => {
 
 export const dataValueFHSLMapper = (dataValue:string) => {
 
-    return openEHR2FHSLDatatypeTable[dataValue as keyof typeof openEHR2FHSLDatatypeTable] || `(openEHR FHSL mapping not supported) ${dataValue}`
+  let rmType = dataValue
+  let intervalPrefix = ''
+
+  if (dataValue.startsWith('DV_INTERVAL')) {
+    intervalPrefix = "DvInterval-"
+    rmType = dataValue.replace(/(^.*<|>.*$)/g, '');
+  }
+
+  return `${intervalPrefix}${openEHR2FHSLDatatypeTable[rmType as keyof typeof openEHR2FHSLDatatypeTable] || rmType}`
 }
 
 export const dataValueFHIRQuestionTypeMapper = (dataValue:string) :string => {
