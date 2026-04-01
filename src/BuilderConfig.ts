@@ -1,6 +1,6 @@
 import fs from 'fs';
 import {ExportFormat} from './formatters/DocFormatter';
-import {FSHDataTypesFormat} from "./types/TemplateTypes.ts";
+import {BaseTypesFormat} from "./types/TemplateTypes.ts";
 
 export enum WtxRegenerate  {
   always = 'always',
@@ -35,7 +35,7 @@ export type Config = {
   fhirBaseUrl: string
   entriesOnly: boolean
   returnFHIRJson: boolean
-  FSHDataTypesFormat: FSHDataTypesFormat
+  FSHDataTypesFormat: BaseTypesFormat
 }
 
 
@@ -66,7 +66,7 @@ const defaultConfig: Config = {
   fhirBaseUrl: 'http://openehr.org',
   entriesOnly: false,
   returnFHIRJson: false,
-  FSHDataTypesFormat: FSHDataTypesFormat.OPENEHR,
+  FSHDataTypesFormat: BaseTypesFormat.OPENEHR,
 };
 
  export async function importConfig(path: string): Promise<Config> {

@@ -106,9 +106,9 @@ export const mapRmTypetoFSHL = (rmTypeString: string) => {
   return `${intervalPrefix}${dataValueLabelMapper(rmType as keyof typeof displayableNodeTextTable)}`
 }
 
-export const mapRmType2FHIR = (rmTypeString: string, dataTypeFormat: FSHDataTypesFormat) => {
+export const mapRmType2FHIR = (rmTypeString: string, dataTypeFormat: BaseTypesFormat) => {
 
-  if (dataTypeFormat === FSHDataTypesFormat.FHIR)
+  if (dataTypeFormat === BaseTypesFormat.FHIR)
     return dataValueFHIRMapper(rmTypeString)
  else
   return dataValueFHSLMapper(rmTypeString)
@@ -134,10 +134,11 @@ export enum DvDataValues{
   'DV_PARSABLE',
 }
 
-export enum FSHDataTypesFormat {
+export enum BaseTypesFormat {
   'FHIR',
   'OPENEHR',
-  'CDI'
+  'OPENEHRWT',
+  'ISOCDI'
 }
 
 export enum NonDvDataValues{
