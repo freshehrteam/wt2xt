@@ -24,7 +24,7 @@ const wrapTripleQuote = (inString: string) => `"""${inString}"""`
 
 const appendFSHLM = (dBuilder: DocBuilder, f: TemplateNode, typeConstraint: string = '') => {
   const { sb } = dBuilder;
-  sb.append(`${formatSpaces(f)}* ${snakeToCamel(f.localizedName?f.localizedName:f.id,isEntry(f.rmType))} ${formatOccurrences(f,true)} ${mapRmType2FHIR(f.rmType, dBuilder.config.FSHDataTypesFormat)} "${formatLocalName(f)}" ${formatDescription(dBuilder,f,typeConstraint)}`)
+  sb.append(`${formatSpaces(f)}* ${snakeToCamel(f.localizedName?f.localizedName:f.id,isEntry(f.rmType))} ${formatOccurrences(f,true)} ${mapRmType2FHIR(f.rmType, dBuilder.config.baseTypesFormat)} "${formatLocalName(f)}" ${formatDescription(dBuilder,f,typeConstraint)}`)
 }
 
 
@@ -112,7 +112,7 @@ export const fshl = {
     let newText: string = ''
     f.children?.forEach((child) => {
       child.parentNode = f
-      newText = mapRmType2FHIR(child.rmType,dBuilder.config.FSHDataTypesFormat)
+      newText = mapRmType2FHIR(child.rmType,dBuilder.config.baseTypesFormat)
       if ((rmTypeText.length) === 0)
         rmTypeText = newText
       else {

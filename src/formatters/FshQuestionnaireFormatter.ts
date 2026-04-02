@@ -121,7 +121,7 @@ export const fshq = {
     let newText: string = ''
     f.children?.forEach((child: TemplateNode) => {
       child.parentNode = f
-      newText = mapRmType2FHIR(child.rmType, dBuilder.config.FSHDataTypesFormat)
+      newText = mapRmType2FHIR(child.rmType, dBuilder.config.baseTypesFormat)
       if ((rmTypeText.length) === 0)
         rmTypeText = newText
       else {

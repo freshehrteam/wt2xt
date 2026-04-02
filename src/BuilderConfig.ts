@@ -35,7 +35,7 @@ export type Config = {
   fhirBaseUrl: string
   entriesOnly: boolean
   returnFHIRJson: boolean
-  FSHDataTypesFormat: BaseTypesFormat
+  baseTypesFormat: BaseTypesFormat
 }
 
 
@@ -66,7 +66,7 @@ const defaultConfig: Config = {
   fhirBaseUrl: 'http://openehr.org',
   entriesOnly: false,
   returnFHIRJson: false,
-  FSHDataTypesFormat: BaseTypesFormat.OPENEHR,
+  baseTypesFormat: BaseTypesFormat.OPENEHR_RM,
 };
 
  export async function importConfig(path: string): Promise<Config> {

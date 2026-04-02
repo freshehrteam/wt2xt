@@ -122,7 +122,7 @@ export class DocBuilder {
           if (this.config.returnFHIRJson)
             fExt = 'zip'
           else
-            fExt = 'fshl'
+            fExt = 'l.fsh'
         else
             fExt= ext === 'wtx'?'wtx.json': ext;
 
