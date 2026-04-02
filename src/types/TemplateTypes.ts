@@ -77,41 +77,34 @@ export const isArchetype= (rmType: string, nodeId: string) => {
 }
 
 export const mapRmTypeText = (rmTypeString: string) => {
-
-  // if (!isDisplayableNode(rmTypeString)) return ''
-
   let rmType = rmTypeString
   let intervalPrefix = ''
-
   if (rmTypeString.startsWith('DV_INTERVAL')) {
     intervalPrefix = "Interval of "
     rmType = rmTypeString.replace(/(^.*<|>.*$)/g, '');
   }
-
-    return `${intervalPrefix}${dataValueLabelMapper(rmType as keyof typeof displayableNodeTextTable)}`
+  return `${intervalPrefix}${lookupDatatypeText(rmType, BaseTypesFormat.OPENEHR_WT)}`
 }
 
-export const mapRmTypetoFSHL = (rmTypeString: string) => {
-
-  // if (!isDisplayableNode(rmTypeString)) return ''
-
-  let rmType = rmTypeString
-  let intervalPrefix = ''
-
-  if (rmTypeString.startsWith('DV_INTERVAL')) {
-    intervalPrefix = "DvInterval-"
-    rmType = rmTypeString.replace(/(^.*<|>.*$)/g, '');
-  }
-
-  return `${intervalPrefix}${dataValueLabelMapper(rmType as keyof typeof displayableNodeTextTable)}`
-}
+// export const mapRmTypetoFSHL = (rmTypeString: string) => {
+//   let rmType = rmTypeString
+//   let intervalPrefix = ''
+//   if (rmTypeString.startsWith('DV_INTERVAL')) {
+//     intervalPrefix = "DvInterval-"
+//     rmType = rmTypeString.replace(/(^.*<|>.*$)/g, '');
+//   }
+//   return `${intervalPrefix}${lookupDatatypeText(rmType, BaseTypesFormat.OPENEHR_RM)}`
+// }
 
 export const mapRmType2FHIR = (rmTypeString: string, dataTypeFormat: BaseTypesFormat) => {
-
-  if (dataTypeFormat === BaseTypesFormat.FHIR)
-    return dataValueFHIRMapper(rmTypeString)
- else
-  return dataValueFHSLMapper(rmTypeString)
+  switch (dataTypeFormat) {
+    case BaseTypesFormat.FHIR:
+      return dataValueFHIRMapper(rmTypeString)
+    case BaseTypesFormat.OPENEHR_RM:
+      return dataValueFHSLMapper(rmTypeString)
+    default:
+      return dataValueFHSLMapper(rmTypeString)
+  }
 }
 
 export enum DvDataValues{
@@ -136,9 +129,9 @@ export enum DvDataValues{
 
 export enum BaseTypesFormat {
   'FHIR',
-  'OPENEHR',
-  'OPENEHRWT',
-  'ISOCDI'
+  'OPENEHR_RM',
+  'OPENEHR_WT',
+  'ISO_CDI'
 }
 
 export enum NonDvDataValues{
@@ -164,114 +157,47 @@ export function isDisplayableNode(rmType: string)
   return Object.keys(DvDataValues).includes(rmType) || Object.keys(OtherDisplayableNodes).includes(rmType)
 }
 
-const displayableNodeTextTable = {
-  ELEMENT: 'Choice',
-  DV_CODED_TEXT: 'CodedText',
-  DV_TEXT: 'Text',
-  DV_ORDINAL: 'Ordinal',
-  DV_SCALE: 'Scale',
-  DV_QUANTITY: 'Quantity',
-  DV_DURATION: 'Duration',
-  DV_COUNT: 'Count',
-  DV_DATE_TIME: 'DateTime',
-  DV_IDENTIFIER: 'Identifier',
-  DV_MULTIMEDIA: 'Multimedia',
-  DV_URI: "ExternalURI",
-  DV_EHR_URI: "InternalURI",
-  DV_PARSABLE: "Parsable text",
-  DV_PROPORTION: "Proportion",
-  DV_STATE: "State",
-  DV_BOOLEAN: "Boolean",
-  DV_DATE: "Date",
-  DV_TIME: "Time",
-  CODE_PHRASE: "CodePhrase",
-  PARTY_PROXY: "Party",
-  STRING: "String",
-  EVALUATION:"Evaluation",
-  SECTION: "Section",
-  OBSERVATION:"Observation",
-  INSTRUCTION: "Instruction",
-  ACTION:"Action",
-  ADMIN_ENTRY: "Admin Entry",
-  GENERIC_ENTRY: "GenericEntry",
-  EVENT: "Event",
-  CLUSTER: "Cluster",
-  COMPOSITION: "Composition",
-
+// Unified datatype mapping table: rows = RM types, columns = BaseTypesFormat values
+const DatatypeTable: Record<string, Partial<Record<BaseTypesFormat, string>>> = {
+  ELEMENT:        { [BaseTypesFormat.FHIR]: 'Choice',           [BaseTypesFormat.OPENEHR_RM]: 'Choice',         [BaseTypesFormat.OPENEHR_WT]: 'Choice' },
+  DV_CODED_TEXT:  { [BaseTypesFormat.FHIR]: 'CodeableConcept',  [BaseTypesFormat.OPENEHR_RM]: 'DV_CODED_TEXT',  [BaseTypesFormat.OPENEHR_WT]: 'CodedText' },
+  DV_TEXT:        { [BaseTypesFormat.FHIR]: 'CodeableConcept',  [BaseTypesFormat.OPENEHR_RM]: 'DV_TEXT',        [BaseTypesFormat.OPENEHR_WT]: 'Text' },
+  DV_ORDINAL:     { [BaseTypesFormat.FHIR]: 'CodeableConcept',  [BaseTypesFormat.OPENEHR_RM]: 'DV_ORDINAL',     [BaseTypesFormat.OPENEHR_WT]: 'Ordinal' },
+  DV_SCALE:       { [BaseTypesFormat.FHIR]: 'CodeableConcept',  [BaseTypesFormat.OPENEHR_RM]: 'DV_SCALE',       [BaseTypesFormat.OPENEHR_WT]: 'Scale' },
+  DV_QUANTITY:    { [BaseTypesFormat.FHIR]: 'Quantity',         [BaseTypesFormat.OPENEHR_RM]: 'DV_QUANTITY',    [BaseTypesFormat.OPENEHR_WT]: 'Quantity' },
+  DV_DURATION:    { [BaseTypesFormat.FHIR]: 'Duration',         [BaseTypesFormat.OPENEHR_RM]: 'DV_DURATION',    [BaseTypesFormat.OPENEHR_WT]: 'Duration' },
+  DV_COUNT:       { [BaseTypesFormat.FHIR]: 'Count',            [BaseTypesFormat.OPENEHR_RM]: 'DV_COUNT',       [BaseTypesFormat.OPENEHR_WT]: 'Count' },
+  DV_DATE_TIME:   { [BaseTypesFormat.FHIR]: 'dateTime',         [BaseTypesFormat.OPENEHR_RM]: 'DV_DATE_TIME',   [BaseTypesFormat.OPENEHR_WT]: 'DateTime' },
+  DV_INTERVAL:    {                                             [BaseTypesFormat.OPENEHR_RM]: 'DV_INTERVAL' },
+  DV_IDENTIFIER:  { [BaseTypesFormat.FHIR]: 'Identifier',        [BaseTypesFormat.OPENEHR_RM]: 'DV_IDENTIFIER',  [BaseTypesFormat.OPENEHR_WT]: 'Identifier' },
+  DV_MULTIMEDIA:  { [BaseTypesFormat.FHIR]: 'Attachment',       [BaseTypesFormat.OPENEHR_RM]: 'DV_MULTIMEDIA',  [BaseTypesFormat.OPENEHR_WT]: 'Multimedia' },
+  DV_URI:         { [BaseTypesFormat.FHIR]: 'uri',              [BaseTypesFormat.OPENEHR_RM]: 'DV_URI',         [BaseTypesFormat.OPENEHR_WT]: 'ExternalURI' },
+  DV_EHR_URI:     { [BaseTypesFormat.FHIR]: 'uri',              [BaseTypesFormat.OPENEHR_RM]: 'DV_EHR_URI',     [BaseTypesFormat.OPENEHR_WT]: 'InternalURI' },
+  DV_PARSABLE:    { [BaseTypesFormat.FHIR]: 'string',           [BaseTypesFormat.OPENEHR_RM]: 'DV_PARSABLE',    [BaseTypesFormat.OPENEHR_WT]: 'Parsable text' },
+  DV_PROPORTION:  { [BaseTypesFormat.FHIR]: 'Ratio',            [BaseTypesFormat.OPENEHR_RM]: 'DV_PROPORTION',  [BaseTypesFormat.OPENEHR_WT]: 'Proportion' },
+  DV_STATE:       { [BaseTypesFormat.FHIR]: 'State',            [BaseTypesFormat.OPENEHR_RM]: 'DV_STATE',       [BaseTypesFormat.OPENEHR_WT]: 'State' },
+  DV_BOOLEAN:     { [BaseTypesFormat.FHIR]: 'boolean',          [BaseTypesFormat.OPENEHR_RM]: 'DV_BOOLEAN',     [BaseTypesFormat.OPENEHR_WT]: 'Boolean' },
+  DV_DATE:        { [BaseTypesFormat.FHIR]: 'date',             [BaseTypesFormat.OPENEHR_RM]: 'DV_DATE',        [BaseTypesFormat.OPENEHR_WT]: 'Date' },
+  DV_TIME:        { [BaseTypesFormat.FHIR]: 'time',             [BaseTypesFormat.OPENEHR_RM]: 'DV_DATE',        [BaseTypesFormat.OPENEHR_WT]: 'Time' },
+  CODE_PHRASE:    { [BaseTypesFormat.FHIR]: 'Coding',           [BaseTypesFormat.OPENEHR_RM]: 'CODE_PHRASE',   [BaseTypesFormat.OPENEHR_WT]: 'CodePhrase' },
+  PARTY_PROXY:    { [BaseTypesFormat.FHIR]: 'BackboneElement',  [BaseTypesFormat.OPENEHR_RM]: 'PARTY_PROXY',   [BaseTypesFormat.OPENEHR_WT]: 'Party' },
+  STRING:         { [BaseTypesFormat.FHIR]: 'string',           [BaseTypesFormat.OPENEHR_RM]: 'STRING',        [BaseTypesFormat.OPENEHR_WT]: 'String' },
+  EVALUATION:     { [BaseTypesFormat.FHIR]: 'Evaluation',       [BaseTypesFormat.OPENEHR_RM]: 'EVALUATION',    [BaseTypesFormat.OPENEHR_WT]: 'Evaluation' },
+  SECTION:        { [BaseTypesFormat.FHIR]: 'Section',          [BaseTypesFormat.OPENEHR_RM]: 'SECTION',       [BaseTypesFormat.OPENEHR_WT]: 'Section' },
+  OBSERVATION:    { [BaseTypesFormat.FHIR]: 'Observation',      [BaseTypesFormat.OPENEHR_RM]: 'OBSERVATION',   [BaseTypesFormat.OPENEHR_WT]: 'Observation' },
+  INSTRUCTION:    { [BaseTypesFormat.FHIR]: 'Instruction',      [BaseTypesFormat.OPENEHR_RM]: 'INSTRUCTION',   [BaseTypesFormat.OPENEHR_WT]: 'Instruction' },
+  ACTION:         { [BaseTypesFormat.FHIR]: 'Action',           [BaseTypesFormat.OPENEHR_RM]: 'ACTION',        [BaseTypesFormat.OPENEHR_WT]: 'Action' },
+  ADMIN_ENTRY:    { [BaseTypesFormat.FHIR]: 'AdminEntry',       [BaseTypesFormat.OPENEHR_RM]: 'ADMIN_ENTRY',   [BaseTypesFormat.OPENEHR_WT]: 'Admin Entry' },
+  GENERIC_ENTRY:  { [BaseTypesFormat.FHIR]: 'GenericEntry',     [BaseTypesFormat.OPENEHR_RM]: 'GENERIC_ENTRY', [BaseTypesFormat.OPENEHR_WT]: 'GenericEntry' },
+  EVENT:          { [BaseTypesFormat.FHIR]: 'Event',            [BaseTypesFormat.OPENEHR_RM]: 'EVENT',         [BaseTypesFormat.OPENEHR_WT]: 'Event' },
+  EVENT_CONTEXT:  { [BaseTypesFormat.FHIR]: 'BackboneElement',  [BaseTypesFormat.OPENEHR_RM]: 'EVENT_CONTEXT', [BaseTypesFormat.OPENEHR_WT]: 'EventContext' },
+  CLUSTER:        { [BaseTypesFormat.FHIR]: 'Cluster',          [BaseTypesFormat.OPENEHR_RM]: 'CLUSTER',       [BaseTypesFormat.OPENEHR_WT]: 'Cluster' },
+  COMPOSITION:    { [BaseTypesFormat.FHIR]: 'Composition',      [BaseTypesFormat.OPENEHR_RM]: 'COMPOSITION',   [BaseTypesFormat.OPENEHR_WT]: 'Composition' },
 }
 
-export const openEHR2FHIRDatatypeTable = {
-  ELEMENT: 'Choice',
-  DV_CODED_TEXT: 'CodeableConcept',
-  DV_TEXT: 'CodeableConcept',
-  DV_ORDINAL: 'CodeableConcept',
-  DV_SCALE: 'CodeableConcept',
-  DV_QUANTITY: 'Quantity',
-  DV_DURATION: 'Duration',
-  DV_COUNT: 'Count',
-  DV_DATE_TIME: 'dateTime',
-  DV_IDENTIFIER: 'Identifier',
-  DV_MULTIMEDIA: 'Attachment',
-  DV_URI: "uri",
-  DV_EHR_URI: "uri",
-  DV_PARSABLE: "string",
-  DV_PROPORTION: "Ratio",
-  DV_STATE: "State",
-  DV_BOOLEAN: "boolean",
-  DV_DATE: "date",
-  DV_TIME: "time",
-  CODE_PHRASE: "Coding",
-  PARTY_PROXY: "BackboneElement",
-  STRING: "string",
-  EVALUATION:"Evaluation",
-  SECTION: "Section",
-  OBSERVATION:"Observation",
-  INSTRUCTION: "Instruction",
-  ACTION:"Action",
-  ADMIN_ENTRY: "AdminEntry",
-  GENERIC_ENTRY: "GenericEntry",
-  EVENT: "Event",
-  CLUSTER: "Cluster",
-  COMPOSITION: "Composition",
+export const lookupDatatypeText = (rmType: string, format: BaseTypesFormat): string => {
+   return DatatypeTable[rmType]?.[format] ?? `RM type not supported: ${rmType}`
 }
-
-export const openEHR2FHSLDatatypeTable = {
-  ELEMENT: 'Choice',
-  DV_CODED_TEXT: 'DvCodedText',
-  DV_TEXT: 'DvText',
-  DV_ORDINAL: 'DvOrdinal',
-  DV_SCALE: 'DvScale',
-  DV_QUANTITY: 'DvQuantity',
-  DV_DURATION: 'DvDuration',
-  DV_COUNT: 'DvCount',
-  DV_DATE_TIME: 'DvDateTime',
-  DV_INTERVAL: 'DvInterval',
-  DV_IDENTIFIER: 'DvIdentifier',
-  DV_MULTIMEDIA: 'DvMultimedia',
-  DV_URI: "DvUri",
-  DV_EHR_URI: "DvEhrUri",
-  DV_PARSABLE: "DvParsable",
-  DV_PROPORTION: "DvProportion",
-  DV_STATE: "DvState",
-  DV_BOOLEAN: "DvBoolean",
-  DV_DATE: "DvDate",
-  DV_TIME: "DvTime",
-  CODE_PHRASE: "CODE_PHRASE",
-  PARTY_PROXY: "PARTY_PROXY",
-  STRING: "string",
-  EVALUATION:"EVALUATION",
-  SECTION: "SECTION",
-  OBSERVATION:"OBSERVATION",
-  INSTRUCTION: "INSTRUCTION",
-  ACTION: "ACTION",
-  ADMIN_ENTRY: "ADMIN_ENTRY",
-  GENERIC_ENTRY: "GENERIC_ENTRY",
-  EVENT: "EVENT",
-  EVENT_CONTEXT: "EVENT_CONTEXT",
-  CLUSTER: "Cluster",
-  COMPOSITION: "COMPOSITION",
-}
-
 export const openEHR2FHIRQuestionTypeTable = {
   ELEMENT: 'choice',
   DV_CODED_TEXT: 'choice',
@@ -321,34 +247,28 @@ export const openEHRInterval2FHIRTable = {
 
 
 export const dataValueLabelMapper = (dataValue: string) =>
-  displayableNodeTextTable[dataValue as keyof typeof displayableNodeTextTable] || `RM type not supported ${dataValue}`
+  lookupDatatypeText(dataValue, BaseTypesFormat.OPENEHR_WT)
 
-export const dataValueFHIRMapper = (dataValue:string) => {
-
+export const dataValueFHIRMapper = (dataValue: string) => {
   if (isBranchNode(dataValue))
-     return 'BackboneElement'
-   else
-     return openEHR2FHIRDatatypeTable[dataValue as keyof typeof openEHR2FHIRDatatypeTable] || `(FHIR mapping not supported) ${dataValue}`
+    return 'BackboneElement'
+  return lookupDatatypeText(dataValue, BaseTypesFormat.FHIR)
 }
 
-export const dataValueFHSLMapper = (dataValue:string) => {
-
+export const dataValueFHSLMapper = (dataValue: string) => {
   let rmType = dataValue
   let intervalPrefix = ''
-
   if (dataValue.startsWith('DV_INTERVAL')) {
     intervalPrefix = "DvInterval-"
     rmType = dataValue.replace(/(^.*<|>.*$)/g, '');
   }
-
-  return `${intervalPrefix}${openEHR2FHSLDatatypeTable[rmType as keyof typeof openEHR2FHSLDatatypeTable] || rmType}`
+  return `${intervalPrefix}${lookupDatatypeText(rmType, BaseTypesFormat.OPENEHR_RM)}`
 }
 
-export const dataValueFHIRQuestionTypeMapper = (dataValue:string) :string => {
+export const dataValueFHIRQuestionTypeMapper = (dataValue: string): string => {
   if (isBranchNode(dataValue))
     return 'group'
-  else
-    return openEHR2FHIRQuestionTypeTable[dataValue as keyof typeof openEHR2FHIRDatatypeTable] || `(FHIR Question type not supported) ${dataValue}`
+  return openEHR2FHIRQuestionTypeTable[dataValue as keyof typeof openEHR2FHIRQuestionTypeTable] || `(FHIR Question type not supported) ${dataValue}`
 }
 
 export const dataValueIntervalFHIRMapper = (dataValue: string) =>
