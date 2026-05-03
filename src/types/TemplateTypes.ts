@@ -83,7 +83,7 @@ export const mapRmTypeText = (rmTypeString: string) => {
     intervalPrefix = "Interval of "
     rmType = rmTypeString.replace(/(^.*<|>.*$)/g, '');
   }
-  return `${intervalPrefix}${lookupDatatypeText(rmType, BaseTypesFormat.OPENEHR_WT)}`
+  return `${intervalPrefix}${lookupDatatypeText(rmType, BaseTypesFormat.wt)}`
 }
 
 // export const mapRmTypetoFSHL = (rmTypeString: string) => {
@@ -96,14 +96,12 @@ export const mapRmTypeText = (rmTypeString: string) => {
 //   return `${intervalPrefix}${lookupDatatypeText(rmType, BaseTypesFormat.OPENEHR_RM)}`
 // }
 
-export const mapRmType2FHIR = (rmTypeString: string, dataTypeFormat: BaseTypesFormat) => {
-  switch (dataTypeFormat) {
-    case BaseTypesFormat.FHIR:
+export const mapRmType2FHIR = (rmTypeString: string, baseTypesFormat: BaseTypesFormat) => {
+  switch (baseTypesFormat) {
+    case BaseTypesFormat.fhir:
       return dataValueFHIRMapper(rmTypeString)
-    case BaseTypesFormat.OPENEHR_RM:
-      return dataValueFHSLMapper(rmTypeString)
     default:
-      return dataValueFHSLMapper(rmTypeString)
+      return dataValueFHSLMapper(rmTypeString, baseTypesFormat)
   }
 }
 
@@ -128,10 +126,10 @@ export enum DvDataValues{
 }
 
 export enum BaseTypesFormat {
-  'FHIR',
-  'OPENEHR_RM',
-  'OPENEHR_WT',
-  'ISO_CDI'
+  'fhir',
+  'rm',
+  'wt',
+  'cdi'
 }
 
 export enum NonDvDataValues{
@@ -159,40 +157,40 @@ export function isDisplayableNode(rmType: string)
 
 // Unified datatype mapping table: rows = RM types, columns = BaseTypesFormat values
 const DatatypeTable: Record<string, Partial<Record<BaseTypesFormat, string>>> = {
-  ELEMENT:        { [BaseTypesFormat.FHIR]: 'Choice',           [BaseTypesFormat.OPENEHR_RM]: 'Choice',         [BaseTypesFormat.OPENEHR_WT]: 'Choice',         [BaseTypesFormat.ISO_CDI]: 'DataValueType' },
-  DV_CODED_TEXT:  { [BaseTypesFormat.FHIR]: 'CodeableConcept',  [BaseTypesFormat.OPENEHR_RM]: 'DV_CODED_TEXT',  [BaseTypesFormat.OPENEHR_WT]: 'CodedText',      [BaseTypesFormat.ISO_CDI]: 'ConceptType' },
-  DV_TEXT:        { [BaseTypesFormat.FHIR]: 'CodeableConcept',  [BaseTypesFormat.OPENEHR_RM]: 'DV_TEXT',        [BaseTypesFormat.OPENEHR_WT]: 'Text',           [BaseTypesFormat.ISO_CDI]: 'TextType' },
-  DV_ORDINAL:     { [BaseTypesFormat.FHIR]: 'CodeableConcept',  [BaseTypesFormat.OPENEHR_RM]: 'DV_ORDINAL',     [BaseTypesFormat.OPENEHR_WT]: 'Ordinal',        [BaseTypesFormat.ISO_CDI]: 'OrdinalType' },
-  DV_SCALE:       { [BaseTypesFormat.FHIR]: 'CodeableConcept',  [BaseTypesFormat.OPENEHR_RM]: 'DV_SCALE',       [BaseTypesFormat.OPENEHR_WT]: 'Scale',          [BaseTypesFormat.ISO_CDI]: 'OrdinalType' },
-  DV_QUANTITY:    { [BaseTypesFormat.FHIR]: 'Quantity',         [BaseTypesFormat.OPENEHR_RM]: 'DV_QUANTITY',    [BaseTypesFormat.OPENEHR_WT]: 'Quantity',       [BaseTypesFormat.ISO_CDI]: 'QuantityType' },
-  DV_DURATION:    { [BaseTypesFormat.FHIR]: 'Duration',         [BaseTypesFormat.OPENEHR_RM]: 'DV_DURATION',    [BaseTypesFormat.OPENEHR_WT]: 'Duration',       [BaseTypesFormat.ISO_CDI]: 'DurationType' },
-  DV_COUNT:       { [BaseTypesFormat.FHIR]: 'Count',            [BaseTypesFormat.OPENEHR_RM]: 'DV_COUNT',       [BaseTypesFormat.OPENEHR_WT]: 'Count',          [BaseTypesFormat.ISO_CDI]: 'NumberType' },
-  DV_DATE_TIME:   { [BaseTypesFormat.FHIR]: 'dateTime',         [BaseTypesFormat.OPENEHR_RM]: 'DV_DATE_TIME',   [BaseTypesFormat.OPENEHR_WT]: 'DateTime',       [BaseTypesFormat.ISO_CDI]: 'DateTimeType' },
-  DV_INTERVAL:    {                                             [BaseTypesFormat.OPENEHR_RM]: 'DV_INTERVAL',                                                    [BaseTypesFormat.ISO_CDI]: 'RangeType' },
-  DV_IDENTIFIER:  { [BaseTypesFormat.FHIR]: 'Identifier',        [BaseTypesFormat.OPENEHR_RM]: 'DV_IDENTIFIER',  [BaseTypesFormat.OPENEHR_WT]: 'Identifier',      [BaseTypesFormat.ISO_CDI]: 'IdentifierType' },
-  DV_MULTIMEDIA:  { [BaseTypesFormat.FHIR]: 'Attachment',       [BaseTypesFormat.OPENEHR_RM]: 'DV_MULTIMEDIA',  [BaseTypesFormat.OPENEHR_WT]: 'Multimedia',     [BaseTypesFormat.ISO_CDI]: 'AttachmentType' },
-  DV_URI:         { [BaseTypesFormat.FHIR]: 'uri',              [BaseTypesFormat.OPENEHR_RM]: 'DV_URI',         [BaseTypesFormat.OPENEHR_WT]: 'ExternalURI',    [BaseTypesFormat.ISO_CDI]: 'UrlType' },
-  DV_EHR_URI:     { [BaseTypesFormat.FHIR]: 'uri',              [BaseTypesFormat.OPENEHR_RM]: 'DV_EHR_URI',     [BaseTypesFormat.OPENEHR_WT]: 'InternalURI',    [BaseTypesFormat.ISO_CDI]: 'UrlType' },
-  DV_PARSABLE:    { [BaseTypesFormat.FHIR]: 'string',           [BaseTypesFormat.OPENEHR_RM]: 'DV_PARSABLE',    [BaseTypesFormat.OPENEHR_WT]: 'Parsable text',  [BaseTypesFormat.ISO_CDI]: 'StringType' },
-  DV_PROPORTION:  { [BaseTypesFormat.FHIR]: 'Ratio',            [BaseTypesFormat.OPENEHR_RM]: 'DV_PROPORTION',  [BaseTypesFormat.OPENEHR_WT]: 'Proportion',     [BaseTypesFormat.ISO_CDI]: 'QuantityType' },
-  DV_STATE:       { [BaseTypesFormat.FHIR]: 'State',            [BaseTypesFormat.OPENEHR_RM]: 'DV_STATE',       [BaseTypesFormat.OPENEHR_WT]: 'State',          [BaseTypesFormat.ISO_CDI]: 'CodeType' },
-  DV_BOOLEAN:     { [BaseTypesFormat.FHIR]: 'boolean',          [BaseTypesFormat.OPENEHR_RM]: 'DV_BOOLEAN',     [BaseTypesFormat.OPENEHR_WT]: 'Boolean',        [BaseTypesFormat.ISO_CDI]: 'BooleanType' },
-  DV_DATE:        { [BaseTypesFormat.FHIR]: 'date',             [BaseTypesFormat.OPENEHR_RM]: 'DV_DATE',        [BaseTypesFormat.OPENEHR_WT]: 'Date',           [BaseTypesFormat.ISO_CDI]: 'DateTimeType' },
-  DV_TIME:        { [BaseTypesFormat.FHIR]: 'time',             [BaseTypesFormat.OPENEHR_RM]: 'DV_DATE',        [BaseTypesFormat.OPENEHR_WT]: 'Time',           [BaseTypesFormat.ISO_CDI]: 'DateTimeType' },
-  CODE_PHRASE:    { [BaseTypesFormat.FHIR]: 'Coding',           [BaseTypesFormat.OPENEHR_RM]: 'CODE_PHRASE',    [BaseTypesFormat.OPENEHR_WT]: 'CodePhrase',     [BaseTypesFormat.ISO_CDI]: 'CodeType' },
-  PARTY_PROXY:    { [BaseTypesFormat.FHIR]: 'BackboneElement',  [BaseTypesFormat.OPENEHR_RM]: 'PARTY_PROXY',    [BaseTypesFormat.OPENEHR_WT]: 'Party',          [BaseTypesFormat.ISO_CDI]: 'ReferenceType' },
-  STRING:         { [BaseTypesFormat.FHIR]: 'string',           [BaseTypesFormat.OPENEHR_RM]: 'string',         [BaseTypesFormat.OPENEHR_WT]: 'String',         [BaseTypesFormat.ISO_CDI]: 'StringType' },
-  EVALUATION:     { [BaseTypesFormat.FHIR]: 'Evaluation',       [BaseTypesFormat.OPENEHR_RM]: 'EVALUATION',     [BaseTypesFormat.OPENEHR_WT]: 'Evaluation',     [BaseTypesFormat.ISO_CDI]: 'EVALUATION' },
-  SECTION:        { [BaseTypesFormat.FHIR]: 'Section',          [BaseTypesFormat.OPENEHR_RM]: 'SECTION',        [BaseTypesFormat.OPENEHR_WT]: 'Section',        [BaseTypesFormat.ISO_CDI]: 'SECTION' },
-  OBSERVATION:    { [BaseTypesFormat.FHIR]: 'Observation',      [BaseTypesFormat.OPENEHR_RM]: 'OBSERVATION',    [BaseTypesFormat.OPENEHR_WT]: 'Observation',    [BaseTypesFormat.ISO_CDI]: 'OBSERVATION' },
-  INSTRUCTION:    { [BaseTypesFormat.FHIR]: 'Instruction',      [BaseTypesFormat.OPENEHR_RM]: 'INSTRUCTION',    [BaseTypesFormat.OPENEHR_WT]: 'Instruction',    [BaseTypesFormat.ISO_CDI]: 'INSTRUCTION' },
-  ACTION:         { [BaseTypesFormat.FHIR]: 'Action',           [BaseTypesFormat.OPENEHR_RM]: 'ACTION',         [BaseTypesFormat.OPENEHR_WT]: 'Action',         [BaseTypesFormat.ISO_CDI]: 'ACTION' },
-  ADMIN_ENTRY:    { [BaseTypesFormat.FHIR]: 'AdminEntry',       [BaseTypesFormat.OPENEHR_RM]: 'ADMIN_ENTRY',    [BaseTypesFormat.OPENEHR_WT]: 'Admin Entry',    [BaseTypesFormat.ISO_CDI]: 'ADMIN_ENTRY' },
-  GENERIC_ENTRY:  { [BaseTypesFormat.FHIR]: 'GenericEntry',     [BaseTypesFormat.OPENEHR_RM]: 'GENERIC_ENTRY',  [BaseTypesFormat.OPENEHR_WT]: 'GenericEntry',   [BaseTypesFormat.ISO_CDI]: 'GENERIC_ENTRY' },
-  EVENT:          { [BaseTypesFormat.FHIR]: 'Event',            [BaseTypesFormat.OPENEHR_RM]: 'EVENT',          [BaseTypesFormat.OPENEHR_WT]: 'Event',          [BaseTypesFormat.ISO_CDI]: 'EVENT' },
-  EVENT_CONTEXT:  { [BaseTypesFormat.FHIR]: 'BackboneElement',  [BaseTypesFormat.OPENEHR_RM]: 'EVENT_CONTEXT',  [BaseTypesFormat.OPENEHR_WT]: 'EventContext',   [BaseTypesFormat.ISO_CDI]: 'EVENT_CONTEXT' },
-  CLUSTER:        { [BaseTypesFormat.FHIR]: 'Cluster',          [BaseTypesFormat.OPENEHR_RM]: 'CLUSTER',        [BaseTypesFormat.OPENEHR_WT]: 'Cluster',        [BaseTypesFormat.ISO_CDI]: 'CLUSTER' },
-  COMPOSITION:    { [BaseTypesFormat.FHIR]: 'Composition',      [BaseTypesFormat.OPENEHR_RM]: 'COMPOSITION',    [BaseTypesFormat.OPENEHR_WT]: 'Composition',    [BaseTypesFormat.ISO_CDI]: 'COMPOSITION' },
+  ELEMENT:        { [BaseTypesFormat.fhir]: 'Choice',           [BaseTypesFormat.rm]: 'Choice',         [BaseTypesFormat.wt]: 'Choice',         [BaseTypesFormat.cdi]: 'DataValueType' },
+  DV_CODED_TEXT:  { [BaseTypesFormat.fhir]: 'CodeableConcept',  [BaseTypesFormat.rm]: 'DV_CODED_TEXT',  [BaseTypesFormat.wt]: 'CodedText',      [BaseTypesFormat.cdi]: 'ConceptType' },
+  DV_TEXT:        { [BaseTypesFormat.fhir]: 'CodeableConcept',  [BaseTypesFormat.rm]: 'DV_TEXT',        [BaseTypesFormat.wt]: 'Text',           [BaseTypesFormat.cdi]: 'ConceptType' },
+  DV_ORDINAL:     { [BaseTypesFormat.fhir]: 'CodeableConcept',  [BaseTypesFormat.rm]: 'DV_ORDINAL',     [BaseTypesFormat.wt]: 'Ordinal',        [BaseTypesFormat.cdi]: 'OrdinalType' },
+  DV_SCALE:       { [BaseTypesFormat.fhir]: 'CodeableConcept',  [BaseTypesFormat.rm]: 'DV_SCALE',       [BaseTypesFormat.wt]: 'Scale',          [BaseTypesFormat.cdi]: 'OrdinalType' },
+  DV_QUANTITY:    { [BaseTypesFormat.fhir]: 'Quantity',         [BaseTypesFormat.rm]: 'DV_QUANTITY',    [BaseTypesFormat.wt]: 'Quantity',       [BaseTypesFormat.cdi]: 'QuantityType' },
+  DV_DURATION:    { [BaseTypesFormat.fhir]: 'Duration',         [BaseTypesFormat.rm]: 'DV_DURATION',    [BaseTypesFormat.wt]: 'Duration',       [BaseTypesFormat.cdi]: 'DurationType' },
+  DV_COUNT:       { [BaseTypesFormat.fhir]: 'Count',            [BaseTypesFormat.rm]: 'DV_COUNT',       [BaseTypesFormat.wt]: 'Count',          [BaseTypesFormat.cdi]: 'NumberType' },
+  DV_DATE_TIME:   { [BaseTypesFormat.fhir]: 'dateTime',         [BaseTypesFormat.rm]: 'DV_DATE_TIME',   [BaseTypesFormat.wt]: 'DateTime',       [BaseTypesFormat.cdi]: 'DateTimeType' },
+  DV_INTERVAL:    {                                             [BaseTypesFormat.rm]: 'DV_INTERVAL',                                            [BaseTypesFormat.cdi]: 'RangeType' },
+  DV_IDENTIFIER:  { [BaseTypesFormat.fhir]: 'Identifier',        [BaseTypesFormat.rm]: 'DV_IDENTIFIER',  [BaseTypesFormat.wt]: 'Identifier',      [BaseTypesFormat.cdi]: 'IdentifierType' },
+  DV_MULTIMEDIA:  { [BaseTypesFormat.fhir]: 'Attachment',       [BaseTypesFormat.rm]: 'DV_MULTIMEDIA',  [BaseTypesFormat.wt]: 'Multimedia',     [BaseTypesFormat.cdi]: 'AttachmentType' },
+  DV_URI:         { [BaseTypesFormat.fhir]: 'uri',              [BaseTypesFormat.rm]: 'DV_URI',         [BaseTypesFormat.wt]: 'ExternalURI',    [BaseTypesFormat.cdi]: 'UrlType' },
+  DV_EHR_URI:     { [BaseTypesFormat.fhir]: 'uri',              [BaseTypesFormat.rm]: 'DV_EHR_URI',     [BaseTypesFormat.wt]: 'InternalURI',    [BaseTypesFormat.cdi]: 'UrlType' },
+  DV_PARSABLE:    { [BaseTypesFormat.fhir]: 'string',           [BaseTypesFormat.rm]: 'DV_PARSABLE',    [BaseTypesFormat.wt]: 'Parsable text',  [BaseTypesFormat.cdi]: 'StringType' },
+  DV_PROPORTION:  { [BaseTypesFormat.fhir]: 'Ratio',            [BaseTypesFormat.rm]: 'DV_PROPORTION',  [BaseTypesFormat.wt]: 'Proportion',     [BaseTypesFormat.cdi]: 'QuantityType' },
+  DV_STATE:       { [BaseTypesFormat.fhir]: 'State',            [BaseTypesFormat.rm]: 'DV_STATE',       [BaseTypesFormat.wt]: 'State',          [BaseTypesFormat.cdi]: 'CodeType' },
+  DV_BOOLEAN:     { [BaseTypesFormat.fhir]: 'boolean',          [BaseTypesFormat.rm]: 'DV_BOOLEAN',     [BaseTypesFormat.wt]: 'Boolean',        [BaseTypesFormat.cdi]: 'BooleanType' },
+  DV_DATE:        { [BaseTypesFormat.fhir]: 'date',             [BaseTypesFormat.rm]: 'DV_DATE',        [BaseTypesFormat.wt]: 'Date',           [BaseTypesFormat.cdi]: 'DateTimeType' },
+  DV_TIME:        { [BaseTypesFormat.fhir]: 'time',             [BaseTypesFormat.rm]: 'DV_DATE',        [BaseTypesFormat.wt]: 'Time',           [BaseTypesFormat.cdi]: 'DateTimeType' },
+  CODE_PHRASE:    { [BaseTypesFormat.fhir]: 'Coding',           [BaseTypesFormat.rm]: 'CODE_PHRASE',    [BaseTypesFormat.wt]: 'CodePhrase',     [BaseTypesFormat.cdi]: 'CodeType' },
+  PARTY_PROXY:    { [BaseTypesFormat.fhir]: 'BackboneElement',  [BaseTypesFormat.rm]: 'PARTY_PROXY',    [BaseTypesFormat.wt]: 'Party',          [BaseTypesFormat.cdi]: 'ReferenceType' },
+  STRING:         { [BaseTypesFormat.fhir]: 'string',           [BaseTypesFormat.rm]: 'string',         [BaseTypesFormat.wt]: 'String',         [BaseTypesFormat.cdi]: 'StringType' },
+  EVALUATION:     { [BaseTypesFormat.fhir]: 'Evaluation',       [BaseTypesFormat.rm]: 'EVALUATION',     [BaseTypesFormat.wt]: 'Evaluation',     [BaseTypesFormat.cdi]: 'Entry' },
+  SECTION:        { [BaseTypesFormat.fhir]: 'Section',          [BaseTypesFormat.rm]: 'SECTION',        [BaseTypesFormat.wt]: 'Section',        [BaseTypesFormat.cdi]: 'Section' },
+  OBSERVATION:    { [BaseTypesFormat.fhir]: 'Observation',      [BaseTypesFormat.rm]: 'OBSERVATION',    [BaseTypesFormat.wt]: 'Observation',    [BaseTypesFormat.cdi]: 'Entry' },
+  INSTRUCTION:    { [BaseTypesFormat.fhir]: 'Instruction',      [BaseTypesFormat.rm]: 'INSTRUCTION',    [BaseTypesFormat.wt]: 'Instruction',    [BaseTypesFormat.cdi]: 'Entry' },
+  ACTION:         { [BaseTypesFormat.fhir]: 'Action',           [BaseTypesFormat.rm]: 'ACTION',         [BaseTypesFormat.wt]: 'Action',         [BaseTypesFormat.cdi]: 'Entry' },
+  ADMIN_ENTRY:    { [BaseTypesFormat.fhir]: 'AdminEntry',       [BaseTypesFormat.rm]: 'ADMIN_ENTRY',    [BaseTypesFormat.wt]: 'Admin Entry',    [BaseTypesFormat.cdi]: 'Entry' },
+  GENERIC_ENTRY:  { [BaseTypesFormat.fhir]: 'GenericEntry',     [BaseTypesFormat.rm]: 'GENERIC_ENTRY',  [BaseTypesFormat.wt]: 'GenericEntry',   [BaseTypesFormat.cdi]: 'Entry' },
+  EVENT:          { [BaseTypesFormat.fhir]: 'Event',            [BaseTypesFormat.rm]: 'EVENT',          [BaseTypesFormat.wt]: 'Event',          [BaseTypesFormat.cdi]: 'BackboneElement' },
+  EVENT_CONTEXT:  { [BaseTypesFormat.fhir]: 'BackboneElement',  [BaseTypesFormat.rm]: 'EVENT_CONTEXT',  [BaseTypesFormat.wt]: 'EventContext',   [BaseTypesFormat.cdi]: 'BackboneElement' },
+  CLUSTER:        { [BaseTypesFormat.fhir]: 'Cluster',          [BaseTypesFormat.rm]: 'CLUSTER',        [BaseTypesFormat.wt]: 'Cluster',        [BaseTypesFormat.cdi]: 'BackboneElement' },
+  COMPOSITION:    { [BaseTypesFormat.fhir]: 'Composition',      [BaseTypesFormat.rm]: 'COMPOSITION',    [BaseTypesFormat.wt]: 'Composition',    [BaseTypesFormat.cdi]: 'Composition' },
 }
 
 export const lookupDatatypeText = (rmType: string, format: BaseTypesFormat): string => {
@@ -247,15 +245,15 @@ export const openEHRInterval2FHIRTable = {
 
 
 export const dataValueLabelMapper = (dataValue: string) =>
-  lookupDatatypeText(dataValue, BaseTypesFormat.OPENEHR_WT)
+  lookupDatatypeText(dataValue, BaseTypesFormat.wt)
 
 export const dataValueFHIRMapper = (dataValue: string) => {
   if (isBranchNode(dataValue))
     return 'BackboneElement'
-  return lookupDatatypeText(dataValue, BaseTypesFormat.FHIR)
+  return lookupDatatypeText(dataValue, BaseTypesFormat.fhir)
 }
 
-export const dataValueFHSLMapper = (dataValue: string) => {
+export const dataValueFHSLMapper = (dataValue: string, baseTypesFormat: BaseTypesFormat) => {
   let rmType = dataValue
 
   let intervalPrefix = ''
@@ -265,7 +263,7 @@ export const dataValueFHSLMapper = (dataValue: string) => {
     intervalSuffix = ">"
     rmType = dataValue.replace(/(^.*<|>.*$)/g, '');
   }
-  return `${intervalPrefix}${lookupDatatypeText(rmType, BaseTypesFormat.OPENEHR_RM)}${intervalSuffix}`
+  return `${intervalPrefix}${lookupDatatypeText(rmType, baseTypesFormat)}${intervalSuffix}`
 }
 
 export const dataValueFHIRQuestionTypeMapper = (dataValue: string): string => {

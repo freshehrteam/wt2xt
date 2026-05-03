@@ -6,6 +6,7 @@ import { DocBuilder } from './DocBuilder';
 import type { Config } from './BuilderConfig';
 import { importConfig } from './BuilderConfig';
 import {ExportFormat} from './formatters/DocFormatter';
+import {BaseTypesFormat} from "./types/TemplateTypes.ts";
 
 const args = yargs(process.argv.slice(2)).options({
   'web-template': { type: 'string', describe: 'web template name',demandOption: true, alias: 'wt' },
@@ -13,16 +14,19 @@ const args = yargs(process.argv.slice(2)).options({
   'out-dir': { type: 'string', demandOption: false, describe: 'Output folder', alias: 'od', default: './out'},
   'in-dir': { type: 'string', demandOption: false, describe: 'Input folder', alias: 'id', default: './templates'},
   'config-file': { type: 'string', demandOption: false, describe: 'Config file',alias: 'cfg', default: "./config/wtconfig.json"},
-   'export-format': { type: 'string', demandOption: false, describe: 'Export format: adoc|docx|xmind|pdf|fshl|fshq|fhirl|html|csv (default: adoc)',alias: 'ex', default: "adoc"},
+  'export-format': { type: 'string', demandOption: false, describe: 'Export format: adoc|docx|xmind|pdf|fshl|fshq|fhirl|html|csv (default: adoc)',alias: 'ex', default: "adoc"},
+  'basetypes-format': { type: 'string', demandOption: false, describe: 'Base type format: wt|rm|fhir|cdi (default: wt)',alias: 'bt', default: "wt"},
 
 }).argv;
 
 const config:Config = await importConfig(args['config-file'])
 const exportFormatKey = args['export-format'] as keyof typeof ExportFormat;
+const baseTypesFormatKey = args['basetypes-format'] as keyof typeof BaseTypesFormat;
 
 config.inFilePath = args['web-template']
 config.inFileDir = args['in-dir']
 config.exportFormat  = ExportFormat[exportFormatKey];
+config.baseTypesFormat  = BaseTypesFormat[baseTypesFormatKey];
 config.outFileDir = args['out-dir']
 config.outFilePath = args['out-file']
 

@@ -66,7 +66,7 @@ const defaultConfig: Config = {
   fhirBaseUrl: 'http://openehr.org',
   entriesOnly: false,
   returnFHIRJson: false,
-  baseTypesFormat: BaseTypesFormat.OPENEHR_RM,
+  baseTypesFormat: BaseTypesFormat.cdi
 };
 
  export async function importConfig(path: string): Promise<Config> {
