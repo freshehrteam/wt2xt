@@ -4,3 +4,4 @@
 /tests/server.run.xml
 /cli/wt2xmacos
 /config/wtconfig-local.json
+/.claude/settings.local.json
