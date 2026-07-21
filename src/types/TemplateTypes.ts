@@ -157,7 +157,7 @@ export function isDisplayableNode(rmType: string)
 
 // Unified datatype mapping table: rows = RM types, columns = BaseTypesFormat values
 const DatatypeTable: Record<string, Partial<Record<BaseTypesFormat, string>>> = {
-  ELEMENT:        { [BaseTypesFormat.fhir]: 'Choice',           [BaseTypesFormat.rm]: 'Choice',         [BaseTypesFormat.wt]: 'Choice',         [BaseTypesFormat.cdi]: 'DataValueType' },
+  ELEMENT:        { [BaseTypesFormat.fhir]: 'Choice',           [BaseTypesFormat.rm]: 'ELEMENT',         [BaseTypesFormat.wt]: 'Choice',         [BaseTypesFormat.cdi]: 'DataValueType' },
   DV_CODED_TEXT:  { [BaseTypesFormat.fhir]: 'CodeableConcept',  [BaseTypesFormat.rm]: 'DV_CODED_TEXT',  [BaseTypesFormat.wt]: 'CodedText',      [BaseTypesFormat.cdi]: 'ConceptType' },
   DV_TEXT:        { [BaseTypesFormat.fhir]: 'CodeableConcept',  [BaseTypesFormat.rm]: 'DV_TEXT',        [BaseTypesFormat.wt]: 'Text',           [BaseTypesFormat.cdi]: 'ConceptType' },
   DV_ORDINAL:     { [BaseTypesFormat.fhir]: 'CodeableConcept',  [BaseTypesFormat.rm]: 'DV_ORDINAL',     [BaseTypesFormat.wt]: 'Ordinal',        [BaseTypesFormat.cdi]: 'OrdinalType' },

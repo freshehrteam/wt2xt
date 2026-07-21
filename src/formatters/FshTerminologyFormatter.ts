@@ -18,7 +18,7 @@ const formatValueSetUrl = (node : TemplateNode) : string => `http://openehr.org/
 // ``
 
 export const appendCodeSystemFSH = ( docBuilder :DocBuilder) => {
-    return
+
     const {cb, codeSystems} = docBuilder;
     for (const cs of codeSystems) {
         cb.newline('')
@@ -31,7 +31,7 @@ export const appendCodeSystemFSH = ( docBuilder :DocBuilder) => {
 
 //const formatValuesetName = (node : TemplateNode) : string => `http://openehr.org/ckm/archetypes/${node.archetype_id}`
 
-export const appendCodesystem = ( node : TemplateNode): string => {
+export const appendCodeSystem = ( node : TemplateNode): string => {
 
   const { codeSystems } = node.builder;
 
@@ -127,7 +127,7 @@ export const formatValueSetDefinition = (node: TemplateNode):string => {
 
     ab.newline('');
     ab.append(`ValueSet: ${uniqueTechName}`);
-    ab.append(`Title: "${templateId}: ${node.localizedName}"`);
+    ab.append(`Title: "${templateId}: ${uniqueTechName}"`);
 
     return uniqueTechName
 };

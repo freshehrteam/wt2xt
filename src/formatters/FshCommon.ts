@@ -4,7 +4,8 @@ import {appendCodeSystemFSH} from "./FshTerminologyFormatter.ts";
 import {OutputBufferType, saveOutputArray} from "./DocFormatter.ts";
 
 const buildFSHString = (docBuilder:DocBuilder) : string => {
-    appendCodeSystemFSH(docBuilder)
+
+//    appendCodeSystemFSH(docBuilder)
     docBuilder.cb.newline('')
     return docBuilder.toString()
 }
@@ -43,6 +44,7 @@ export const fsh = {
     getOutputBuffer: async (docBuilder: DocBuilder): Promise<OutputBufferType> => {
         return buildFSHString(docBuilder)
     },
+
     saveFile: async (docBuilder: DocBuilder, outFile: string, useStdout: boolean) => {
         // Ensure the directory exists
         const outputBuffer: OutputBufferType = await fsh.getOutputBuffer(docBuilder)

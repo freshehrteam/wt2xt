@@ -2,7 +2,10 @@ import { DocBuilder } from "../DocBuilder";
 import { TemplateInput, TemplateNode } from '../types/TemplateNodes';
 import { formatOccurrences, isEntry, mapRmType2FHIR, snakeToCamel } from '../types/TemplateTypes';
 import {formatLeafHeader} from './DocFormatter';
-import {appendCodesystem, formatValueSetDefinition} from './FshTerminologyFormatter';
+import {
+  appendCodeSystem,
+  formatValueSetDefinition
+} from './FshTerminologyFormatter';
 
 //const sanitiseFhirName  = (name: string): string  => name.replace(/[^a-zA-Z0-9_-]/g, '_')
 
@@ -131,7 +134,7 @@ export const fshl = {
 
       appendFSHLM(dBuilder, f)
 
-      const csUrl = appendCodesystem(f)
+       const csUrl = appendCodeSystem(f)
         const uniqueVS = formatValueSetDefinition(f)
 
         f?.inputs?.forEach((input: TemplateInput) => {
@@ -156,7 +159,7 @@ formatDvText: (dBuilder: DocBuilder, f: TemplateNode) => {
   const { ab} = dBuilder;
 
    appendFSHLM(dBuilder,f)
-  appendCodesystem(f)
+  const csUrl = appendCodeSystem(f)
   //  const uniqueVS = formatValueSetDefinition(f)
 
       f.inputs?.forEach((input: TemplateInput) => {
@@ -165,7 +168,7 @@ formatDvText: (dBuilder: DocBuilder, f: TemplateNode) => {
             appendExternalBinding(f, input)
           else {
             input.list?.forEach((item) => {
-              ab.append(`* $local$#{item.value} "${item.label}"`);
+              ab.append(`* ${csUrl}#${item.value} "${item.label}"`);
             })
             appendLocalBinding(f, input,undefined)
           }
@@ -175,7 +178,7 @@ formatDvText: (dBuilder: DocBuilder, f: TemplateNode) => {
   formatDvOrdinal: (dBuilder: DocBuilder, f: TemplateNode) => {
   const { sb , config} = dBuilder;
 
-    appendCodesystem(f)
+    const csUrl = appendCodeSystem(f)
   f.inputs?.forEach((input) => {
     if (input.list)
       input.list.forEach((listItem) => {
