@@ -11,6 +11,7 @@
   "displayAQLPaths": false,
   "displayToc": false,
   "hideXmindValues" : true,
+
    "entriesOnly" : false,
    "returnFhirJson": false
 }

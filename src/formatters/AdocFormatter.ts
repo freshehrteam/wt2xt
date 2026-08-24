@@ -336,12 +336,17 @@ export const adoc = {
     const { localArchetypeList, remoteArchetypeList, sb } = dBuilder;
 
     const formatList = (aList: ArchetypeList) => {
-      sb.append('a|');
-      aList.forEach((item) => {
+
+       if (aList.length == 0){
+         sb.append(` None`);
+         return
+       }
+
+       aList.forEach((item) => {
  //       const trimmedId = item.archetypeId.replace(new RegExp('^' + 'openEHR-EHR-'),  `${item.originalNamespace}::`);
-        const trimmedId = item.archetypeId.replace(new RegExp('^' + 'openEHR-EHR-'), ``);
+        const trimmedId = `${item.originalNamespace}::${item.archetypeId}`;
       //  const semver = item.semver.substring(2,3);
-        sb.append(`${trimmedId}`);
+        sb.append(` ${trimmedId} [${item.custodianOrganisation}]`);
       });
     }
 
@@ -362,16 +367,24 @@ export const adoc = {
 
     sb.newline()
 
+    // sb.append(`== Archetype provenance`)
+    //
+    // sb.append('[options="header","stretch", cols="50,50"]');
+    // sb.append('|===');
+    // sb.append(`| Local archetypes | Archetypes published or managed externally`)
+    // sb.append(`| **${formatTotal(localTotal)}**  | **${formatTotal(remoteTotal)}**`)
+    // formatList(localArchetypeList)
+    // formatList(remoteArchetypeList)
+    // sb.append('|===');
+
     sb.append(`== Archetype provenance`)
 
-    sb.append('[options="header","stretch", cols="50,50"]');
-    sb.append('|===');
-    sb.append(`| Local archetypes | Archetypes published or managed externally`)
-    sb.append(`| **${formatTotal(localTotal)}**  | **${formatTotal(remoteTotal)}**`)
-    formatList(localArchetypeList)
+    sb.append(`=== **${formatTotal(remoteTotal)}** Archetypes published or managed externally`)
     formatList(remoteArchetypeList)
+    sb.newline()
+    sb.append(`=== **${formatTotal(localTotal)}** Local archetypes`)
 
-    sb.append('|===');
+    formatList(localArchetypeList)
 
   },
 

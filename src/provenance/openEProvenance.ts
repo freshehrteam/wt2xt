@@ -6,6 +6,7 @@ export type ArchetypeProvenance = {
   archetypeId: string,
   originalNamespace?: string,
   custodianNamespace?: string,
+  custodianOrganisation?: string,
   semver?:string,
   lifecycleStatus?:string
 }
@@ -187,6 +188,7 @@ export const getProvenance = (templateNode: TemplateNode): ArchetypeProvenance  
     archetypeId: templateNode.nodeId,
     originalNamespace: templateNode.original_namespace,
     custodianNamespace: templateNode.custodian_namespace,
+    custodianOrganisation: templateNode.custodian_organisation,
     semver: templateNode.revision,
     lifecycleStatus: templateNode.lifecycleState
   }
