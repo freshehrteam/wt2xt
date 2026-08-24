@@ -338,15 +338,15 @@ export const adoc = {
     const formatList = (aList: ArchetypeList) => {
 
        if (aList.length == 0){
-         sb.append(` None`);
+         sb.append(`| None |`);
          return
        }
 
        aList.forEach((item) => {
  //       const trimmedId = item.archetypeId.replace(new RegExp('^' + 'openEHR-EHR-'),  `${item.originalNamespace}::`);
-        const trimmedId = `${item.originalNamespace}::${item.archetypeId}`;
+        const trimmedId = sb.backTick(`${item.originalNamespace}::${item.archetypeId}`);
       //  const semver = item.semver.substring(2,3);
-        sb.append(` ${trimmedId} [${item.custodianOrganisation}]`);
+        sb.append(`| ${trimmedId} | ${item.custodianOrganisation} `);
       });
     }
 
@@ -369,9 +369,7 @@ export const adoc = {
 
     // sb.append(`== Archetype provenance`)
     //
-    // sb.append('[options="header","stretch", cols="50,50"]');
-    // sb.append('|===');
-    // sb.append(`| Local archetypes | Archetypes published or managed externally`)
+
     // sb.append(`| **${formatTotal(localTotal)}**  | **${formatTotal(remoteTotal)}**`)
     // formatList(localArchetypeList)
     // formatList(remoteArchetypeList)
@@ -379,13 +377,23 @@ export const adoc = {
 
     sb.append(`== Archetype provenance`)
 
-    sb.append(`=== **${formatTotal(remoteTotal)}** Archetypes published or managed externally`)
+    sb.append(`==== **${formatTotal(remoteTotal)}** Archetypes published or managed externally`)
+
+    sb.append('[options="header","stretch", cols="70,30"]');
+    sb.append('|===');
+    sb.append(`| Archetype Id | Custodian organisation`)
     formatList(remoteArchetypeList)
+    sb.append('|===');
+
     sb.newline()
-    sb.append(`=== **${formatTotal(localTotal)}** Local archetypes`)
 
+    sb.append(`==== **${formatTotal(localTotal)}** Local archetypes`)
+
+    sb.append('[options="header","stretch", cols="70,30"]');
+    sb.append('|===');
+    sb.append(`| Archetype Id | Custodian organisation`)
     formatList(localArchetypeList)
-
+    sb.append('|===');
   },
 
 }
