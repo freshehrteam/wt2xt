@@ -1,16 +1,16 @@
 {
   "hideLanguageTerritory": false,
-  "displayTechnicalOccurrences": false,
-  "hideNodeIds": true,
+  "displayTechnicalOccurrences": true,
+  "hideNodeIds": false,
   "skippedAQLPaths": [],
   "includedAnnotations": ["comment"],
   "hideComments": false,
   "excludedRMTags": ["territory","language", "encoding", "subject", "current_state","transition"],
   "title": "",
   "hideParticipations": true,
-  "displayAQLPaths": false,
+  "displayAQLPaths": true,
   "displayToc": false,
-  "hideXmindValues" : true,
+  "hideXmindValues" : false,
 
    "entriesOnly" : false,
    "returnFhirJson": false

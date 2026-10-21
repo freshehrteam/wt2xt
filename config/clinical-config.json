@@ -6,6 +6,6 @@
   "skippedAQLPaths": [],
   "includedAnnotations": [],
   "excludedRMTags": ["territory","language", "encoding"],
-  "displayAQLPaths": false,
+  "displayAQLPaths": true,
   "hideXmindValues" : false
 }
