@@ -68,7 +68,7 @@ export const xmind = {
     const { sb, config } = dBuilder;
     const localName = f.localizedName ? f.localizedName : f.name
     const nodeName = localName ? localName : f.id
-    const rmTypeText = mapRmTypeText(f.rmType);
+    const rmTypeText = mapRmTypeText(f.rmType, config.baseTypesFormat);
     const occurrencesText = formatOccurrences(f, config.displayTechnicalOccurrences)
     sb.append(`${nodeIndent} ${nodeName} [${rmTypeText} ${occurrencesText}]`)
   },

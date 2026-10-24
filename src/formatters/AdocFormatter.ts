@@ -41,8 +41,10 @@ export const adoc = {
   },
 
   formatNodeHeader: (dBuilder: DocBuilder) => {
-    const { sb } = dBuilder;
-    sb.append('[options="header","stretch", cols="20,50,30"]');
+    const { sb,config } = dBuilder;
+
+    const colWidths = config.displayAQLPaths?'35,40,25':'20,20,30'
+    sb.append(`[options="header","stretch", cols="${colWidths}"]`);
     sb.append('|====');
     sb.append('|Data item | Description | Allowed values');
   },
@@ -77,13 +79,13 @@ export const adoc = {
     else
       resolvedNodeId = 'RM'
 
-    const nodeIdText = `NodeID: [${sb.backTick(resolvedNodeId)}] + \n ${sb.backTick(f.id)}`;
+    const nodeIdText = `NodeID: [${sb.backTick(resolvedNodeId)}] + \n wtID: ${sb.backTick(f.id)}`;
     let nodeName = f.localizedName ? f.localizedName : f.name
     nodeName = nodeName ? nodeName : f.id
     // let rmTypeText:string;
 
   //  if (isDisplayableNode(f.rmType)) {
-      const rmTypeText = `${sb.backTick(mapRmTypeText(f.rmType))}`;
+      const rmTypeText = `${sb.backTick(mapRmTypeText(f.rmType,config.baseTypesFormat))}`;
   //  } else
   //    rmTypeText = sb.backTick(`Unsupported RM type:  ${f.rmType}`)
 
@@ -92,24 +94,23 @@ export const adoc = {
     const occurrencesText = formatOccurrences(f, config.displayTechnicalOccurrences)
     const formattedOccurrencesText = occurrencesText ? `(_${occurrencesText}_)` : ``
 
-    let descriptionText: string;
+    const descriptionText = dBuilder.getDescription(f) ?? '';
 
-    if (config.displayAQLPaths)
-      descriptionText = `**AQL**: ${f.aqlPath}`
-    else
-      descriptionText = dBuilder.getDescription(f) ?? ''
+    // The AQL block sits in the first column, which must be an AsciiDoc ('a|') cell to render it
+    const aqlBlock = (aqlPath: string) =>
+             `\n\n**AQL path**:\n[source,aql]\n----\n${aqlPath}\n----\n`;
+
+    const firstCellSep = config.displayAQLPaths ? 'a|' : '|';
+    const aqlText = config.displayAQLPaths ? aqlBlock(f.aqlPath) : '';
 
     if (!isChoice) {
       nameText = `**${nodeName}** + \n Type: ${rmTypeText} ${formattedOccurrencesText}`
-      sb.append(`| ${applyNodeIdFilter(nameText, nodeIdText)} | ${descriptionText} `);
+      sb.append(`${firstCellSep} ${applyNodeIdFilter(nameText, nodeIdText)}${aqlText} | ${descriptionText}` );
       formatAnnotations(dBuilder,f)
     } else {
       nameText = `Type: ${rmTypeText}`
-      sb.append(`| ${applyNodeIdFilter(nameText, nodeIdText)} |`);
+      sb.append(`${firstCellSep} ${applyNodeIdFilter(nameText, nodeIdText)}${aqlText} |`);
     }
-
-
-
   },
 
   formatNodeFooter: (dBuilder: DocBuilder) => {

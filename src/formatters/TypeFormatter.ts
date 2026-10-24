@@ -16,6 +16,7 @@ export const formatDvCodedText = (docBuilder: DocBuilder, f: TemplateNode): void
       fn = xmind.dvTypes.formatDvCodedText
       break;
     case ExportFormat.fshl:
+    case ExportFormat.fhirl:
       fn = fshl.dvTypes.formatDvCodedText
       break;
       case ExportFormat.fshq:
@@ -61,6 +62,7 @@ export const formatDvText = (docBuilder: DocBuilder, f: TemplateNode): void => {
       fn = xmind.dvTypes.formatDvText
       break;
     case ExportFormat.fshl:
+    case ExportFormat.fhirl:
       fn = fshl.dvTypes.formatDvText
       break;
     case ExportFormat.fshq:
@@ -85,6 +87,7 @@ export const formatDvCount = (docBuilder: DocBuilder, f: TemplateNode): void => 
   switch (docBuilder.config.exportFormat) {
     case ExportFormat.xmind:
     case ExportFormat.fshl:
+    case ExportFormat.fhirl:
     case ExportFormat.fshq:
       break;
     case ExportFormat.csv:
@@ -106,6 +109,7 @@ export const formatDvQuantity = (docBuilder: DocBuilder, f: TemplateNode): void 
     case ExportFormat.xmind:
      break;
     case ExportFormat.fshl:
+    case ExportFormat.fhirl:
       fn = fshl.dvTypes.formatDvQuantity
       break;
       case ExportFormat.fshq:
@@ -131,6 +135,7 @@ export const formatDvOrdinal = (docBuilder: DocBuilder, f: TemplateNode): void =
       fn = xmind.dvTypes.formatDvOrdinal
       break;
     case ExportFormat.fshl:
+    case ExportFormat.fhirl:
       break;
       case ExportFormat.fshq:
       break;
@@ -152,6 +157,7 @@ export const formatDvDefault = (docBuilder: DocBuilder, f: TemplateNode): void =
     case ExportFormat.xmind:
       break;
     case ExportFormat.fshl:
+    case ExportFormat.fhirl:
       fn = fshl.dvTypes.formatDvDefault
       break;
       case ExportFormat.fshq:

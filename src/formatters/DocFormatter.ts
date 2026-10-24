@@ -412,8 +412,10 @@ export const saveFile  = async (docBuilder: DocBuilder, outFile: string, useStdO
             break
         case ExportFormat.fsht:
         case ExportFormat.fshl:
-        case ExportFormat.fhirl:
             fn = fsh.saveFile
+            break;
+        case ExportFormat.fhirl:
+            fn = fhirl.saveFile
             break;
         case ExportFormat.fshq:
             fn = fsh.saveFile

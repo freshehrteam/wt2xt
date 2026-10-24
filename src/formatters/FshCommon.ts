@@ -57,5 +57,10 @@ export const fhirl = {
     getOutputBuffer: async (docBuilder: DocBuilder): Promise<OutputBufferType> => {
         const fshString = buildFSHString(docBuilder)
             return convertFSHtoJson(fshString)
-    }
+    },
+
+    saveFile: async (docBuilder: DocBuilder, outFile: string, useStdout: boolean) => {
+        const outputBuffer: OutputBufferType = await fhirl.getOutputBuffer(docBuilder)
+        return saveOutputArray(outputBuffer, outFile, useStdout);
+    },
 }

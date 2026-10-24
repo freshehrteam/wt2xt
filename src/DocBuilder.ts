@@ -123,6 +123,8 @@ export class DocBuilder {
             fExt = 'zip'
           else
             fExt = 'l.fsh'
+        else if (ext === 'fhirl')
+            fExt = 'zip'
         else
             fExt= ext === 'wtx'?'wtx.json': ext;
 
@@ -302,7 +304,7 @@ export class DocBuilder {
 
   private walkChoice(f: TemplateNode) {
     formatNodeContent(this, f, true)
-    if (this.config.exportFormat !== ExportFormat.fshl)
+    if (this.config.exportFormat !== ExportFormat.fshl && this.config.exportFormat !== ExportFormat.fhirl)
      this.walkDataType(f)
   }
 

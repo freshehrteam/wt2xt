@@ -76,14 +76,14 @@ export const isArchetype= (rmType: string, nodeId: string) => {
       &&  nodeId.substring(0,2) !== 'at'
 }
 
-export const mapRmTypeText = (rmTypeString: string) => {
+export const mapRmTypeText = (rmTypeString: string, baseTypesFormat: BaseTypesFormat) => {
   let rmType = rmTypeString
   let intervalPrefix = ''
   if (rmTypeString.startsWith('DV_INTERVAL')) {
     intervalPrefix = "Interval of "
     rmType = rmTypeString.replace(/(^.*<|>.*$)/g, '');
   }
-  return `${intervalPrefix}${lookupDatatypeText(rmType, BaseTypesFormat.wt)}`
+  return `${intervalPrefix}${lookupDatatypeText(rmType, baseTypesFormat)}`
 }
 
 // export const mapRmTypetoFSHL = (rmTypeString: string) => {

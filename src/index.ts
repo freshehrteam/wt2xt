@@ -13,7 +13,7 @@ const args = yargs(process.argv.slice(2)).options({
   'out-file': { type: 'string', describe: 'Output file',demandOption: false, alias: 'o' },
   'out-dir': { type: 'string', demandOption: false, describe: 'Output folder', alias: 'od', default: './out'},
   'in-dir': { type: 'string', demandOption: false, describe: 'Input folder', alias: 'id', default: './templates'},
-  'config-file': { type: 'string', demandOption: false, describe: 'Config file',alias: 'cfg', default: "./config/wtconfig.json"},
+  'config-file': { type: 'string', demandOption: false, describe: 'Config file',alias: 'cfg', default: ""},
   'export-format': { type: 'string', demandOption: false, describe: 'Export format: adoc|docx|xmind|pdf|fshl|fshq|fhirl|html|csv (default: adoc)',alias: 'ex', default: "adoc"},
   'basetypes-format': { type: 'string', demandOption: false, describe: 'Base type format: wt|rm|fhir|cdi (default: wt)',alias: 'bt', default: "wt"},
 

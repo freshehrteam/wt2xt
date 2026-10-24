@@ -13,5 +13,6 @@
   "hideXmindValues" : false,
 
    "entriesOnly" : false,
-   "returnFhirJson": false
+   "returnFhirJson": false,
+  "baseTypesFormat": "fhir"
 }

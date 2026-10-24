@@ -86,7 +86,7 @@ const appendRow = (dBuilder: DocBuilder, f: TemplateNode, constraintBuilder: Str
   const mapTargetFhirPath: string = f?.annotations?.['mapTargetFhirPath']|| ''
   const mapTargetCardinality: string = f?.annotations?.['mapTargetCardinality']|| ''
   const openehrConstraints:string = constraintBuilder?.toString() || ''
-  const rmDatatype = mapRmTypeText(f.rmType)
+  const rmDatatype = mapRmTypeText(f.rmType, config.baseTypesFormat)
  // const datatype: string = constraint?rmDatatype + '\n' + constraint: rmDatatype
   const aqlString = f?.aqlPath || '/'
 
