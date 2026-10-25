@@ -43,7 +43,7 @@ export const adoc = {
   formatNodeHeader: (dBuilder: DocBuilder) => {
     const { sb,config } = dBuilder;
 
-    const colWidths = config.displayAQLPaths?'35,40,25':'20,20,30'
+    const colWidths = config.displayAQLPaths?'25,20,25':'20,20,30'
     sb.append(`[options="header","stretch", cols="${colWidths}"]`);
     sb.append('|====');
     sb.append('|Data item | Description | Allowed values');
@@ -98,7 +98,7 @@ export const adoc = {
 
     // The AQL block sits in the first column, which must be an AsciiDoc ('a|') cell to render it
     const aqlBlock = (aqlPath: string) =>
-             `\n\n**AQL path**:\n[source,aql]\n----\n${aqlPath}\n----\n`;
+             `\n\nAQL path:\n[source,aql]\n----\n${aqlPath}\n----\n`;
 
     const firstCellSep = config.displayAQLPaths ? 'a|' : '|';
     const aqlText = config.displayAQLPaths ? aqlBlock(f.aqlPath) : '';
